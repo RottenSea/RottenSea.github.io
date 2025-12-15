@@ -2,6 +2,9 @@
 // Welcome to Astro! Everything between these triple-dash code fences
 // is your "component frontmatter". It never runs in the browser.
 console.log("This runs in your terminal, not the browser!");
+
+// You can also define variables and import other components here!
+const pageTitle = "Home";
 ---
 
 <!-- Below is your "component template." It's just HTML, but with
@@ -11,7 +14,8 @@ console.log("This runs in your terminal, not the browser!");
     <a href="/">Home</a>
     <a href="/about/">About</a>
     <a href="/blog/">Blog</a>
-    <h1>Hello, World!</h1>
+
+    <h1>{pageTitle}</h1>
   </body>
 
   <style>
