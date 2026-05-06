@@ -52,28 +52,28 @@ export default function Search() {
 
   return (
     <>
-      <button class="theme-toggle" onClick={() => setOpen(true)} aria-label="Search">
+      <button className="theme-toggle" onClick={() => setOpen(true)} aria-label="Search">
         &#128269;
       </button>
 
       {open && (
-        <div class="search-overlay" onClick={handleOverlayClick}>
-          <div class="search-panel">
+        <div className="search-overlay" onClick={handleOverlayClick}>
+          <div className="search-panel">
             <input
               ref={inputRef}
-              class="search-input"
+              className="search-input"
               type="text"
               placeholder="Search posts... (press Esc to close)"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
             {query && results.length === 0 && (
-              <p class="search-empty">No results found for "{query}"</p>
+              <p className="search-empty">No results found for "{query}"</p>
             )}
             {results.map((item) => (
-              <a key={item.slug} href={`/posts/${item.slug}`} class="search-result" onClick={() => setOpen(false)}>
-                <div class="search-result__title">{item.title}</div>
-                <div class="search-result__excerpt">{item.excerpt}</div>
+              <a key={item.slug} href={`/posts/${item.slug}`} className="search-result" onClick={() => setOpen(false)}>
+                <div className="search-result__title">{item.title}</div>
+                <div className="search-result__excerpt">{item.excerpt}</div>
               </a>
             ))}
           </div>

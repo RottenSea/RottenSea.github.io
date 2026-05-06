@@ -17,7 +17,7 @@ export default function DarkModeToggle() {
   }
 
   return (
-    <button class="theme-toggle" onClick={toggle} aria-label="Toggle dark mode">
+    <button className="theme-toggle" onClick={toggle} aria-label="Toggle dark mode">
       {dark ? '☀️' : '🌙'}
     </button>
   );

@@ -46,12 +46,12 @@ export default function ArticleLayout({ headings, children }: ArticleLayoutProps
   const tocHeadings = headings.filter((h) => h.depth <= 3);
 
   return (
-    <div class="article-layout">
-      <div class="article-layout__content">{children}</div>
+    <div className="article-layout">
+      <div className="article-layout__content">{children}</div>
       {tocHeadings.length > 0 && (
-        <aside class="article-layout__toc">
+        <aside className="article-layout__toc">
           <nav>
-            <h3 class="toc-heading">Contents</h3>
+            <h3 className="toc-heading">Contents</h3>
             {tocHeadings.map((h) => (
               <a
                 key={h.slug}
