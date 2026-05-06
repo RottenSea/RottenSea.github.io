@@ -13,7 +13,7 @@ export function buildSearchIndex(posts: CollectionEntry<'posts'>[]): SearchItem[
   return posts.map((post) => ({
     title: post.data.title,
     excerpt: post.data.excerpt || '',
-    slug: post.slug,
+    slug: post.id.replace(/\.\w+$/, ''),
     tags: post.data.tags || [],
     date: post.data.date.toISOString().split('T')[0],
   }));

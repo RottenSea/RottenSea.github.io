@@ -6,6 +6,8 @@ import { getCollection } from 'astro:content';
 
 const posts = await getCollection('posts');
 posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const slugFromId = (id: string) => id.replace(/\.\w+$/, '');
 ---
 
 <Layout title="RottenSea">
@@ -18,7 +20,7 @@ posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
     {posts.map((post) => (
       <article class="post-card">
         <h2 class="post-card__title">
-          <a href={`/posts/${post.slug}`}>{post.data.title}</a>
+          <a href={`/posts/${slugFromId(post.id)}`}>{post.data.title}</a>
         </h2>
         <p class="post-card__meta">
           <time datetime={post.data.date.toISOString().split('T')[0]}>

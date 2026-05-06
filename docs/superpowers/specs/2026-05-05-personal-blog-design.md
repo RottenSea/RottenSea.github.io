@@ -99,7 +99,7 @@ src/
 ## Partytown
 
 - Configured in `astro.config.mjs` but inactive until third-party scripts are added
-- Future use: Google Analytics, other analytics scripts offloaded to web worker
+- Future use: Quick load web, other analytics scripts offloaded to web worker
 
 ## Design Direction
 

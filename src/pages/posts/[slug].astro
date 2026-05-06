@@ -2,12 +2,12 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header';
 import ArticleLayout from '../../components/ArticleLayout';
-import { getCollection, getEntry, render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id.replace(/\.\w+$/, '') },
     props: { post },
   }));
 }
