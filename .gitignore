@@ -3,6 +3,7 @@ dist/
 
 # generated types
 .astro/
+public/
 
 # dependencies
 node_modules/
@@ -26,3 +27,8 @@ pnpm-debug.log*
 # visual companion
 .superpowers/
 docs/
+
+# vscode configuration
+.vscode/
+!.vscode/launch.json
+!.vscode/extensions.json
