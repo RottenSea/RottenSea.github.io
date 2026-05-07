@@ -24,8 +24,6 @@ jobs:
           node-version: 24
           package-manager: pnpm
           build-cmd: pnpm run build
-          cache: true
-          cache-dir: .astro/cache
           out-dir: dist
 
   deploy:
