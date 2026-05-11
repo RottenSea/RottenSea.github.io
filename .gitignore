@@ -3,7 +3,6 @@ dist/
 
 # generated types
 .astro/
-public/
 
 # dependencies
 node_modules/
@@ -24,7 +23,7 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# visual companion
+# claude code
 .superpowers/
 docs/
 
