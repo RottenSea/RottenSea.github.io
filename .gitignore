@@ -23,11 +23,15 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# claude code
+# vibe coding
 .superpowers/
 docs/
+AGENTS.md
 
 # vscode configuration
 .vscode/
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# obsidian
+src/content/blog/.obsidian
