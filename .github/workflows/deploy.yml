@@ -23,7 +23,7 @@ jobs:
           path: .
           node-version: 24
           package-manager: pnpm@latest
-          # build-cmd: pnpm run build
+          build-cmd: pnpm run build
           out-dir: dist
 
   deploy:
