@@ -2,60 +2,14 @@
 
 ---
 
-<header>
+<header class="header">
   <h1>
-    <a
-      class="title"
-      href="/"
-      >RottenTh's cafe nest</a
-    >
+    <a class="header-title" href="/">RottenTh's cafe nest</a>
   </h1>
-  <nav>
-    <ul>
+  <nav class="header-nav">
+    <ul class="header-nav-list">
       <li><a href="/">blog</a></li>
       <li><a href="/about">about</a></li>
     </ul>
   </nav>
 </header>
-
-<style>
-  header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    color: var(--text-000);
-  }
-
-  .title {
-    padding: 1rem;
-    margin: 1rem;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  nav {
-    padding: 1rem 2rem;
-    margin: 0 0 5rem 0;
-    border: 10px dotted var(--text-200);
-    border-width: 0 0 3px 0;
-  }
-
-  ul {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    font-size: var(--text-xl);
-    list-style: none;
-    gap: 3rem;
-  }
-
-  a {
-    color: var(--text-200);
-    text-decoration: none;
-  }
-
-  a:hover {
-    color: var(--brand-000);
-  }
-</style>

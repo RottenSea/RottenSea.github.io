@@ -8,13 +8,10 @@ type Props = {
 const { post } = Astro.props;
 ---
 
-<a
-  class="card-link"
-  href={`/blog/${post.id}`}
->
+<a class="card-link" href={`/blog/${post.id}`}>
   <article class="card">
-    <h2>{post.data.title}</h2>
-    <time datetime={post.data.date.toISOString()}>
+    <h2 class="card-title">{post.data.title}</h2>
+    <time class="card-time" datetime={post.data.date.toISOString()}>
       {
         post.data.date.toLocaleDateString("zh-CN", {
           year: "numeric",
@@ -23,75 +20,15 @@ const { post } = Astro.props;
         })
       }
     </time>
-    {
-      post.data.description && (
-        <p class="description">{post.data.description}</p>
-      )
-    }
+    {post.data.description && <p class="card-description">{post.data.description}</p>}
     {
       post.data.tags && post.data.tags.length > 0 && (
-        <ul class="tags">
+        <ul class="card-tags">
           {post.data.tags.map((tag) => (
-            <li class="tag">{tag}</li>
+            <li class="card-tag">{tag}</li>
           ))}
         </ul>
       )
     }
   </article>
 </a>
-
-<style>
-  .card-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .card {
-    max-width: 800px;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-  }
-
-  .card:hover {
-    background: var(--bg-000);
-  }
-
-  h2 {
-    margin: 0 0 0.25rem;
-    font-size: var(--text-xxl);
-    color: var(--text-000);
-    font-family: var(--font-noto-serif-sc);
-  }
-
-  .card-link:hover h2 {
-    color: var(--brand-000);
-  }
-
-  time {
-    display: block;
-    font-size: var(--text-sm);
-    color: var(--text-400);
-    margin-bottom: 0.75rem;
-  }
-
-  .description {
-    margin: 0;
-    color: var(--text-300);
-    line-height: 1.6;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 1rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .tag {
-    font-size: var(--text-xs);
-    color: var(--text-400);
-  }
-</style>

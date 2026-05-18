@@ -82,3 +82,239 @@ h6 {
 a {
   transition: color 0.15s;
 }
+
+/* ===== Scrollbar ===== */
+
+html {
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-100) transparent;
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--border-100);
+  border-radius: 4px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--text-400);
+}
+
+/* ===== Header ===== */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-000);
+}
+
+.header-title {
+  padding: 1rem;
+  margin: 1rem;
+  text-decoration: none;
+  font-weight: 500;
+  color: inherit;
+}
+
+.header-nav {
+  padding: 1rem 2rem;
+  margin: 0 0 5rem;
+  border-bottom: 1px solid var(--text-200);
+}
+
+.header-nav-list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-xl);
+  list-style: none;
+  gap: 3rem;
+}
+
+.header-nav a {
+  color: var(--text-200);
+  text-decoration: none;
+}
+
+.header-nav a:hover {
+  color: var(--brand-000);
+}
+
+/* ===== Blog Card ===== */
+
+.card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card {
+  max-width: 800px;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.card:hover {
+  background: var(--bg-000);
+}
+
+.card-link:hover .card-title {
+  color: var(--brand-000);
+}
+
+.card-title {
+  margin: 0 0 0.25rem;
+  font-size: var(--text-xxl);
+  color: var(--text-000);
+}
+
+.card-time {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text-400);
+  margin-bottom: 0.75rem;
+}
+
+.card-description {
+  margin: 0;
+  color: var(--text-300);
+  line-height: 1.6;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card-tag {
+  font-size: var(--text-xs);
+  color: var(--text-400);
+}
+
+/* ===== Article (blog post) ===== */
+
+.article {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.article-title {
+  font-size: var(--text-title);
+  margin: 0 0 0.5rem;
+  color: var(--text-000);
+}
+
+.article-time {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text-400);
+  margin-bottom: 2rem;
+}
+
+.article-content {
+  line-height: 1.8;
+}
+
+.article-content h2,
+.article-content h3,
+.article-content h4 {
+  color: var(--text-000);
+  margin: 2rem 0 1rem;
+}
+
+.article-content p {
+  margin: 0 0 1.25rem;
+  color: var(--text-200);
+}
+
+.article-content a {
+  color: var(--brand-000);
+  text-decoration: none;
+}
+
+.article-content a:hover {
+  text-decoration: underline;
+}
+
+.article-content code {
+  font-size: 0.875em;
+  background: var(--bg-200);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+.article-content pre {
+  background: var(--bg-200);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+}
+
+.article-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.article-content blockquote {
+  border-left: 3px solid var(--brand-000);
+  margin: 0 0 1.25rem;
+  padding: 0.5rem 1rem;
+  color: var(--text-300);
+}
+
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.article-content ul,
+.article-content ol {
+  padding-left: 1.5rem;
+  margin: 0 0 1.25rem;
+  color: var(--text-200);
+}
+
+.article-content li {
+  margin-bottom: 0.25rem;
+}
+
+.article-content hr {
+  border: none;
+  border-top: 1px solid var(--border-100);
+  margin: 2rem 0;
+}
+
+.article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1.25rem;
+}
+
+.article-content th,
+.article-content td {
+  border: 1px solid var(--border-100);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.article-content th {
+  background: var(--bg-200);
+  font-weight: 500;
+}
