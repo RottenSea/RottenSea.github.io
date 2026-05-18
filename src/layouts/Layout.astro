@@ -1,6 +1,7 @@
 ---
 import "@/styles/global.css";
 import "@/styles/normalize.css";
+import { Font } from "astro:assets";
 
 import Header from "@/components/Header.astro";
 
@@ -28,6 +29,8 @@ const { title = "RottenTh's cafe nest" } = Astro.props;
       name="generator"
       content={Astro.generator}
     />
+    <Font cssVariable="--font-noto-serif-sc" />
+    <Font cssVariable="--font-source-han-sans-sc" />
   </head>
   <body>
     <Header />

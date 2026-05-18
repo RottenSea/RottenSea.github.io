@@ -23,6 +23,10 @@
   --brand-100: #c6613f;
   --brand-200: #d97757;
 
+  /* fonts */
+  --font-noto-serif-sc: "Noto Serif SC";
+  --font-source-han-sans-sc: "Source Han Sans SC";
+
   /* font-size */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -61,8 +65,18 @@
 }
 
 body {
+  font-family: var(--font-source-han-sans-sc), sans-serif;
   background-color: var(--bg-100);
   color: var(--text-100);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-noto-serif-sc), serif;
 }
 
 a {
