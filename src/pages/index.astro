@@ -1,7 +1,23 @@
 ---
-import Layout from "@/layouts/layout.astro";
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import BlogCard from "@/components/BlogCard.astro";
+
+const posts = await getCollection("blog");
+const sortedPosts = posts.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
 ---
 
 <Layout title="RottenTh's cafe nest">
-  <main></main>
+  <main>
+    {sortedPosts.map((post) => <BlogCard post={post} />)}
+  </main>
 </Layout>
+
+<style>
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+</style>
