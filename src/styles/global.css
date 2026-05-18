@@ -22,6 +22,15 @@
   --brand-000: #c6613f;
   --brand-100: #c6613f;
   --brand-200: #d97757;
+
+  /* font-size */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-xxl: 1.5rem;
+  --text-title: 3rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,4 +63,8 @@
 body {
   background-color: var(--bg-100);
   color: var(--text-100);
+}
+
+a {
+  transition: color 0.15s;
 }

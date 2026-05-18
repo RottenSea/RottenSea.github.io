@@ -35,3 +35,8 @@ AGENTS.md
 
 # obsidian
 src/content/blog/.obsidian
+
+# font
+src/assets/fonts/*
+!src/assets/fonts/Noto_Serif_SC_woff2
+!src/assets/fonts/SourceHanSansSC_woff2
