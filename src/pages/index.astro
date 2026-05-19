@@ -4,20 +4,16 @@ import Layout from "@/layouts/Layout.astro";
 import BlogCard from "@/components/BlogCard.astro";
 
 const posts = await getCollection("blog");
-const sortedPosts = posts.sort(
+const publishedPosts = posts.filter(
+  (post) => post.data.draft !== true,
+);
+const sortedPosts = publishedPosts.sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 ---
 
-<Layout title="RottenTh's cafe nest">
+<Layout title="RottenTh's cafe corner">
   <main>
     {sortedPosts.map((post) => <BlogCard post={post} />)}
   </main>
 </Layout>
-
-<style>
-  main {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-</style>

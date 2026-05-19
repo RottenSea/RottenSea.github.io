@@ -8,10 +8,16 @@ type Props = {
 const { post } = Astro.props;
 ---
 
-<a class="card-link" href={`/blog/${post.id}`}>
+<a
+  class="card-link"
+  href={`/blog/${post.id}`}
+>
   <article class="card">
     <h2 class="card-title">{post.data.title}</h2>
-    <time class="card-time" datetime={post.data.date.toISOString()}>
+    <time
+      class="card-time"
+      datetime={post.data.date.toISOString()}
+    >
       {
         post.data.date.toLocaleDateString("zh-CN", {
           year: "numeric",
@@ -19,8 +25,25 @@ const { post } = Astro.props;
           day: "numeric",
         })
       }
+      {
+        post.data.update && (
+          <>
+            {" "}
+            · last update{" "}
+            {post.data.update.toLocaleDateString("zh-CN", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </>
+        )
+      }
     </time>
-    {post.data.description && <p class="card-description">{post.data.description}</p>}
+    {
+      post.data.description && (
+        <p class="card-description">{post.data.description}</p>
+      )
+    }
     {
       post.data.tags && post.data.tags.length > 0 && (
         <ul class="card-tags">

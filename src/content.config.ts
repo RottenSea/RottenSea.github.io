@@ -5,11 +5,12 @@ import { z } from "astro/zod";
 const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    draft: z.boolean().optional(),
     title: z.string(),
     description: z.string().optional(),
-    date: z.coerce.date(),
     tags: z.array(z.string()).optional(),
-    draft: z.boolean().optional(),
+    date: z.coerce.date(),
+    update: z.coerce.date().optional(),
   }),
 });
 

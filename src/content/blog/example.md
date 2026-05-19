@@ -1,21 +1,13 @@
 ---
-# 标题（必填）
-title: "示例文章"
-
-# 发布日期（必填，推荐 YYYY-MM-DD 格式）
-date: 2026-01-01
-
-# 草稿标记（选填，设为 true 则不会出现在博客列表中）
 draft: true
-
-# 文章摘要（选填，显示在卡片上）
-description: "这是一篇示例文章，展示了博客支持的全部 Markdown 语法。复制此文件作为新文章的模板。"
-
-# 标签（选填，数组格式）
+title: 示例文章
+description: 这是一篇示例文章，展示了博客支持的全部 Markdown 语法。复制此文件作为新文章的模板。
 tags:
   - example
   - markdown
   - guide
+date: 2026-01-01
+# update: 2026-06-01
 ---
 
 ## 文本样式

@@ -32,7 +32,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --bg-000: #2c2c2a;
     --bg-100: #20201f;
     --bg-200: #181817;
@@ -58,6 +58,31 @@
   }
 }
 
+:root[data-theme="dark"] {
+  --bg-000: #2c2c2a;
+  --bg-100: #20201f;
+  --bg-200: #181817;
+  --bg-300: #131313;
+  --bg-400: #0b0b0b;
+  --bg-500: #0b0b0b;
+
+  --text-000: #f9f9f7;
+  --text-100: #f9f9f7;
+  --text-200: #c3c2b7;
+  --text-300: #c3c2b7;
+  --text-400: #97958d;
+  --text-500: #97958d;
+
+  --border-100: #e1e0d9;
+  --border-200: #e1e0d9;
+  --border-300: #e1e0d9;
+  --border-400: #e1e0d9;
+
+  --brand-000: #c6613f;
+  --brand-100: #c6613f;
+  --brand-200: #d97757;
+}
+
 body {
   font-family: var(--font-source-han-sans-sc), sans-serif;
   background-color: var(--bg-100);
@@ -75,6 +100,23 @@ h6 {
 
 a {
   transition: color 0.15s;
+  text-decoration: none;
+  color: var(--text-200);
+}
+
+a:hover {
+  color: var(--brand-000);
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* ===== Scrollbar ===== */
@@ -119,7 +161,6 @@ html::-webkit-scrollbar-thumb:hover {
 .header-title {
   display: block;
   padding: 4rem 3rem 2rem;
-  text-decoration: none;
   font-weight: 500;
   color: inherit;
   font-size: var(--text-xxl);
@@ -137,36 +178,31 @@ html::-webkit-scrollbar-thumb:hover {
 }
 
 .nav-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
   margin: 0 auto;
   padding-bottom: 1rem;
-  width: 200px;
-  border-bottom: 1px solid var(--text-200);
+  width: fit-content;
+  border-bottom: 3px dotted var(--text-400);
 }
 
 .header-nav-list {
   display: flex;
   justify-content: center;
-  margin: 0;
-  padding: 0;
   font-size: var(--text-base);
-  list-style: none;
-  gap: 3rem;
+  gap: 0;
 }
 
-.header-nav a {
-  color: var(--text-200);
-  text-decoration: none;
-}
-
-.header-nav a:hover {
-  color: var(--brand-000);
+.header-nav-list a {
+  padding: 0 1rem;
 }
 
 /* ===== Blog Card ===== */
 
 .card-link {
   display: block;
-  text-decoration: none;
   color: inherit;
 }
 
@@ -210,13 +246,32 @@ html::-webkit-scrollbar-thumb:hover {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin: 1rem 0 0;
-  padding: 0;
-  list-style: none;
 }
 
 .card-tag {
   font-size: var(--text-sm);
   color: var(--text-400);
+}
+
+/* ===== About ===== */
+
+.about-heading {
+  text-align: center;
+  font-size: var(--text-xl);
+  margin: 0;
+}
+
+.about-text {
+  text-align: center;
+  font-size: var(--text-base);
+  margin: 1rem 0 0;
+}
+
+.about-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
 }
 
 /* ===== Article (blog post) ===== */
@@ -258,7 +313,6 @@ html::-webkit-scrollbar-thumb:hover {
 
 .article-content a {
   color: var(--brand-000);
-  text-decoration: none;
 }
 
 .article-content a:hover {
