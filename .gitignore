@@ -40,4 +40,4 @@ src/content/blog/.obsidian
 src/assets/fonts/*
 !src/assets/fonts/Noto_Serif_SC_woff2
 !src/assets/fonts/SourceHanSansSC_woff2
-!src/assets/fonts/MapleMono_woff2
+!src/assets/fonts/MapleMonoNL-NF-CN-unhinted_woff2

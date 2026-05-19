@@ -40,5 +40,21 @@ export default defineConfig({
         ],
       },
     },
+    {
+      name: "MapleMono",
+      cssVariable: "--font-maple-mono",
+      provider: fontProviders.local(),
+      options: {
+        variants: [
+          {
+            src: [
+              "./src/assets/fonts/MapleMonoNL-NF-CN-unhinted_woff2/MapleMonoNL-NF-CN-Medium.woff2",
+            ],
+            weight: 500,
+            style: "normal",
+          },
+        ],
+      },
+    },
   ],
 });
