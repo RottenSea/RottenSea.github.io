@@ -1,4 +1,5 @@
-:root {
+:root,
+:root[data-theme="light"] {
   /* Light mode - Claude theme */
   --bg-000: #ffffff;
   --bg-100: #f9f9f7;
@@ -83,6 +84,14 @@
   --brand-200: #d97757;
 }
 
+* {
+  transition-property:
+    background-color, color, border-color, border-left, border-top,
+    scrollbar-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
 body {
   font-family: var(--font-source-han-sans-sc), sans-serif;
   background-color: var(--bg-100);
@@ -99,7 +108,7 @@ h6 {
 }
 
 a {
-  transition: color 0.15s;
+  transition-duration: 0.15s;
   text-decoration: none;
   color: var(--text-200);
 }
@@ -188,15 +197,30 @@ html::-webkit-scrollbar-thumb:hover {
   border-bottom: 3px dotted var(--text-400);
 }
 
-.header-nav-list {
-  display: flex;
-  justify-content: center;
+.nav-wrapper a {
+  padding: 0.5rem 0;
   font-size: var(--text-base);
-  gap: 0;
 }
 
-.header-nav-list a {
-  padding: 0 1rem;
+.theme-toggle {
+  transition-duration: 0.15s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1.5rem;
+  padding: 0;
+  font-family: var(--font-maple-mono);
+  font-size: var(--text-lg);
+  color: var(--text-200);
+  line-height: 1;
+}
+
+.theme-toggle:hover {
+  color: var(--brand-000);
 }
 
 /* ===== Blog Card ===== */
@@ -210,7 +234,7 @@ html::-webkit-scrollbar-thumb:hover {
   max-width: 800px;
   padding: 1.5rem;
   border-radius: 0.5rem;
-  transition: background 0.15s;
+  transition-duration: 0.15s;
 }
 
 .card:hover {
@@ -225,7 +249,7 @@ html::-webkit-scrollbar-thumb:hover {
   margin: 0 0 0.25rem;
   font-size: var(--text-xl);
   color: var(--text-000);
-  transition: color 0.15s;
+  transition-duration: 0.15s;
 }
 
 .card-time {
