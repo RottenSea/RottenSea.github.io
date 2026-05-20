@@ -16,9 +16,9 @@ export default defineConfig({
         variants: [
           {
             src: [
-              "./src/assets/fonts/Noto_Serif_SC_woff2/NotoSerifSC-Medium.woff2",
+              "./src/assets/fonts/Noto_Serif_SC_woff2/NotoSerifSC-Regular.woff2",
             ],
-            weight: 500,
+            weight: 400,
             style: "normal",
           },
         ],
@@ -32,9 +32,9 @@ export default defineConfig({
         variants: [
           {
             src: [
-              "./src/assets/fonts/SourceHanSansSC_woff2/SourceHanSansSC-Medium.woff2",
+              "./src/assets/fonts/SourceHanSansSC_woff2/SourceHanSansSC-Regular.woff2",
             ],
-            weight: 500,
+            weight: 400,
             style: "normal",
           },
         ],
@@ -48,9 +48,9 @@ export default defineConfig({
         variants: [
           {
             src: [
-              "./src/assets/fonts/MapleMonoNL-NF-CN-unhinted_woff2/MapleMonoNL-NF-CN-Medium.woff2",
+              "./src/assets/fonts/MapleMonoNL-NF-CN-unhinted_woff2/MapleMonoNL-NF-CN-Regular.woff2",
             ],
-            weight: 500,
+            weight: 400,
             style: "normal",
           },
         ],

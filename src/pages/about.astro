@@ -1,15 +1,42 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import GitHub from "@/assets/icons/github.svg";
+import Bsky from "@/assets/icons/bsky.svg";
 ---
 
 <Layout title="RottenTh's cafe corner">
   <main>
     <h3 class="about-heading">普通大学生</h3>
-    <p class="about-text">Media</p>
+    <p class="about-text">Social Links</p>
     <ul class="about-links">
-      <li><a href="https://github.com">GitHub</a></li>
-      <li><a href="https://twitter.com">Twitter</a></li>
-      <li><a href="https://example.com">Website</a></li>
+      <li>
+        <a
+          href="https://github.com/RottenSea"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <GitHub width="1em" height="1em" />
+          GitHub<span class="external-link-icon">&#xf08e;</span></a
+        >
+      </li>
+      <li>
+        <a
+          href="https://bsky.app/profile/rottenth.bsky.social"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Bsky width="1em" height="1em" />
+          Bluesky<span class="external-link-icon">&#xf08e;</span></a
+        >
+      </li>
+      <!-- <li>
+        <a
+          href="https://example.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Website</a
+        >
+      </li> -->
     </ul>
   </main>
 </Layout>
