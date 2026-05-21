@@ -1,4 +1,6 @@
 // @ts-check
+process.env.TZ = "Asia/Shanghai";
+
 import { defineConfig, fontProviders } from "astro/config";
 
 import react from "@astrojs/react";

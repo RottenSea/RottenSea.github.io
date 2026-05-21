@@ -381,6 +381,14 @@ html::-webkit-scrollbar-thumb:hover {
   color: var(--brand-000);
 }
 
+.article-content a::after {
+  content: "\f08e";
+  font-family: var(--font-maple-mono), monospace;
+  font-size: 0.7em;
+  margin-left: 0.3em;
+  opacity: 0.6;
+}
+
 .article-content a:hover {
   text-decoration: underline;
 }
@@ -414,10 +422,12 @@ html::-webkit-scrollbar-thumb:hover {
 }
 
 .article-content img {
+  display: block;
+  width: 100%;
   max-width: 100%;
   height: auto;
-  border-radius: 0.5rem;
-  margin: 1.5rem 0;
+  border-radius: 1rem;
+  margin: 1.5rem auto;
 }
 
 .article-content ul,
