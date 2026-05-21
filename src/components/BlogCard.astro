@@ -19,10 +19,8 @@ const { post } = Astro.props;
       datetime={post.data.date.toISOString()}
     >
       {
-        post.data.date.toLocaleDateString("zh-CN", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
+        post.data.date.toLocaleDateString("en-US", {
+          dateStyle: "medium",
         })
       }
       {
@@ -30,10 +28,8 @@ const { post } = Astro.props;
           <>
             {" "}
             · last update{" "}
-            {post.data.update.toLocaleDateString("zh-CN", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
+            {post.data.update.toLocaleDateString("en-US", {
+              dateStyle: "medium",
             })}
           </>
         )

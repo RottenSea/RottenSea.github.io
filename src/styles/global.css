@@ -279,6 +279,12 @@ html::-webkit-scrollbar-thumb:hover {
   margin-bottom: 0.75rem;
 }
 
+.card-time::before {
+  content: "\f133";
+  font-family: var(--font-maple-mono), monospace;
+  margin-right: 0.25em;
+}
+
 .card-description {
   margin: 0;
   color: var(--text-300);
@@ -359,6 +365,12 @@ html::-webkit-scrollbar-thumb:hover {
   font-size: var(--text-sm);
   color: var(--text-400);
   margin-bottom: 2rem;
+}
+
+.article-time::before {
+  content: "\f133";
+  font-family: var(--font-maple-mono), monospace;
+  margin-right: 0.25em;
 }
 
 .article-content {
