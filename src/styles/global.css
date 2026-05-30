@@ -375,6 +375,7 @@ html::-webkit-scrollbar-thumb:hover {
 
 .article-content {
   line-height: 1.8;
+  overflow-wrap: anywhere;
 }
 
 .article-content h2,
@@ -411,6 +412,7 @@ html::-webkit-scrollbar-thumb:hover {
   background: var(--bg-200);
   padding: 0.2em 0.4em;
   border-radius: 3px;
+  overflow-wrap: break-word;
 }
 
 .article-content pre {
@@ -460,9 +462,11 @@ html::-webkit-scrollbar-thumb:hover {
 }
 
 .article-content table {
-  width: 100%;
-  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
   margin: 0 0 1.25rem;
+  border-collapse: collapse;
 }
 
 .article-content th,
@@ -470,6 +474,12 @@ html::-webkit-scrollbar-thumb:hover {
   border: 1px solid var(--border-100);
   padding: 0.5rem 0.75rem;
   text-align: left;
+  min-width: 12em;
+}
+
+.article-content td:first-child,
+.article-content th:first-child {
+  min-width: 7em;
 }
 
 .article-content th {

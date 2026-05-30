@@ -26,7 +26,6 @@ pnpm-debug.log*
 # vibe coding
 .superpowers/
 docs/
-AGENTS.md
 
 # vscode configuration
 .vscode/
