@@ -2,6 +2,7 @@
 import "@/styles/global.css";
 import "@/styles/normalize.css";
 import { Font } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
 
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
@@ -33,55 +34,63 @@ const { title = "RottenTh's cafe corner" } = Astro.props;
     <Font cssVariable="--font-noto-serif-sc" />
     <Font cssVariable="--font-source-han-sans-sc" />
     <Font cssVariable="--font-maple-mono" />
+    <ClientRouter />
     <script is:inline>
       (function () {
         var STORAGE_KEY = "theme-preference";
         var LIGHT = "light", DARK = "dark";
         var SUN = "\uf522", MOON = "\uf4ee";
 
-        var saved = localStorage.getItem(STORAGE_KEY);
-        var prefersDark = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
-        var theme =
-          saved === LIGHT || saved === DARK
+        function getTheme() {
+          var saved = localStorage.getItem(STORAGE_KEY);
+          var prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          return saved === LIGHT || saved === DARK
             ? saved
             : prefersDark
               ? DARK
               : LIGHT;
+        }
 
-        document.documentElement.setAttribute("data-theme", theme);
+        function applyTheme(t) {
+          document.documentElement.setAttribute("data-theme", t);
+          localStorage.setItem(STORAGE_KEY, t);
+        }
 
-        document.addEventListener("DOMContentLoaded", function () {
+        // Apply immediately on first paint
+        applyTheme(getTheme());
+
+        // Re-apply after DOM swap (swapRootAttributes() strips data-theme)
+        document.addEventListener("astro:after-swap", function () {
+          applyTheme(getTheme());
+        });
+
+        // Set up button on every navigation (initial + client-side)
+        document.addEventListener("astro:page-load", function () {
           var btn = document.getElementById("theme-toggle");
           if (!btn) return;
 
-          var currentTheme = theme;
+          var currentTheme = getTheme();
 
           function setIcon(t) {
             btn.textContent = t === DARK ? MOON : SUN;
           }
 
-          function applyTheme(t) {
-            currentTheme = t;
-            document.documentElement.setAttribute("data-theme", t);
-            localStorage.setItem(STORAGE_KEY, t);
-            setIcon(t);
-          }
-
           setIcon(currentTheme);
 
-          btn.addEventListener("mouseenter", function () {
+          btn.onclick = function () {
+            var next = currentTheme === DARK ? LIGHT : DARK;
+            currentTheme = next;
+            applyTheme(next);
+            setIcon(next);
+          };
+          btn.onmouseenter = function () {
             btn.textContent = currentTheme === DARK ? SUN : MOON;
-          });
-
-          btn.addEventListener("mouseleave", function () {
+          };
+          btn.onmouseleave = function () {
             btn.textContent = currentTheme === DARK ? MOON : SUN;
-          });
-
-          btn.addEventListener("click", function () {
-            applyTheme(currentTheme === DARK ? LIGHT : DARK);
-          });
+          };
         });
       })();
     </script>
