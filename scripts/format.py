@@ -6,12 +6,15 @@
 Format blog articles according to Chinese typography rules in CLAUDE.md.
 
 Usage:
-    uv run scripts/format.py              # Format git-modified blog articles
-    uv run scripts/format.py --all        # Format all blog articles
-    uv run scripts/format.py <file.md>    # Format specific files
+    uv run scripts/format.py                        # Format git-modified blog articles
+    uv run scripts/format.py --all                  # Format all blog articles
+    uv run scripts/format.py <file.md>              # Format specific files
+    uv run scripts/format.py --all --images         # Format + process images
+    uv run scripts/format.py <file.md> --images     # Format specific file + process images
 """
 
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -208,6 +211,116 @@ def fix_casing(text: str) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Image processing: move blog-adjacent images to assets, rename, update refs
+# ---------------------------------------------------------------------------
+
+# Obsidian-style wiki link: ![[filename]] or ![[filename|alt text]]
+WIKI_IMG = re.compile(r'!\[\[([^\]|]+)(?:\|([^\]]*))?\]\]')
+# Standard markdown image: ![alt](path)
+MD_IMG = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
+
+ASSETS_DIR = REPO_ROOT / "src/assets/images"
+
+
+def _next_seq(article_stem: str) -> int:
+    """Determine next available sequence number for an article's images."""
+    seq = 0
+    for asset in ASSETS_DIR.glob(f"{article_stem}[0-9][0-9].*"):
+        try:
+            s = int(asset.stem[-2:])
+            seq = max(seq, s + 1)
+        except ValueError:
+            pass
+    return seq
+
+
+def process_images(filepath: str | Path) -> int:
+    """Move local images to assets, rename, and update article references.
+
+    Handles both ``![[file.png]]`` (Obsidian wiki) and ``![alt](file.png)``
+    (standard markdown) syntax.  Returns the number of images processed.
+    """
+    fp = Path(filepath)
+    article_stem = fp.stem
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+
+    original = fp.read_text(encoding="utf-8")
+    content = original
+    seq = _next_seq(article_stem)
+    count = 0
+
+    def _move_and_replace(src_name: str, alt: str, old_ref: str) -> str | None:
+        """Move image file and return replacement ref, or None on failure."""
+        nonlocal seq
+        src = fp.parent / src_name
+        if not src.exists():
+            print(f"  ! Image not found: {src}")
+            return None
+        ext = src.suffix or ".png"
+        new_name = f"{article_stem}{seq:02d}{ext}"
+        dest = ASSETS_DIR / new_name
+        seq += 1
+        shutil.move(str(src), str(dest))
+        new_ref = f"![{alt}](@/assets/images/{new_name})"
+        print(f"  → {src.name} → @/assets/images/{new_name}")
+        return new_ref
+
+    # 1. Process Obsidian wiki links: ![[filename]] / ![[filename|alt]]
+    for m in list(WIKI_IMG.finditer(content)):
+        fname = m.group(1).strip()
+        alt = m.group(2).strip() if m.group(2) else fname
+        new_ref = _move_and_replace(fname, alt, m.group(0))
+        if new_ref:
+            content = content.replace(m.group(0), new_ref)
+            count += 1
+
+    # 2. Process standard markdown: ![alt](local/path)
+    for m in list(MD_IMG.finditer(content)):
+        path = m.group(2)
+        # Skip URLs, absolute paths, and already-processed asset refs
+        if path.startswith(("@", "http", "/", "data:")):
+            continue
+        alt = m.group(1)
+        new_ref = _move_and_replace(path, alt, m.group(0))
+        if new_ref:
+            content = content.replace(m.group(0), new_ref)
+            count += 1
+
+    if count:
+        fp.write_text(content, encoding="utf-8")
+
+    return count
+
+
+def clean_unreferenced_images() -> int:
+    """Remove image files from blog dir not referenced by any article.
+
+    Only operates when ``--all`` is combined with ``--images`` to avoid
+    accidentally deleting draft assets.  Returns count removed.
+    """
+    image_exts = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".bmp"}
+
+    # Collect every filename referenced by any article
+    all_refs: set[str] = set()
+    for md_file in BLOG_DIR.glob("*.md"):
+        text = md_file.read_text(encoding="utf-8")
+        for m in WIKI_IMG.finditer(text):
+            all_refs.add(m.group(1).strip())
+        for m in MD_IMG.finditer(text):
+            all_refs.add(Path(m.group(2)).name)
+
+    removed = 0
+    for f in sorted(BLOG_DIR.iterdir()):
+        if f.suffix.lower() in image_exts and not f.name.startswith("."):
+            if f.name not in all_refs:
+                f.unlink()
+                print(f"  ⊖ removed unreferenced: {f.name}")
+                removed += 1
+
+    return removed
+
+
+# ---------------------------------------------------------------------------
 # File-level pipeline
 # ---------------------------------------------------------------------------
 
@@ -286,8 +399,13 @@ def revision_bump(filepath: str | Path) -> bool:
 def main() -> None:
     args = sys.argv[1:]
 
+    do_images = "--images" in args
+    do_all = "--all" in args
+    # Strip flag-only args so they don't interfere with file selection
+    clean_args = [a for a in args if a not in ("--images", "--all")]
+
     files: list[Path] = []
-    if not args:
+    if not clean_args and not do_all:
         # Default: git-modified blog articles
         result = subprocess.run(
             ["git", "status", "--porcelain"],
@@ -306,18 +424,17 @@ def main() -> None:
         if not files:
             print("No modified blog articles found.")
             return
-    elif "--all" in args:
+    elif do_all:
         files = sorted(BLOG_DIR.glob("*.md"))
     else:
-        for f in args:
-            if f == "--all":
-                continue
+        for f in clean_args:
             p = Path(f)
             if p.suffix == ".md":
                 files.append(p)
 
     formatted = 0
     bumped = 0
+    imaged = 0
     for f in files:
         if not f.exists():
             print(f"  ! {f} — not found, skipping")
@@ -326,9 +443,17 @@ def main() -> None:
             formatted += 1
             if revision_bump(f):
                 bumped += 1
+        if do_images:
+            imaged += process_images(f)
 
     print(f"Formatted: {formatted} file(s)")
     print(f"Revision bumped: {bumped} file(s)")
+    if do_images:
+        msg = f"Images processed: {imaged}"
+        if do_all:
+            cleaned = clean_unreferenced_images()
+            msg += f", unreferenced removed: {cleaned}"
+        print(msg)
 
 
 if __name__ == "__main__":

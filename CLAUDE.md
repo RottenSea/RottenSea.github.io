@@ -38,11 +38,7 @@
 
 ## Format Workflow
 
-When the user requests formatting, execute these steps in order:
+When the user requests formatting, run the script:
 
-1. **Run formatter** — execute `uv run scripts/format.py` to apply all Chinese Typography rules and bump revision on changed articles
-2. **Process images** — scan `src/content/blog/` for image files:
-   - Move to `src/assets/images/`
-   - Rename as `{article-filename}{two-digit-seq}.{ext}` (e.g. `2026061600.png`)
-   - Remove unreferenced images
-   - Update article references to standard Markdown: `![alt](@/assets/images/2026061600.png)`
+- `uv run scripts/format.py --all --images` — apply all Chinese Typography rules, bump revision on changed articles, and process images (move to `src/assets/images/`, rename as `{article-filename}{two-digit-seq}.{ext}`, update references, remove unreferenced images)
+- `uv run scripts/format.py <file.md> --images` — same, but for specific files only
