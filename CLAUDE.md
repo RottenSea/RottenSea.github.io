@@ -21,7 +21,13 @@
 - Add space between Chinese and numbers: `标题 1` / `5 小时` / `200 次`
 - Add space after `, . ? !` when following Chinese text
 - No space before `, . ? !` when following English text
+- Spacing rules apply only outside `""`; content inside quotes is left untouched
+- Add space before `[]()` when preceded by Chinese text: `参考 [链接](url)`
+- No space inside `[]` or `()`: `[内容](url)`, not `[ 内容 ]( url )`
 - No trailing whitespace at line endings
+
+### Markdown Links
+- Image syntax `![alt](path)` — alt text follows same spacing rules as content
 
 ### Case
 - Proper nouns: `GitHub`, `Node.js`, `PowerShell`, `macOS`

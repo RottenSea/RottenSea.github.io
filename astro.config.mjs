@@ -9,6 +9,9 @@ import partytown from "@astrojs/partytown";
 // https://astro.build/config
 export default defineConfig({
   integrations: [react(), partytown()],
+  markdown: {
+    smartypants: false,
+  },
   fonts: [
     {
       name: "Noto Serif SC",
