@@ -148,7 +148,7 @@ def fix_punctuation(text: str) -> str:
 
 
 def fix_spacing(text: str) -> str:
-    """Add space between CJK and Latin / digits / straight quotes."""
+    """Add space between CJK and Latin / digits / quotes / brackets."""
     # CJK followed by Latin
     text = re.sub(rf"([{CJK}])([{LATIN}])", r"\1 \2", text)
     # Latin followed by CJK
@@ -157,11 +157,13 @@ def fix_spacing(text: str) -> str:
     text = re.sub(rf"([{CJK}])([{DIGIT}])", r"\1 \2", text)
     # Digit followed by CJK
     text = re.sub(rf"([{DIGIT}])([{CJK}])", r"\1 \2", text)
-    # CJK followed by straight quote (opening or closing)
+    # CJK followed by straight quote
     text = re.sub(rf'([{CJK}])"', r'\1 "', text)
-    # Straight quote followed by CJK (only closing quote matches;
-    # opening quote is followed by the sentinel, not CJK)
+    # Straight quote followed by CJK
     text = re.sub(rf'"([{CJK}])', r'" \1', text)
+    # Closing bracket/paren followed by CJK
+    text = re.sub(rf"([\]\)])([{CJK}])", r"\1 \2", text)
+    # CJK followed by opening bracket/paren (already handled by fix_bracket_spacing for ( and [)
     return text
 
 

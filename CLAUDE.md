@@ -40,9 +40,8 @@
 
 When the user requests formatting, execute these steps in order:
 
-1. **Read modified articles** — check git status to identify changed `.md` files, apply the `Chinese Typography` rules above
-2. **Increment revision** — `revision + 1` for each modified article
-3. **Process images** — scan `src/content/blog/` for image files:
+1. **Run formatter** — execute `uv run scripts/format.py` to apply all Chinese Typography rules and bump revision on changed articles
+2. **Process images** — scan `src/content/blog/` for image files:
    - Move to `src/assets/images/`
    - Rename as `{article-filename}{two-digit-seq}.{ext}` (e.g. `2026061600.png`)
    - Remove unreferenced images
