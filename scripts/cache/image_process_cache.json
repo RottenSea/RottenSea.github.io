@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-06-19T06:31:50.941956",
+  "summary": {
+    "articles_scanned": 5,
+    "refs_found": 4,
+    "mode": "full"
+  },
+  "operations": [
+    {
+      "article": "20260617.md",
+      "article_stem": "20260617",
+      "type": "wiki",
+      "old_ref": "![[Pasted image 20260618102525.png]]",
+      "filename": "Pasted image 20260618102525.png",
+      "alt": "Pasted image 20260618102525",
+      "status": "processed",
+      "new_name": "2026061703.png"
+    },
+    {
+      "article": "20260617.md",
+      "article_stem": "20260617",
+      "type": "wiki",
+      "old_ref": "![[Screenshot 2026-06-19 035713 1.png]]",
+      "filename": "Screenshot 2026-06-19 035713 1.png",
+      "alt": "Screenshot 2026-06-19 035713 1",
+      "status": "processed",
+      "new_name": "2026061704.png"
+    },
+    {
+      "article": "20260617.md",
+      "article_stem": "20260617",
+      "type": "wiki",
+      "old_ref": "![[Screenshot 2026-06-19 044709 1.png]]",
+      "filename": "Screenshot 2026-06-19 044709 1.png",
+      "alt": "Screenshot 2026-06-19 044709 1",
+      "status": "processed",
+      "new_name": "2026061705.png"
+    },
+    {
+      "article": "20260617.md",
+      "article_stem": "20260617",
+      "type": "wiki",
+      "old_ref": "![[Screenshot 2026-06-19 044923 2 1.png]]",
+      "filename": "Screenshot 2026-06-19 044923 2 1.png",
+      "alt": "Screenshot 2026-06-19 044923 2 1",
+      "status": "processed",
+      "new_name": "2026061706.png"
+    }
+  ]
+}
