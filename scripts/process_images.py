@@ -8,6 +8,7 @@ Process blog images: move to assets, rename, update article references, and clea
 Usage:
     uv run scripts/process_images.py              # Scan, cache, process, clean
     uv run scripts/process_images.py --dry-run    # Only scan and cache, no modifications
+    uv run scripts/process_images.py --vision-alt # Find images with non-descriptive alt text
 """
 
 import json
@@ -32,17 +33,49 @@ MD_IMG = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".bmp"}
 
+# Patterns indicating alt text is just a filename, not descriptive
+FILENAME_ALT = re.compile(
+    r'(?i)'
+    r'(^.*\.(png|jpg|jpeg|gif|webp|svg)$)'   # ends with image extension
+    r'|(^Screenshot\s+\d{4})'                  # starts with "Screenshot 2026..."
+    r'|(^Pasted\s+image\s+\d{4})'              # starts with "Pasted image 2026..."
+)
 
-def _next_seq(article_stem: str) -> int:
-    """Determine next available sequence number for an article's images."""
-    seq = 0
-    for asset in ASSETS_DIR.glob(f"{article_stem}[0-9][0-9].*"):
-        try:
-            s = int(asset.stem[-2:])
-            seq = max(seq, s + 1)
-        except ValueError:
-            pass
-    return seq
+
+def _needs_alt_fix(alt: str) -> bool:
+    """Check if alt text is filename-based and needs a descriptive replacement."""
+    return bool(FILENAME_ALT.match(alt.strip()))
+
+
+def _clean_filename(filename: str) -> str:
+    """Convert a filename to a cleaner alt text by removing extension and formatting."""
+    stem = Path(filename).stem
+    # Remove date-like suffixes: "Screenshot 2026-06-19 035713 1" -> "Screenshot"
+    cleaned = re.sub(r'\s+\d{4}[-_]\d{2}[-_]\d{2}.*', '', stem)
+    cleaned = re.sub(r'\s{2,}', ' ', cleaned).strip()
+    return cleaned if cleaned else stem
+
+
+def scan_vision_alt() -> list[dict]:
+    """Scan all articles and report images with non-descriptive alt text."""
+    issues: list[dict] = []
+
+    for md_file in sorted(BLOG_DIR.glob("*.md")):
+        text = md_file.read_text(encoding="utf-8")
+
+        # Find ALL image references (both Astro and non-Astro)
+        for m in MD_IMG.finditer(text):
+            alt = m.group(1).strip()
+            path = m.group(2)
+            if _needs_alt_fix(alt):
+                issues.append({
+                    "article": md_file.name,
+                    "path": path,
+                    "alt": alt,
+                    "old_ref": m.group(0),
+                })
+
+    return issues
 
 
 def scan_articles() -> list[dict]:
@@ -56,7 +89,7 @@ def scan_articles() -> list[dict]:
         # Wiki links: ![[filename]] / ![[filename|alt]]
         for m in WIKI_IMG.finditer(text):
             fname = m.group(1).strip()
-            alt = m.group(2).strip() if m.group(2) else Path(fname).stem
+            alt = m.group(2).strip() if m.group(2) else _clean_filename(fname)
             ops.append({
                 "article": md_file.name,
                 "article_stem": article_stem,
@@ -74,7 +107,7 @@ def scan_articles() -> list[dict]:
             if path.startswith(("@", "http", "/", "data:")):
                 continue
             fname = Path(path).name
-            alt = m.group(1) or Path(fname).stem
+            alt = m.group(1) or _clean_filename(fname)
             ops.append({
                 "article": md_file.name,
                 "article_stem": article_stem,
@@ -199,7 +232,22 @@ def print_summary(ops: list[dict], cleaned: int, dry_run: bool) -> None:
 
 
 def main() -> None:
-    dry_run = "--dry-run" in sys.argv[1:]
+    args = sys.argv[1:]
+
+    if "--vision-alt" in args:
+        print("Scanning for images with non-descriptive alt text...")
+        issues = scan_vision_alt()
+        if not issues:
+            print("  All images have descriptive alt text.")
+        else:
+            print(f"  Found {len(issues)} image(s) needing alt text improvements:\n")
+            for issue in issues:
+                print(f"  [{issue['article']}] {issue['path']}")
+                print(f"      current alt: \"{issue['alt']}\"")
+                print()
+        return
+
+    dry_run = "--dry-run" in args
 
     print("Scanning articles for non-Astro image references...")
     ops = scan_articles()
