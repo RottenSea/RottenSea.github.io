@@ -14,6 +14,7 @@ Usage:
 import re
 import subprocess
 import sys
+from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent
@@ -296,6 +297,24 @@ def revision_bump(filepath: str | Path) -> bool:
     return False
 
 
+def update_date(filepath: str | Path) -> bool:
+    """Set `update` frontmatter field to today. Returns True if changed."""
+    fp = Path(filepath)
+    text = fp.read_text(encoding="utf-8")
+    today = date.today().isoformat()
+    new_text, n = re.subn(
+        r"^(update:\s*).*$",
+        lambda m: f"{m.group(1)}{today}",
+        text,
+        count=1,
+        flags=re.MULTILINE,
+    )
+    if n:
+        fp.write_text(new_text, encoding="utf-8")
+        return True
+    return False
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -343,6 +362,7 @@ def main() -> None:
         if format_file(f):
             formatted += 1
             if revision_bump(f):
+                update_date(f)
                 bumped += 1
 
     print(f"Formatted: {formatted} file(s)")
