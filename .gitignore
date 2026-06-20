@@ -44,6 +44,9 @@ src/assets/fonts/*
 # image process cache
 scripts/cache/
 
+# python cache
+__pycache__/
+
 # temp directory
 temp/
 
