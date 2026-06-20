@@ -84,8 +84,20 @@ def protect_code(content: str) -> tuple[str, dict[str, str]]:
 
     # Fenced code blocks (``` … ```)
     text = _protect(r"```[\s\S]*?```", content)
-    # Inline code (`…`)
-    text = _protect(r"(?<!`)`[^`\n]+`(?!`)", text)
+    # Inline code (`…`) — keep backticks visible so spacing rules can work
+    def _protect_inline(text: str) -> str:
+        nonlocal counter
+
+        def _replacer(m: re.Match) -> str:
+            nonlocal counter
+            key = f"\x00CODE{counter}\x00"
+            placeholders[key] = m.group(1)
+            counter += 1
+            return f"`{key}`"
+
+        return re.sub(r"(?<!`)`([^`\n]+)`(?!`)", _replacer, text)
+
+    text = _protect_inline(text)
     return text, placeholders
 
 
@@ -163,6 +175,11 @@ def fix_spacing(text: str) -> str:
     text = re.sub(rf'"([{CJK}])', r'" \1', text)
     # Closing bracket/paren followed by CJK
     text = re.sub(rf"([\]\)])([{CJK}])", r"\1 \2", text)
+    # CJK followed by opening bracket/paren (already handled by fix_bracket_spacing for ( and [)
+    # CJK followed by backtick
+    text = re.sub(rf"([{CJK}])(`)", r"\1 \2", text)
+    # Backtick followed by CJK
+    text = re.sub(rf"(`)([{CJK}])", r"\1 \2", text)
     # CJK followed by opening bracket/paren (already handled by fix_bracket_spacing for ( and [)
     return text
 
