@@ -33,6 +33,19 @@ MD_IMG = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".bmp"}
 
+
+def _next_seq(article_stem: str) -> int:
+    """Find next available sequence number for an article's images."""
+    max_seq = -1
+    pattern = re.compile(rf'^{re.escape(article_stem)}(\d+)\.\w+$')
+    for f in ASSETS_DIR.iterdir():
+        m = pattern.match(f.name)
+        if m:
+            seq = int(m.group(1))
+            if seq > max_seq:
+                max_seq = seq
+    return max_seq + 1
+
 # Patterns indicating alt text is just a filename, not descriptive
 FILENAME_ALT = re.compile(
     r'(?i)'

@@ -43,3 +43,9 @@ src/assets/fonts/*
 
 # image process cache
 scripts/cache/
+
+# temp directory
+temp/
+
+# vision script
+vision.js
