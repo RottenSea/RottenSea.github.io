@@ -181,6 +181,9 @@ def fix_spacing(text: str) -> str:
     text = re.sub(rf"([{CJK}])(`)", r"\1 \2", text)
     # Backtick followed by CJK
     text = re.sub(rf"(`)([{CJK}])", r"\1 \2", text)
+    # Space around +
+    text = re.sub(r"([^\s])\+", r"\1 +", text)
+    text = re.sub(r"\+([^\s])", r"+ \1", text)
     # CJK followed by opening bracket/paren (already handled by fix_bracket_spacing for ( and [)
     return text
 
