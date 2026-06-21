@@ -11,10 +11,9 @@ date: 2026-05-21
 
 ## 选题
 
-- [ ] 如何访问 Unity Assets Store
 - [ ] 正确使用 Word
 - [ ] Vsocode 配置
-- [ ] 如何重装win11
+- [x] 如何重装win11
 - [x] 赋予AI更多的技能
 
 
