@@ -23,3 +23,7 @@ These are independent operations. Do not chain them together — run only what i
 ### Vision Alt Text
 
 When asked to update image alt text, use the `vision` skill to analyze each image and write a proper description.
+
+## Temp Directory
+
+`temp/` (gitignored) — Temporary files for image resizing and other transient operations. Clean up after use.

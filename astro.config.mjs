@@ -2,6 +2,7 @@
 process.env.TZ = "Asia/Shanghai";
 
 import { defineConfig, fontProviders } from "astro/config";
+import rehypeExternalLinks from "rehype-external-links";
 
 import react from "@astrojs/react";
 import partytown from "@astrojs/partytown";
@@ -11,6 +12,9 @@ export default defineConfig({
   integrations: [react(), partytown()],
   markdown: {
     smartypants: false,
+    rehypePlugins: [
+      [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
+    ],
   },
   fonts: [
     {

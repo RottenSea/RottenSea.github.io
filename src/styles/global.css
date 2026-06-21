@@ -479,9 +479,10 @@ html::-webkit-scrollbar-thumb:hover {
 
 .article-content th,
 .article-content td {
-  border: 1px solid var(--border-100);
+  border: 1px solid var(--text-400);
   padding: 0.5rem 0.75rem;
   text-align: left;
+  color: var(--text-200);
   min-width: 12em;
 }
 
@@ -490,7 +491,11 @@ html::-webkit-scrollbar-thumb:hover {
   min-width: 7em;
 }
 
+.article-content td:first-child {
+  font-weight: 600;
+}
+
 .article-content th {
   background: var(--bg-200);
-  font-weight: 500;
+  font-weight: 700;
 }
