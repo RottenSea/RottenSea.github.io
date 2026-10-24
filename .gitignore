@@ -1,54 +1,11 @@
-# build output
-dist/
-
-# generated types
-.astro/
-
 # dependencies
 node_modules/
 
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
 # environment variables
 .env
-.env.production
+.env.*
 
-# macOS-specific files
+# OS and editor files
 .DS_Store
-
-# jetbrains setting folder
 .idea/
-
-# vibe coding
-.superpowers/
-docs/
-
-# vscode configuration
 .vscode/
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# obsidian
-src/content/blog/.obsidian
-
-# font
-src/assets/fonts/*
-!src/assets/fonts/Noto_Serif_SC_woff2
-!src/assets/fonts/SourceHanSansSC_woff2
-!src/assets/fonts/MapleMonoNL-NF-CN-unhinted_woff2
-
-# image process cache
-scripts/cache/
-
-# python cache
-__pycache__/
-
-# temp directory
-temp/
-
-# vision script
-vision.js
