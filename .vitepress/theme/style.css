@@ -7,8 +7,23 @@
   padding-block: var(--space-8) var(--space-16);
 }
 
+/* Hidden on screen, still read by screen readers. */
+.visually-hidden {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 .site-header {
+  align-items: center;
   border-bottom: var(--border-hairline);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: space-between;
   margin-bottom: var(--space-12);
   padding-bottom: var(--space-4);
 }
@@ -17,6 +32,48 @@
   color: var(--color-text-ink);
   font: var(--typography-title-md);
   text-decoration: none;
+}
+
+.site-nav {
+  align-items: center;
+  display: flex;
+  gap: var(--space-4);
+}
+
+.site-nav a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-tint);
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+  color: var(--color-text-ink);
+}
+
+.site-nav a[aria-current="page"] {
+  text-decoration-line: underline;
+}
+
+.theme-toggle {
+  align-items: center;
+  border-radius: var(--radius-md);
+  color: var(--color-text-body);
+  cursor: pointer;
+  display: inline-flex;
+  height: var(--space-8);
+  justify-content: center;
+  transition: background-color var(--transition-tint);
+  width: var(--space-8);
+}
+
+.theme-toggle:hover {
+  background-color: var(--color-surface-soft);
+}
+
+.theme-toggle-icon {
+  height: 1.125rem;
+  width: 1.125rem;
 }
 
 /* Home */
@@ -91,6 +148,30 @@
 .prose ol {
   list-style: decimal;
   padding-left: var(--space-6);
+}
+
+/* Visible cue for links that open a new tab. The empty alt text keeps screen readers on the hidden note instead. */
+.prose a[target="_blank"]::after {
+  content: "↗" / "";
+  margin-left: 0.125em;
+}
+
+.prose .social-links {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  padding-left: 0;
+}
+
+.social-links a {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.social-icon {
+  height: 1em;
+  width: 1em;
 }
 
 .prose blockquote {
