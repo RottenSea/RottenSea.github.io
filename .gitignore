@@ -1,0 +1,9 @@
+# dependencies
+node_modules/
+
+# VitePress build output and cache
+.vitepress/dist/
+.vitepress/cache/
+
+# Obsidian settings for the content/blog vault
+.obsidian/
