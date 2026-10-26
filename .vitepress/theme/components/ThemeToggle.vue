@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { Moon, Sun } from "@lucide/vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
+import { THEME_STORAGE_KEY } from "../../shared";
 
 type Theme = "light" | "dark";
-
-// Same key as the head script in config.ts that applies the saved theme before the first paint.
-const STORAGE_KEY = "theme-preference";
 
 // Unknown while rendering on the server, so the icon appears once the page is mounted.
 const theme = ref<Theme | null>(null);
@@ -15,7 +13,7 @@ const systemTheme = (): Theme => (matchMedia("(prefers-color-scheme: dark)").mat
 
 function savedTheme(): Theme | null {
   try {
-    const value = localStorage.getItem(STORAGE_KEY);
+    const value = localStorage.getItem(THEME_STORAGE_KEY);
     return value === "light" || value === "dark" ? value : null;
   } catch {
     return null;
@@ -47,7 +45,7 @@ function toggle() {
   const value = next.value;
   document.documentElement.dataset.theme = value;
   try {
-    localStorage.setItem(STORAGE_KEY, value);
+    localStorage.setItem(THEME_STORAGE_KEY, value);
   } catch {
     // Without storage the choice lasts until the page is reloaded.
   }
@@ -74,3 +72,26 @@ function startPreview(event: PointerEvent) {
     <Sun v-else-if="shown === 'light'" class="theme-toggle-icon" aria-hidden="true" />
   </button>
 </template>
+
+<style scoped>
+.theme-toggle {
+  align-items: center;
+  border-radius: var(--radius-md);
+  color: var(--color-text-body);
+  cursor: pointer;
+  display: inline-flex;
+  height: var(--space-8);
+  justify-content: center;
+  transition: background-color var(--transition-tint);
+  width: var(--space-8);
+}
+
+.theme-toggle:hover {
+  background-color: var(--color-surface-soft);
+}
+
+.theme-toggle-icon {
+  height: 1.125rem;
+  width: 1.125rem;
+}
+</style>

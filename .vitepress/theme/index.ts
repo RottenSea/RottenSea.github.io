@@ -1,6 +1,7 @@
 import type { Theme } from "vitepress";
 import "@rottensea/ds-personal-website/index.css";
-import "./style.css";
+import "./styles/utilities.css";
+import "./styles/prose.css";
 import SocialLinks from "./components/SocialLinks.vue";
 import Layout from "./Layout.vue";
 

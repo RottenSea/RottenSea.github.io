@@ -1,4 +1,5 @@
 import { createContentLoader } from "vitepress";
+import { formatDate, isDraft } from "../shared";
 
 export interface Post {
   url: string;
@@ -11,18 +12,19 @@ export interface Post {
 declare const data: Post[];
 export { data };
 
-// createContentLoader ignores srcExclude, so it drops the templates and, in a build, the drafts itself.
+// createContentLoader ignores srcExclude, so it drops the drafts from a build itself.
+// The pattern does not reach blog/example/, so the templates never get here.
 const isBuild = process.env.NODE_ENV === "production";
 
 export default createContentLoader("blog/*.md", {
   transform(pages): Post[] {
     return pages
-      .filter(({ frontmatter }) => !(isBuild && frontmatter.draft))
+      .filter(({ frontmatter }) => !(isBuild && isDraft(frontmatter)))
       .map(({ url, frontmatter }) => ({
         url,
         title: frontmatter.title,
         description: frontmatter.description ?? "",
-        date: new Date(frontmatter.date).toISOString().slice(0, 10),
+        date: formatDate(frontmatter.date),
       }))
       .sort((a, b) => b.date.localeCompare(a.date));
   },

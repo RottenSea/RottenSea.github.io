@@ -11,9 +11,12 @@
     "build": "vitepress build",
     "preview": "vitepress preview"
   },
-  "dependencies": {
+  "devDependencies": {
     "@lucide/vue": "1.55.0",
     "@rottensea/ds-personal-website": "https://github.com/RottenSea/design-system/releases/download/personal-website-v0.1.0/rottensea-ds-personal-website-0.1.0.tgz",
+    "@types/node": "24.19.2",
+    "gray-matter": "4.0.3",
+    "image-size": "2.0.4",
     "simple-icons": "16.34.0",
     "vitepress": "1.6.4",
     "vue": "3.5.43"

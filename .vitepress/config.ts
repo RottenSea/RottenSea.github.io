@@ -1,46 +1,25 @@
 import { readdirSync, readFileSync } from "node:fs";
-import type { MarkdownRenderer, UserConfigFn } from "vitepress";
+import matter from "gray-matter";
+import type { UserConfigFn } from "vitepress";
+import { externalLinkNote } from "./markdown/external-link-note";
+import { imageDimensions } from "./markdown/image-dimensions";
+import { isDraft, THEME_STORAGE_KEY } from "./shared";
 
 const srcDir = "content";
 
 // Runs before the first paint so a saved theme never flashes the other one first.
 // Without a saved choice there is no data-theme, and the CSS follows prefers-color-scheme.
 const applySavedTheme = `try {
-  const theme = localStorage.getItem("theme-preference");
+  const theme = localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});
   if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
 } catch {}`;
-
-// VitePress opens external links in a new tab (same test as its link plugin), so each one
-// gets a note for screen readers, as WCAG technique G201 advises.
-const EXTERNAL_URL_RE = /^(?:[a-z]+:|\/\/)/i;
-
-function externalLinkNote(md: MarkdownRenderer) {
-  md.core.ruler.push("external_link_note", (state) => {
-    for (const block of state.tokens) {
-      if (block.type !== "inline" || !block.children) continue;
-      const opensNewTab: boolean[] = [];
-      for (let i = 0; i < block.children.length; i++) {
-        const token = block.children[i];
-        if (token.type === "link_open") {
-          const href = token.attrGet("href") ?? "";
-          opensNewTab.push(EXTERNAL_URL_RE.test(href) && !token.attrGet("target") && !token.attrGet("download"));
-        } else if (token.type === "link_close" && opensNewTab.pop()) {
-          const note = new state.Token("html_inline", "", 0);
-          note.content = '<span class="visually-hidden">（在新标签页打开）</span>';
-          block.children.splice(i, 0, note);
-          i++;
-        }
-      }
-    }
-  });
-}
 
 // Posts with `draft: true` in their frontmatter, as paths relative to srcDir.
 // They stay visible in `vitepress dev` and are left out of `vitepress build`.
 function draftPosts(): string[] {
   return readdirSync(`${srcDir}/blog`)
     .filter((file) => file.endsWith(".md"))
-    .filter((file) => /^---[\s\S]*?^draft:\s*true\s*$[\s\S]*?^---/m.test(readFileSync(`${srcDir}/blog/${file}`, "utf8")))
+    .filter((file) => isDraft(matter(readFileSync(`${srcDir}/blog/${file}`, "utf8")).data))
     .map((file) => `blog/${file}`);
 }
 
@@ -53,10 +32,23 @@ const config: UserConfigFn<Record<string, never>> = ({ command }) => ({
   srcExclude: ["blog/example/**", ...(command === "build" ? draftPosts() : [])],
   // The custom theme follows data-theme and prefers-color-scheme itself.
   appearance: false,
-  head: [["script", {}, applySavedTheme]],
+  head: [
+    ["script", {}, applySavedTheme],
+    // The design system's fonts.css loads font CSS from Google Fonts and jsDelivr, and the font
+    // files from fonts.gstatic.com and jsDelivr. Connecting early saves a round trip each. Font
+    // files are fetched with CORS, which uses a separate connection, so jsDelivr needs both kinds.
+    ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
+    ["link", { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" }],
+    ["link", { rel: "preconnect", href: "https://cdn.jsdelivr.net" }],
+    ["link", { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossorigin: "" }],
+  ],
   markdown: {
     theme: { light: "github-light", dark: "github-dark" },
-    config: externalLinkNote,
+    image: { lazyLoading: true },
+    config(md) {
+      md.use(externalLinkNote);
+      md.use(imageDimensions);
+    },
   },
 });
 
