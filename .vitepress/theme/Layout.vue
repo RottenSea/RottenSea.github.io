@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useData, useRoute } from "vitepress";
 import { computed } from "vue";
+import Design from "./components/Design.vue";
 import Home from "./components/Home.vue";
 import NotFound from "./components/NotFound.vue";
 import Page from "./components/Page.vue";
 import Post from "./components/Post.vue";
+import SiteFooter from "./components/SiteFooter.vue";
 import ThemeToggle from "./components/ThemeToggle.vue";
 
 const { page, frontmatter, site } = useData();
@@ -18,7 +20,7 @@ const current = computed(() => nav.find((item) => item.matches(route.path))?.hre
 </script>
 
 <template>
-  <div class="site">
+  <div class="site" :class="{ 'site-wide': frontmatter.layout === 'design' }">
     <header class="site-header">
       <a class="site-title" href="/">{{ site.title }}</a>
       <nav class="site-nav" aria-label="网站">
@@ -38,8 +40,11 @@ const current = computed(() => nav.find((item) => item.matches(route.path))?.hre
       <NotFound v-if="page.isNotFound" />
       <Home v-else-if="frontmatter.layout === 'home'" />
       <Page v-else-if="frontmatter.layout === 'page'" />
+      <Design v-else-if="frontmatter.layout === 'design'" />
       <Post v-else />
     </main>
+
+    <SiteFooter />
   </div>
 </template>
 
@@ -47,8 +52,13 @@ const current = computed(() => nav.find((item) => item.matches(route.path))?.hre
 .site {
   margin-inline: auto;
   max-width: 42.5rem;
-  padding-inline: var(--space-6);
-  padding-block: var(--space-8) var(--space-16);
+  padding-inline: var(--space-lg);
+  padding-block: var(--space-xl) calc(var(--space-xl) * 2);
+}
+
+/* The design page shows specimens drawn at 700px, wider than the reading column. */
+.site-wide {
+  max-width: calc(700px + 2 * var(--space-lg));
 }
 
 .site-header {
@@ -56,33 +66,37 @@ const current = computed(() => nav.find((item) => item.matches(route.path))?.hre
   border-bottom: var(--border-hairline);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--space-md);
   justify-content: space-between;
-  margin-bottom: var(--space-12);
-  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-xxl);
+  padding-bottom: var(--space-md);
 }
 
 .site-title {
-  color: var(--color-text-ink);
-  font: var(--typography-title-md);
+  color: var(--text-ink);
+  font-family: var(--title-md-family);
+  font-size: var(--title-md-size);
+  font-weight: var(--title-md-weight);
+  line-height: var(--title-md-lh);
+  letter-spacing: var(--title-md-ls);
   text-decoration: none;
 }
 
 .site-nav {
   align-items: center;
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-md);
 }
 
 .site-nav a {
-  color: var(--color-text-muted);
+  color: var(--text-muted);
   text-decoration: none;
-  transition: color var(--transition-tint);
+  transition: var(--transition-tint);
 }
 
 .site-nav a:hover,
 .site-nav a[aria-current="page"] {
-  color: var(--color-text-ink);
+  color: var(--text-ink);
 }
 
 .site-nav a[aria-current="page"] {

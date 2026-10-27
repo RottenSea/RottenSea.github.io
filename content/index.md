@@ -1,8 +1,8 @@
 ---
 layout: home
-title: RottenTh's cafe corner
+title: The Key of Urala
 ---
 
-# RottenTh's cafe corner
+# The Key of Urala
 
 欢迎来到 RottenTh 的咖啡角~

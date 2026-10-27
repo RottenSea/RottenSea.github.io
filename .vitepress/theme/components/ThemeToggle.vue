@@ -23,7 +23,9 @@ function savedTheme(): Theme | null {
 // Until the reader picks a theme, the page follows the system, including later changes to it.
 let systemQuery: MediaQueryList | undefined;
 const followSystem = () => {
-  if (!savedTheme()) theme.value = systemTheme();
+  if (savedTheme()) return;
+  theme.value = systemTheme();
+  document.documentElement.dataset.theme = theme.value;
 };
 
 onMounted(() => {
@@ -77,17 +79,17 @@ function startPreview(event: PointerEvent) {
 .theme-toggle {
   align-items: center;
   border-radius: var(--radius-md);
-  color: var(--color-text-body);
+  color: var(--text-body);
   cursor: pointer;
   display: inline-flex;
-  height: var(--space-8);
+  height: var(--icon-button-size);
   justify-content: center;
-  transition: background-color var(--transition-tint);
-  width: var(--space-8);
+  transition: var(--transition-tint);
+  width: var(--icon-button-size);
 }
 
 .theme-toggle:hover {
-  background-color: var(--color-surface-soft);
+  background-color: var(--surface-soft);
 }
 
 .theme-toggle-icon {

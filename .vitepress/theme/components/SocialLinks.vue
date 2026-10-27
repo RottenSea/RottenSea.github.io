@@ -26,7 +26,7 @@ const links = [
 /* Also beats the list styles the article gives a Markdown page's lists. */
 .social-links {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-xs);
   list-style: none;
   padding-left: 0;
 }
@@ -34,7 +34,7 @@ const links = [
 a {
   align-items: center;
   display: inline-flex;
-  gap: var(--space-2);
+  gap: var(--space-xs);
 }
 
 .social-icon {

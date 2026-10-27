@@ -8,6 +8,6 @@
 <style scoped>
 .not-found {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-md);
 }
 </style>

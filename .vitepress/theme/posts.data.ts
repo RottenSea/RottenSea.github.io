@@ -1,11 +1,13 @@
 import { createContentLoader } from "vitepress";
-import { formatDate, isDraft } from "../shared";
+import { formatDate, isDraft, toInstant } from "../shared";
 
 export interface Post {
   url: string;
   title: string;
   description: string;
-  /** Publication date as YYYY-MM-DD. */
+  /** Publication time as an ISO 8601 instant in UTC. */
+  published: string;
+  /** Publication date as YYYY-MM-DD in UTC. */
   date: string;
 }
 
@@ -24,8 +26,9 @@ export default createContentLoader("blog/*.md", {
         url,
         title: frontmatter.title,
         description: frontmatter.description ?? "",
+        published: toInstant(frontmatter.date),
         date: formatDate(frontmatter.date),
       }))
-      .sort((a, b) => b.date.localeCompare(a.date));
+      .sort((a, b) => b.published.localeCompare(a.published));
   },
 });

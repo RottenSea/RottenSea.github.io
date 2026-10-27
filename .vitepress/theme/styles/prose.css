@@ -1,27 +1,35 @@
 /* Styles for Markdown content, provisional until the design system has article styles.
    Unlayered, so they win over the design system's base layer. <Content> wraps the Markdown in a div. */
 .prose > div > * + * {
-  margin-top: var(--space-4);
+  margin-top: var(--space-md);
 }
 
 .prose > div > h2 {
-  font: var(--typography-display-sm);
-  margin-top: var(--space-12);
+  font-family: var(--display-sm-family);
+  font-size: var(--display-sm-size);
+  font-weight: var(--display-sm-weight);
+  line-height: var(--display-sm-lh);
+  letter-spacing: var(--display-sm-ls);
+  margin-top: var(--space-xxl);
 }
 
 .prose > div > h3 {
-  font: var(--typography-title-lg);
-  margin-top: var(--space-8);
+  font-family: var(--title-lg-family);
+  font-size: var(--title-lg-size);
+  font-weight: var(--title-lg-weight);
+  line-height: var(--title-lg-lh);
+  letter-spacing: var(--title-lg-ls);
+  margin-top: var(--space-xl);
 }
 
 .prose ul {
   list-style: disc;
-  padding-left: var(--space-6);
+  padding-left: var(--space-lg);
 }
 
 .prose ol {
   list-style: decimal;
-  padding-left: var(--space-6);
+  padding-left: var(--space-lg);
 }
 
 /* Visible cue for links that open a new tab. The empty alt text keeps screen readers on the hidden note instead. */
@@ -31,9 +39,9 @@
 }
 
 .prose blockquote {
-  border-left: 2px solid var(--color-border-default);
-  color: var(--color-text-muted);
-  padding-left: var(--space-4);
+  border-left: 2px solid var(--hairline);
+  color: var(--text-muted);
+  padding-left: var(--space-md);
 }
 
 .prose img {
@@ -49,18 +57,18 @@
 .prose th,
 .prose td {
   border: var(--border-hairline);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-xs) var(--space-sm);
   text-align: left;
 }
 
 .prose th {
-  background-color: var(--color-surface-soft);
-  color: var(--color-text-body-strong);
-  font-weight: var(--font-weight-medium);
+  background-color: var(--surface-soft);
+  color: var(--text-body-strong);
+  font-weight: 500;
 }
 
 .prose :not(pre) > code {
-  background-color: var(--color-surface-soft);
+  background-color: var(--surface-soft);
   border-radius: var(--radius-xs);
   font-size: 0.875em;
   padding: 0.125em 0.375em;
@@ -69,13 +77,13 @@
 /* Code blocks. Shiki writes both theme colors on every token; light-dark() picks one from the
    element's color-scheme, which the tokens set per theme, so [data-theme] subtrees work too. */
 .prose div[class*="language-"] {
-  background-color: var(--color-surface-card);
+  background-color: var(--surface-card);
   border-radius: var(--radius-lg);
   overflow-x: auto;
 }
 
 .prose pre {
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-md) var(--space-lg);
 }
 
 .shiki span {

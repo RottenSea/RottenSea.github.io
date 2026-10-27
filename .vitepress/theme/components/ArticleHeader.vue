@@ -13,11 +13,15 @@ defineProps<{ title: string }>();
 <style scoped>
 .article-header {
   display: grid;
-  gap: var(--space-3);
-  margin-bottom: var(--space-12);
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xxl);
 }
 
 h1 {
-  font: var(--typography-display-md);
+  font-family: var(--display-md-family);
+  font-size: var(--display-md-size);
+  font-weight: var(--display-md-weight);
+  line-height: var(--display-md-lh);
+  letter-spacing: var(--display-md-ls);
 }
 </style>

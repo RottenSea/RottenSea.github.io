@@ -1,18 +1,24 @@
 import { readdirSync, readFileSync } from "node:fs";
 import matter from "gray-matter";
 import type { UserConfigFn } from "vitepress";
+import { copyDesignSystem, DS_BASE, serveDesignSystem } from "./design-system";
 import { externalLinkNote } from "./markdown/external-link-note";
 import { imageDimensions } from "./markdown/image-dimensions";
 import { isDraft, THEME_STORAGE_KEY } from "./shared";
 
 const srcDir = "content";
 
-// Runs before the first paint so a saved theme never flashes the other one first.
-// Without a saved choice there is no data-theme, and the CSS follows prefers-color-scheme.
-const applySavedTheme = `try {
-  const theme = localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});
-  if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
-} catch {}`;
+// Runs before the first paint so the page never flashes the other theme first. The design system's
+// CSS reads only data-theme, so this always sets it: the saved choice, or else the OS setting.
+// The block keeps `theme` out of the global scope.
+const applySavedTheme = `{
+  let theme;
+  try {
+    theme = localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});
+  } catch {}
+  if (theme !== "light" && theme !== "dark") theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  document.documentElement.dataset.theme = theme;
+}`;
 
 // Posts with `draft: true` in their frontmatter, as paths relative to srcDir.
 // They stay visible in `vitepress dev` and are left out of `vitepress build`.
@@ -25,7 +31,7 @@ function draftPosts(): string[] {
 
 const config: UserConfigFn<Record<string, never>> = ({ command }) => ({
   lang: "zh-CN",
-  title: "RottenTh's cafe corner",
+  title: "The Key of Urala",
   srcDir,
   cleanUrls: true,
   // Templates for writing posts; never published.
@@ -42,6 +48,17 @@ const config: UserConfigFn<Record<string, never>> = ({ command }) => ({
     ["link", { rel: "preconnect", href: "https://cdn.jsdelivr.net" }],
     ["link", { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossorigin: "" }],
   ],
+  vite: {
+    plugins: [
+      {
+        name: "design-system-specimens",
+        configureServer(server) {
+          server.middlewares.use(DS_BASE, serveDesignSystem);
+        },
+      },
+    ],
+  },
+  buildEnd: (siteConfig) => copyDesignSystem(siteConfig.outDir),
   markdown: {
     theme: { light: "github-light", dark: "github-dark" },
     image: { lazyLoading: true },

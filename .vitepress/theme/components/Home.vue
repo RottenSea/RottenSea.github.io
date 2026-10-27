@@ -11,7 +11,7 @@ import { data as posts } from "../posts.data";
         <h2 class="post-card-title">
           <a :href="post.url">{{ post.title }}</a>
         </h2>
-        <time class="post-card-date" :datetime="post.date">{{ post.date }}</time>
+        <time class="post-card-date" :datetime="post.published">{{ post.date }}</time>
         <p v-if="post.description">{{ post.description }}</p>
       </li>
     </ol>
@@ -21,26 +21,30 @@ import { data as posts } from "../posts.data";
 <style scoped>
 .home-intro {
   display: grid;
-  gap: var(--space-4);
-  margin-bottom: var(--space-12);
+  gap: var(--space-md);
+  margin-bottom: var(--space-xxl);
 }
 
 .post-list {
   display: grid;
-  gap: var(--space-8);
+  gap: var(--space-xl);
 }
 
 .post-card {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-xs);
 }
 
 .post-card-title {
-  font: var(--typography-display-sm);
+  font-family: var(--display-sm-family);
+  font-size: var(--display-sm-size);
+  font-weight: var(--display-sm-weight);
+  line-height: var(--display-sm-lh);
+  letter-spacing: var(--display-sm-ls);
 }
 
 .post-card-title a {
-  color: var(--color-text-ink);
+  color: var(--text-ink);
   text-decoration: none;
 }
 
@@ -49,7 +53,11 @@ import { data as posts } from "../posts.data";
 }
 
 .post-card-date {
-  color: var(--color-text-muted);
-  font: var(--typography-caption-default);
+  color: var(--text-muted);
+  font-family: var(--caption-family);
+  font-size: var(--caption-size);
+  font-weight: var(--caption-weight);
+  line-height: var(--caption-lh);
+  letter-spacing: var(--caption-ls);
 }
 </style>
