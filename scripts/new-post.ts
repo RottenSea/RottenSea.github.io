@@ -1,41 +1,66 @@
-// Creates a new draft post: pnpm new-post [folder]
-// The folder defaults to today's date in UTC+8, such as 20261027, which is also the post's URL.
+// Creates a new draft post: pnpm new-post <name>
+// The name is the post's folder and its URL, such as vibe-coding for /blog/vibe-coding. It is
+// required, so two posts published on the same day never share a URL.
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const today = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Asia/Shanghai"
-}).format(new Date());
-const folder = process.argv[2] ?? today.replaceAll("-", "");
+const name = process.argv[2];
 
-if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(folder)) {
+if (!name) {
   console.error(
-    `"${folder}" is not a valid folder name: use lowercase letters, digits and single hyphens.`
+    "Give the post a name: pnpm new-post <name>, such as pnpm new-post vibe-coding."
   );
   process.exit(1);
 }
 
-const dir = join("src", "content", "blog", folder);
+if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name)) {
+  console.error(
+    `"${name}" is not a valid name: use lowercase letters, digits and single hyphens.`
+  );
+  process.exit(1);
+}
+
+const dir = join("src", "content", "blog", name);
 if (existsSync(dir)) {
   console.error(`${dir} already exists.`);
   process.exit(1);
 }
+
+// The current moment in UTC+8, the author's time zone. `published` is its date, and
+// `publishedAt` orders posts published on the same day.
+const parts = Object.fromEntries(
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  })
+    .formatToParts(new Date())
+    .map(({ type, value }) => [type, value])
+);
+const date = `${parts.year}-${parts.month}-${parts.day}`;
+const time = `${parts.hour}:${parts.minute}:${parts.second}`;
 
 // Every field the schema in src/content.config.ts accepts. Optional ones are commented out.
 const template = `---
 title: ""
 description: ""
 lang: zh
-published: ${today}
-# updated: ${today}
-# publishedAt: ${today}T09:30:00+08:00
+published: ${date}
+publishedAt: ${date}T${time}+08:00
+# updated: ${date}
+# updatedAt: ${date}T${time}+08:00
 tags: []
 # category: ""
 # image: ./cover.png
 # revision: 1
 # pinned: true
 # comment: true
-# permalink: a-readable-url
+# permalink: another-url
 draft: true
 ---
 

@@ -6,9 +6,9 @@ It is built with [Astro](https://astro.build/) 7 on the personal-website system 
 
 ## Writing
 
-Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's images beside it, referenced as `./2026051900.png`. The folder name is the post's URL: `src/content/blog/20260518/` becomes `/blog/20260518`, unless the post sets `permalink`.
+Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's images beside it, referenced as `./cover.png`. The folder name is the post's URL: `src/content/blog/vibe-coding/` becomes `/blog/vibe-coding`, unless the post sets `permalink`. New posts get a short English name; the first five posts keep their date names, such as `20260518`, so their URLs stay the same.
 
-`pnpm new-post` creates a folder for today's date (UTC+8) with every frontmatter field in it; `pnpm new-post some-name` uses that name instead. The fields and their rules are in `src/content.config.ts`, and a post with an unknown or mistyped field fails the build.
+`pnpm new-post <name>` creates the folder with every frontmatter field in it, and fills in `published` and `publishedAt` with the current time in UTC+8. `publishedAt` orders posts published on the same day. The fields and their rules are in `src/content.config.ts`, and a post with an unknown or mistyped field fails the build.
 
 A post with `draft: true` shows up in `pnpm dev` but not in the built site. Only `index.md` or `index.mdx` one folder down becomes a post, so a file such as `src/content/blog/_topics.md` stays a private note.
 
