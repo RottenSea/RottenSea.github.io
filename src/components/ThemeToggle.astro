@@ -1,0 +1,104 @@
+---
+// Switches between the light and dark theme and remembers the choice. Until the reader picks one,
+// the page follows the OS setting, including later changes to it.
+import Moon from "../assets/icons/moon.svg";
+import Sun from "../assets/icons/sun.svg";
+---
+
+<theme-toggle>
+  <button type="button" class="theme-toggle" aria-label="Switch theme">
+    <Sun class="icon icon-sun" aria-hidden="true" />
+    <Moon class="icon icon-moon" aria-hidden="true" />
+  </button>
+</theme-toggle>
+
+<script>
+  import { THEME_STORAGE_KEY } from "../utils/site";
+
+  type Theme = "light" | "dark";
+
+  const root = document.documentElement;
+  const systemQuery = matchMedia("(prefers-color-scheme: dark)");
+  const current = (): Theme => (root.dataset.theme === "dark" ? "dark" : "light");
+  const next = (): Theme => (current() === "dark" ? "light" : "dark");
+
+  function savedTheme(): Theme | null {
+    try {
+      const value = localStorage.getItem(THEME_STORAGE_KEY);
+      return value === "light" || value === "dark" ? value : null;
+    } catch {
+      return null;
+    }
+  }
+
+  class ThemeToggle extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector("button");
+      if (!button) return;
+      const updateLabel = () => button.setAttribute("aria-label", `Switch to ${next()} theme`);
+      updateLabel();
+
+      button.addEventListener("click", () => {
+        const value = next();
+        root.dataset.theme = value;
+        try {
+          localStorage.setItem(THEME_STORAGE_KEY, value);
+        } catch {
+          // Without storage the choice lasts until the page is reloaded.
+        }
+        delete button.dataset.preview;
+        updateLabel();
+      });
+
+      // Hovering with a mouse previews the theme a click switches to. Touch screens fire
+      // pointerenter on tap and never leave, which would leave the preview stuck.
+      button.addEventListener("pointerenter", (event) => {
+        if (event.pointerType === "mouse") button.dataset.preview = "";
+      });
+      button.addEventListener("pointerleave", () => delete button.dataset.preview);
+
+      systemQuery.addEventListener("change", () => {
+        if (savedTheme()) return;
+        root.dataset.theme = systemQuery.matches ? "dark" : "light";
+        updateLabel();
+      });
+    }
+  }
+
+  customElements.define("theme-toggle", ThemeToggle);
+</script>
+
+<style>
+  .theme-toggle {
+    align-items: center;
+    border-radius: var(--radius-md);
+    color: var(--text-body);
+    cursor: pointer;
+    display: inline-flex;
+    height: var(--icon-button-size);
+    justify-content: center;
+    transition: var(--transition-tint);
+    width: var(--icon-button-size);
+  }
+
+  .theme-toggle:hover {
+    background-color: var(--surface-soft);
+  }
+
+  /* The icons come from SVG components, which do not carry this component's scope, so they are
+     reached through the button. Their stroke styling is in the SVG files. */
+  .theme-toggle :global(.icon) {
+    display: none;
+    height: 1.125rem;
+    width: 1.125rem;
+  }
+
+  /* The icon shows the current theme, read straight from data-theme so it is right before any
+     script runs. While a mouse hovers, it shows the theme a click switches to. */
+  :global(html[data-theme="light"]) .theme-toggle:not([data-preview]) :global(.icon-sun),
+  :global(html[data-theme="dark"]) .theme-toggle[data-preview] :global(.icon-sun),
+  :global(html[data-theme="dark"]) .theme-toggle:not([data-preview]) :global(.icon-moon),
+  :global(html[data-theme="light"]) .theme-toggle[data-preview] :global(.icon-moon) {
+    display: block;
+  }
+</style>

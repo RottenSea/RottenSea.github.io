@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Not found">
+  <section class="not-found">
+    <h1>404</h1>
+    <p>This page does not exist. <a href="/">Back to the home page</a></p>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    gap: var(--space-md);
+  }
+</style>

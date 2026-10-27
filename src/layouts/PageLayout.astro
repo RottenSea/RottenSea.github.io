@@ -1,0 +1,20 @@
+---
+// A plain page written in MDX under src/pages, such as about.mdx: a title, then the content.
+import ArticleHeader from "../components/ArticleHeader.astro";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  frontmatter: { title: string; description?: string; lang?: string };
+}
+
+const { title, description, lang } = Astro.props.frontmatter;
+---
+
+<BaseLayout title={title} description={description}>
+  <article lang={lang}>
+    <ArticleHeader title={title} />
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,91 @@
+/* Styles for Markdown content, provisional until the design system has components for it.
+   Unlayered, so they win over the design system's base layer. */
+.prose > * + * {
+  margin-top: var(--space-md);
+}
+
+.prose > h2 {
+  font-family: var(--display-sm-family);
+  font-size: var(--display-sm-size);
+  font-weight: var(--display-sm-weight);
+  line-height: var(--display-sm-lh);
+  letter-spacing: var(--display-sm-ls);
+  margin-top: var(--space-xxl);
+}
+
+.prose > h3 {
+  font-family: var(--title-lg-family);
+  font-size: var(--title-lg-size);
+  font-weight: var(--title-lg-weight);
+  line-height: var(--title-lg-lh);
+  letter-spacing: var(--title-lg-ls);
+  margin-top: var(--space-xl);
+}
+
+.prose ul {
+  list-style: disc;
+  padding-left: var(--space-lg);
+}
+
+.prose ol {
+  list-style: decimal;
+  padding-left: var(--space-lg);
+}
+
+/* Visible cue for links that open a new tab. The empty alt text keeps screen readers on the hidden note instead. */
+.prose a[target="_blank"]::after {
+  content: "↗" / "";
+  margin-left: 0.125em;
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--hairline);
+  color: var(--text-muted);
+  padding-left: var(--space-md);
+}
+
+.prose img {
+  border-radius: var(--radius-md);
+  height: auto;
+  max-width: 100%;
+}
+
+/* Wide tables scroll inside the column instead of stretching the page. */
+.prose table {
+  display: block;
+  overflow-x: auto;
+}
+
+.prose th,
+.prose td {
+  border: var(--border-hairline);
+  padding: var(--space-xs) var(--space-sm);
+  text-align: left;
+}
+
+.prose th {
+  background-color: var(--surface-soft);
+  color: var(--text-body-strong);
+  font-weight: 500;
+}
+
+.prose :not(pre) > code {
+  background-color: var(--surface-soft);
+  border-radius: var(--radius-xs);
+  font-size: 0.875em;
+  padding: 0.125em 0.375em;
+}
+
+/* Code blocks. Shiki writes both themes' colors as --shiki-light and --shiki-dark on every token;
+   light-dark() picks one from the element's color-scheme, which the tokens set per theme. */
+.prose pre {
+  background-color: var(--surface-card);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  padding: var(--space-md) var(--space-lg);
+}
+
+.astro-code,
+.astro-code span {
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
+}

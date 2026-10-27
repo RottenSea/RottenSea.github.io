@@ -1,9 +1,9 @@
 # dependencies
 node_modules/
 
-# VitePress build output and cache
-.vitepress/dist/
-.vitepress/cache/
+# Astro build output and generated types
+dist/
+.astro/
 
-# Obsidian settings for the content/blog vault
+# Obsidian settings, when src/content/blog is opened as a vault
 .obsidian/

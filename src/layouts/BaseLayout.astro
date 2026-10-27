@@ -1,0 +1,80 @@
+---
+import "@rottensea/ds-personal-website/index.css";
+import "../styles/utilities.css";
+import "../styles/prose.css";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { pagePath, THEME_STORAGE_KEY } from "../utils/site";
+
+interface Props {
+  /** The page's own title. Leave it out on the home page. */
+  title?: string;
+  description?: string;
+  /** Widens the column, for the design page's 700px specimens. */
+  wide?: boolean;
+}
+
+const SITE_TITLE = "The Key of Urala";
+const {
+  title,
+  description = "欢迎来到 RottenTh 的咖啡角~",
+  wide = false
+} = Astro.props;
+const fullTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(pagePath(Astro.url), Astro.site)} />
+    {/*
+      Runs before the first paint so the page never flashes the other theme first. The design
+      system's CSS reads only data-theme, so this always sets it: the saved choice, or else the OS
+      setting. is:inline keeps Astro from bundling it into a deferred module.
+    */}
+    <script is:inline define:vars={{ key: THEME_STORAGE_KEY }}>
+      let theme;
+      try {
+        theme = localStorage.getItem(key);
+      } catch {}
+      if (theme !== "light" && theme !== "dark") theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = theme;
+    </script>
+    {/*
+      The design system's fonts.css loads font CSS from Google Fonts and jsDelivr, and the font
+      files from fonts.gstatic.com and jsDelivr. Connecting early saves a round trip each. Font
+      files are fetched with CORS, which uses a separate connection, so jsDelivr needs both kinds.
+    */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  </head>
+  <body>
+    <div class:list={["site", { "site-wide": wide }]}>
+      <SiteHeader title={SITE_TITLE} />
+      <main>
+        <slot />
+      </main>
+      <SiteFooter />
+    </div>
+  </body>
+</html>
+
+<style>
+  .site {
+    margin-inline: auto;
+    max-width: 42.5rem;
+    padding-inline: var(--space-lg);
+    padding-block: var(--space-xl) calc(var(--space-xl) * 2);
+  }
+
+  /* The design page shows specimens drawn at 700px, wider than the reading column. */
+  .site-wide {
+    max-width: calc(700px + 2 * var(--space-lg));
+  }
+</style>

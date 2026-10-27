@@ -1,5 +1,5 @@
-# Builds the VitePress site and deploys it to GitHub Pages, following
-# https://vitepress.dev/guide/deploy#github-pages
+# Checks and builds the Astro site and deploys it to GitHub Pages, following
+# https://docs.astro.build/en/guides/deploy/github/
 name: Deploy
 
 on:
@@ -30,10 +30,12 @@ jobs:
           cache: pnpm
       - uses: actions/configure-pages@v6
       - run: pnpm install --frozen-lockfile
+      # Type checks the Astro files and runs Biome's format and lint checks.
+      - run: pnpm check
       - run: pnpm build
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: .vitepress/dist
+          path: dist
 
   deploy:
     needs: build

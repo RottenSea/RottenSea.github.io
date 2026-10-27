@@ -1,0 +1,51 @@
+---
+import { siBluesky, siGithub } from "simple-icons";
+import { NEW_TAB_NOTE } from "../utils/site";
+
+const links = [
+  { label: "GitHub", href: "https://github.com/RottenSea", icon: siGithub },
+  {
+    label: "Bluesky",
+    href: "https://bsky.app/profile/rottenth.bsky.social",
+    icon: siBluesky
+  }
+];
+---
+
+<ul class="social-links">
+  {
+    links.map((link) => (
+      <li>
+        {/* Matches what rehype-external-links does for links in Markdown. */}
+        <a href={link.href} target="_blank" rel="noreferrer">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d={link.icon.path} />
+          </svg>
+          {link.label}
+          <span class="visually-hidden">{NEW_TAB_NOTE}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  /* Also beats the list styles prose.css gives lists in a page. */
+  .social-links {
+    display: grid;
+    gap: var(--space-xs);
+    list-style: none;
+    padding-left: 0;
+  }
+
+  a {
+    align-items: center;
+    display: inline-flex;
+    gap: var(--space-xs);
+  }
+
+  .social-icon {
+    height: 1em;
+    width: 1em;
+  }
+</style>

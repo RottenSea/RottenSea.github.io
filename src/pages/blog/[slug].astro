@@ -1,0 +1,54 @@
+---
+import { render } from "astro:content";
+import ArticleHeader from "../../components/ArticleHeader.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPosts, type Post, postDates, postSlug } from "../../utils/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: postSlug(post) },
+    props: { post }
+  }));
+}
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { published, publishedDate, updated, updatedDate } = postDates(post);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article lang={post.data.lang}>
+    <ArticleHeader title={post.data.title}>
+      <p class="post-meta" lang="en">
+        <time datetime={published}>{publishedDate}</time>
+        {
+          updated && updatedDate !== publishedDate && (
+            <>
+              · Updated <time datetime={updated}>{updatedDate}</time>
+            </>
+          )
+        }
+      </p>
+    </ArticleHeader>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-meta {
+    color: var(--text-muted);
+    font-family: var(--caption-family);
+    font-size: var(--caption-size);
+    font-weight: var(--caption-weight);
+    line-height: var(--caption-lh);
+    letter-spacing: var(--caption-ls);
+  }
+</style>
