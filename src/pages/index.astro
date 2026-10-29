@@ -1,76 +1,127 @@
 ---
+import {
+  ArticleListCard,
+  ContentGrid,
+  FilterList,
+  MiniCalendar,
+  Pagination,
+  QuoteBand,
+  SidebarCard,
+  StatList,
+  TagList
+} from "@rottensea/ds-personal-website/components";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getPosts, postDates, postUrl } from "../utils/posts";
+import { QUOTES } from "../utils/quotes";
+import { countWords, readingMinutes } from "../utils/reading";
+import { SITE_TITLE } from "../utils/site";
 
 const posts = await getPosts();
+
+const rows = posts.map((post) => {
+  const dates = postDates(post);
+  const words = countWords(post.body ?? "");
+  return { post, dates, words };
+});
+
+/** Labels with how many posts carry each, the most common first. */
+const tally = (labels: string[]) =>
+  [
+    ...labels.reduce(
+      (counts, label) => counts.set(label, (counts.get(label) ?? 0) + 1),
+      new Map<string, number>()
+    )
+  ]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([label, count]) => ({ label, count }));
+
+const categories = tally(
+  posts.flatMap((post) => (post.data.category ? [post.data.category] : []))
+);
+const tags = tally(posts.flatMap((post) => post.data.tags));
+const lastUpdated = rows
+  .map(({ dates }) => dates.updatedDate ?? dates.publishedDate)
+  .sort()
+  .at(-1);
+const stats = [
+  { label: "Posts", value: posts.length },
+  { label: "Categories", value: categories.length },
+  { label: "Tags", value: tags.length },
+  { label: "Words", value: rows.reduce((sum, row) => sum + row.words, 0) },
+  // The uptime is only known in the browser; the home page's script counts it.
+  { label: "Uptime", value: "--", id: "uptime" },
+  { label: "Last updated", value: lastUpdated ?? "--" }
+];
+// The calendar's days are worked out again in the browser, in the reader's time zone; these are
+// the UTC dates the cards show, for a reader without script.
+const days = rows.reduce<Record<string, number>>((counts, { dates }) => {
+  counts[dates.publishedDate] = (counts[dates.publishedDate] ?? 0) + 1;
+  return counts;
+}, {});
 ---
 
-<BaseLayout>
-  <div class="home-intro">
-    <h1>The Key of Urala</h1>
-    <p lang="zh">欢迎来到 RottenTh 的咖啡角~</p>
-  </div>
-
-  <ol class="post-list">
-    {
-      posts.map((post) => {
-        const { published, publishedDate } = postDates(post);
-        return (
-          <li class="post-card" lang={post.data.lang}>
-            <h2 class="post-card-title">
-              <a href={postUrl(post)}>{post.data.title}</a>
-            </h2>
-            <time class="post-card-date" datetime={published}>
-              {publishedDate}
-            </time>
-            {post.data.description && <p>{post.data.description}</p>}
-          </li>
-        );
-      })
-    }
-  </ol>
+<BaseLayout overlayNav wide>
+  <QuoteBand slot="hero" eyebrow="欢迎来到 RottenTh 的咖啡角~" quotes={QUOTES} pullNext />
+  <h1 class="ds-visually-hidden">{SITE_TITLE}</h1>
+  <ContentGrid>
+    <Fragment slot="left">
+      {categories.length > 0 && <FilterList label="Categories" items={categories} class="home-categories" />}
+      <TagList items={tags} class="home-tags" />
+    </Fragment>
+    <div class="home-posts">
+      <p class="home-empty" hidden>No posts match. Press a selected filter again to clear it.</p>
+      {
+        rows.map(({ post, dates, words }) => (
+          <ArticleListCard
+            href={postUrl(post)}
+            title={post.data.title}
+            date={dates.publishedDate}
+            datetime={dates.published}
+            category={post.data.category}
+            readTime={`${readingMinutes(words)} min`}
+            tags={post.data.tags}
+            pinned={post.data.pinned}
+            level={2}
+            lang={post.data.lang}
+            data-post
+            data-category={post.data.category}
+            data-tags={JSON.stringify(post.data.tags)}
+            data-published={dates.published}
+          >
+            {post.data.description}
+          </ArticleListCard>
+        ))
+      }
+      {/* One page without script, where every post shows; the script sets the real count. */}
+      <Pagination page={1} pageCount={1} class="home-pager" />
+    </div>
+    <Fragment slot="right">
+      <SidebarCard title="Stats">
+        <StatList items={stats} />
+      </SidebarCard>
+      <SidebarCard title="Calendar">
+        <MiniCalendar counts={days} weekStart="sun" navigable selectable class="home-calendar" />
+      </SidebarCard>
+    </Fragment>
+  </ContentGrid>
 </BaseLayout>
 
+<script>
+  import "../scripts/home";
+</script>
+
 <style>
-  .home-intro {
-    display: grid;
+  .home-posts {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-md);
-    margin-bottom: var(--space-xxl);
   }
 
-  .post-list {
-    display: grid;
-    gap: var(--space-xl);
+  .home-posts > :global([hidden]) {
+    display: none;
   }
 
-  .post-card {
-    display: grid;
-    gap: var(--space-xs);
-  }
-
-  .post-card-title {
-    font-family: var(--display-sm-family);
-    font-size: var(--display-sm-size);
-    font-weight: var(--display-sm-weight);
-    line-height: var(--display-sm-lh);
-    letter-spacing: var(--display-sm-ls);
-  }
-
-  .post-card-title a {
-    color: var(--text-ink);
-    text-decoration: none;
-  }
-
-  .post-card-title a:hover {
-    text-decoration-line: underline;
-  }
-
-  .post-card-date {
+  .home-empty {
     color: var(--text-muted);
-    font-family: var(--caption-family);
-    font-size: var(--caption-size);
-    font-weight: var(--caption-weight);
-    line-height: var(--caption-lh);
-    letter-spacing: var(--caption-ls);
   }
 </style>

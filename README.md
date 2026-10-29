@@ -10,7 +10,7 @@ Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's 
 
 `pnpm new-post <name>` creates the folder with every frontmatter field in it, and fills in `published` and `publishedAt` with the current time in UTC+8. `publishedAt` orders posts published on the same day. The fields and their rules are in `src/content.config.ts`, and a post with an unknown or mistyped field fails the build.
 
-A post with `draft: true` shows up in `pnpm dev` but not in the built site. Only `index.md` or `index.mdx` one folder down becomes a post, so a file such as `src/content/blog/_topics.md` stays a private note.
+A post with `draft: true` shows up in `pnpm dev` but not in the built site. Only `index.md` or `index.mdx` one folder down becomes a post, so `src/content/blog/_quotes.md` is never published. It holds the quotes the home page shows one of at random: a line per quote, starting with `- `, with ` — ` before its source.
 
 Posts are MDX, so `<`, `{` and `}` in ordinary text have to be escaped (`\<`, `\{`, `\}`), and HTML comments are written `{/* ... */}`. Code blocks and inline code are not affected.
 
@@ -24,7 +24,8 @@ Posts are MDX, so `<`, `{` and `}` in ordinary text have to be escaped (`\<`, `\
 | `src/layouts/` | `BaseLayout` is the page frame; `PageLayout` wraps MDX pages such as about |
 | `src/components/` | The site's own components; the page shell (nav, footer, theme switch) comes from the design system |
 | `src/styles/` | `prose.css`, the running-text styles the design system leaves to the site |
-| `src/utils/` | Dates, the post list, and site constants |
+| `src/utils/` | Dates, the post list, reading time, the home page's quotes, and site constants |
+| `src/scripts/` | Scripts for one page: `home.ts` filters and pages the home page's posts and counts the uptime |
 | `scripts/new-post.ts` | The `pnpm new-post` script |
 
 Markdown runs through the unified processor (`@astrojs/markdown-remark`) rather than Astro 7's default, Sätteri, because the design system's plugins are remark and rehype plugins. They turn directives such as `:::tip` into the design system's components, typeset math, and add heading anchors and the new-tab mark on links to other sites; the post page passes the design system's `components` map so code fences, tables and images become its components too.

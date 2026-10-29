@@ -10,7 +10,6 @@ import {
   TopNav
 } from "@rottensea/ds-personal-website/components";
 import "../styles/prose.css";
-import Uptime from "../components/Uptime.astro";
 import {
   FOOTER_COLUMNS,
   NAV,
@@ -25,9 +24,18 @@ interface Props {
   /** The page's own title. Leave it out on the home page. */
   title?: string;
   description?: string;
+  /** The nav floats over a full-height band in the `hero` slot until the page scrolls. */
+  overlayNav?: boolean;
+  /** The main column runs to the grid's width, for a page with rails. */
+  wide?: boolean;
 }
 
-const { title, description = "欢迎来到 RottenTh 的咖啡角~" } = Astro.props;
+const {
+  title,
+  description = "欢迎来到 RottenTh 的咖啡角~",
+  overlayNav = false,
+  wide = false
+} = Astro.props;
 const fullTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 const path = pagePath(Astro.url);
 const active = NAV.find((item) => item.matches(path))?.label;
@@ -53,10 +61,11 @@ const links = NAV.map(({ label, href }) => ({ label, href }));
   </head>
   <body>
     <SkipLink />
-    <TopNav brand={SITE_TITLE} links={links} active={active}>
+    <TopNav brand={SITE_TITLE} links={links} active={active} overlay={overlayNav}>
       <ThemeToggle slot="actions" storageKey={THEME_STORAGE_KEY} />
     </TopNav>
-    <main id="main" class="site-main">
+    <slot name="hero" />
+    <main id="main" class:list={["site-main", { "site-main--wide": wide }]}>
       <slot />
     </main>
     <Footer brand={SITE_TITLE} columns={FOOTER_COLUMNS}>
@@ -64,7 +73,7 @@ const links = NAV.map(({ label, href }) => ({ label, href }));
         © 2026 RottenTh. Posts are licensed under
         <a class="ds-external" href={POST_LICENSE.href} target="_blank" rel="license noreferrer"
           >{POST_LICENSE.name}<span class="ds-visually-hidden">{NEW_TAB_NOTE}</span></a
-        >. <Uptime />
+        >.
       </Fragment>
     </Footer>
     <FloatingControls />
@@ -72,10 +81,14 @@ const links = NAV.map(({ label, href }) => ({ label, href }));
 </html>
 
 <style>
-  /* One reading column until the home and post pages get their rails. */
+  /* One reading column, or the grid's width for a page with rails. */
   .site-main {
     margin-inline: auto;
     max-width: 42.5rem;
     padding: var(--space-xl) var(--space-lg) var(--space-section);
+  }
+
+  .site-main--wide {
+    max-width: none;
   }
 </style>
