@@ -22,8 +22,7 @@ Posts are MDX, so `<`, `{` and `}` in ordinary text have to be escaped (`\<`, `\
 | `src/content.config.ts` | The post collection and its frontmatter schema |
 | `src/pages/` | Routes: the home page, about, 404 and `blog/[slug]` |
 | `src/layouts/` | `BaseLayout` is the page frame; `PageLayout` wraps MDX pages such as about |
-| `src/assets/` | Images and icons that components import, such as the theme toggle's icons in `icons/` |
-| `src/components/` | The site's own components, each with its own scoped styles |
+| `src/components/` | The site's own components; the page shell (nav, footer, theme switch) comes from the design system |
 | `src/styles/` | `prose.css`, the running-text styles the design system leaves to the site |
 | `src/utils/` | Dates, the post list, and site constants |
 | `scripts/new-post.ts` | The `pnpm new-post` script |

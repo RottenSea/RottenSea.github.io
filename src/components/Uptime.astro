@@ -1,11 +1,9 @@
 ---
-// The uptime counter from the old site. It moves to the sidebar's stats card once there is a
-// sidebar; the footer will then hold the copyright, licence and RSS links.
+// How long the site has been up, counting in the browser; the built HTML says "--". It sits in
+// the footer's last line until the home page's stats card takes it.
 ---
 
-<footer class="site-footer">
-  uptime <span class="uptime" data-uptime>--</span>
-</footer>
+<span class="uptime">up <span data-uptime>--</span></span>
 
 <script>
   /** When the site went live: 2026-05-20 10:49:12 UTC+8. */
@@ -33,17 +31,7 @@
 </script>
 
 <style>
-  .site-footer {
-    color: var(--text-muted-soft);
-    font-family: var(--body-sm-family);
-    font-size: var(--body-sm-size);
-    line-height: var(--body-sm-lh);
-    margin-top: var(--space-section);
-    padding: var(--space-xl);
-    text-align: center;
-  }
-
-  .uptime {
+  [data-uptime] {
     font-family: var(--font-mono);
   }
 </style>

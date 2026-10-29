@@ -1,15 +1,12 @@
 ---
 import { siBluesky, siGithub } from "simple-icons";
-import { NEW_TAB_NOTE } from "../utils/site";
+import { NEW_TAB_NOTE, SOCIAL } from "../utils/site";
 
-const links = [
-  { label: "GitHub", href: "https://github.com/RottenSea", icon: siGithub },
-  {
-    label: "Bluesky",
-    href: "https://bsky.app/profile/rottenth.bsky.social",
-    icon: siBluesky
-  }
-];
+const icons: Record<string, { path: string }> = {
+  GitHub: siGithub,
+  Bluesky: siBluesky
+};
+const links = SOCIAL.map((link) => ({ ...link, icon: icons[link.label] }));
 ---
 
 <ul class="social-links">

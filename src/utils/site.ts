@@ -1,3 +1,5 @@
+export const SITE_TITLE = "The Key of Urala";
+
 /** localStorage key for the theme the reader picked. */
 export const THEME_STORAGE_KEY = "theme-preference";
 
@@ -13,16 +15,34 @@ export function pagePath(url: URL): string {
   return path || "/";
 }
 
-/** Links in the site header. `matches` decides which one is marked as the current page. */
+/** Links in the site's nav. `matches` decides which one is marked as the current page. */
 export const NAV = [
   {
-    label: "blog",
+    label: "Blog",
     href: "/",
     matches: (path: string) => path === "/" || path.startsWith("/blog/")
   },
   {
-    label: "about",
+    label: "About",
     href: "/about",
     matches: (path: string) => path === "/about"
   }
 ];
+
+/** The author's pages on other sites: the about page and the footer list them. */
+export const SOCIAL = [
+  { label: "GitHub", href: "https://github.com/RottenSea" },
+  { label: "Bluesky", href: "https://bsky.app/profile/rottenth.bsky.social" }
+];
+
+/** The footer's link columns. RSS joins Elsewhere once the site has a feed. */
+export const FOOTER_COLUMNS = [
+  { title: "Site", links: NAV.map(({ label, href }) => ({ label, href })) },
+  { title: "Elsewhere", links: SOCIAL }
+];
+
+/** The licence posts are published under. */
+export const POST_LICENSE = {
+  name: "CC BY-NC-SA 4.0",
+  href: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+};
