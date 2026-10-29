@@ -41,6 +41,6 @@ Markdown runs through the unified processor (`@astrojs/markdown-remark`) rather 
 | `pnpm format` | Formats and fixes what Biome can fix |
 | `pnpm new-post` | Creates a draft post |
 
-Biome formats the TypeScript files and the script parts of `.astro` files; it leaves the HTML in `.astro` files, Markdown, MDX and the SVG files in `src/assets/` alone.
+Biome formats the TypeScript files and the script parts of `.astro` files; it leaves the HTML in `.astro` files, Markdown, MDX and SVG files alone.
 
 Pushing to `main` checks, builds and deploys the site to GitHub Pages through `.github/workflows/deploy.yml`.
