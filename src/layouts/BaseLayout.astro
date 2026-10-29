@@ -1,6 +1,6 @@
 ---
 import "@rottensea/ds-personal-website/index.css";
-import "../styles/utilities.css";
+import { Fonts } from "@rottensea/ds-personal-website/components";
 import "../styles/prose.css";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
@@ -10,16 +10,10 @@ interface Props {
   /** The page's own title. Leave it out on the home page. */
   title?: string;
   description?: string;
-  /** Widens the column, for the design page's 700px specimens. */
-  wide?: boolean;
 }
 
 const SITE_TITLE = "The Key of Urala";
-const {
-  title,
-  description = "欢迎来到 RottenTh 的咖啡角~",
-  wide = false
-} = Astro.props;
+const { title, description = "欢迎来到 RottenTh 的咖啡角~" } = Astro.props;
 const fullTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 ---
 
@@ -45,17 +39,14 @@ const fullTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
       document.documentElement.dataset.theme = theme;
     </script>
     {/*
-      The design system's fonts.css loads font CSS from Google Fonts and jsDelivr, and the font
-      files from fonts.gstatic.com and jsDelivr. Connecting early saves a round trip each. Font
-      files are fetched with CORS, which uses a separate connection, so jsDelivr needs both kinds.
+      The design system's CSS loads no fonts. Fonts connects early to Google Fonts and jsDelivr and
+      loads their stylesheets without holding up the page: text shows at once in the fallback
+      fonts, and each part of a font swaps in as it arrives.
     */}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <Fonts />
   </head>
   <body>
-    <div class:list={["site", { "site-wide": wide }]}>
+    <div class="site">
       <SiteHeader title={SITE_TITLE} />
       <main>
         <slot />
@@ -71,10 +62,5 @@ const fullTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
     max-width: 42.5rem;
     padding-inline: var(--space-lg);
     padding-block: var(--space-xl) calc(var(--space-xl) * 2);
-  }
-
-  /* The design page shows specimens drawn at 700px, wider than the reading column. */
-  .site-wide {
-    max-width: calc(700px + 2 * var(--space-lg));
   }
 </style>

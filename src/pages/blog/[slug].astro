@@ -1,5 +1,6 @@
 ---
 import { render } from "astro:content";
+import { components } from "@rottensea/ds-personal-website/components";
 import ArticleHeader from "../../components/ArticleHeader.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getPosts, type Post, postDates, postSlug } from "../../utils/posts";
@@ -37,7 +38,8 @@ const { published, publishedDate, updated, updatedDate } = postDates(post);
     </ArticleHeader>
 
     <div class="prose">
-      <Content />
+      {/* Code fences, tables and images become the design system's CodeBlock, TableScroll and Figure. */}
+      <Content components={components} />
     </div>
   </article>
 </BaseLayout>

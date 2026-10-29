@@ -16,13 +16,13 @@ const links = [
   {
     links.map((link) => (
       <li>
-        {/* Matches what rehype-external-links does for links in Markdown. */}
-        <a href={link.href} target="_blank" rel="noreferrer">
+        {/* Matches what the design system's rehypeDsExternalLinks does for links in Markdown. */}
+        <a class="ds-external" href={link.href} target="_blank" rel="noreferrer">
           <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d={link.icon.path} />
           </svg>
           {link.label}
-          <span class="visually-hidden">{NEW_TAB_NOTE}</span>
+          <span class="ds-visually-hidden">{NEW_TAB_NOTE}</span>
         </a>
       </li>
     ))

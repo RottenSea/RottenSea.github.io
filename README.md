@@ -20,17 +20,15 @@ Posts are MDX, so `<`, `{` and `}` in ordinary text have to be escaped (`\<`, `\
 | --- | --- |
 | `src/content/blog/` | Posts |
 | `src/content.config.ts` | The post collection and its frontmatter schema |
-| `src/pages/` | Routes: the home page, about, design, 404 and `blog/[slug]` |
+| `src/pages/` | Routes: the home page, about, 404 and `blog/[slug]` |
 | `src/layouts/` | `BaseLayout` is the page frame; `PageLayout` wraps MDX pages such as about |
 | `src/assets/` | Images and icons that components import, such as the theme toggle's icons in `icons/` |
 | `src/components/` | The site's own components, each with its own scoped styles |
-| `src/styles/` | Global styles: Markdown content in `prose.css`, helpers in `utilities.css` |
-| `src/plugins/` | rehype plugins for the Markdown processor |
-| `src/integrations/` | Serves and copies the design system's specimen pages for `/design` |
+| `src/styles/` | `prose.css`, the running-text styles the design system leaves to the site |
 | `src/utils/` | Dates, the post list, and site constants |
 | `scripts/new-post.ts` | The `pnpm new-post` script |
 
-Markdown runs through the unified processor (`@astrojs/markdown-remark`) rather than Astro 7's default, Sätteri, because the site's plugins are remark and rehype plugins.
+Markdown runs through the unified processor (`@astrojs/markdown-remark`) rather than Astro 7's default, Sätteri, because the design system's plugins are remark and rehype plugins. They turn directives such as `:::tip` into the design system's components, typeset math, and add heading anchors and the new-tab mark on links to other sites; the post page passes the design system's `components` map so code fences, tables and images become its components too.
 
 ## Commands
 
