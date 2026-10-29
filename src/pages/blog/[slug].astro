@@ -1,56 +1,182 @@
 ---
 import { render } from "astro:content";
-import { components } from "@rottensea/ds-personal-website/components";
-import ArticleHeader from "../../components/ArticleHeader.astro";
+import {
+  ContentGrid,
+  components,
+  Figure,
+  PostLicense,
+  PostMeta,
+  PostNav,
+  SidebarCard,
+  TagList,
+  TocButton,
+  TocList
+} from "@rottensea/ds-personal-website/components";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getPosts, type Post, postDates, postSlug } from "../../utils/posts";
+import {
+  getPosts,
+  type Post,
+  postDates,
+  postSlug,
+  postUrl
+} from "../../utils/posts";
+import { countWords, readingMinutes } from "../../utils/reading";
+import {
+  AUTHOR,
+  filterUrl,
+  NEW_TAB_NOTE,
+  POST_LICENSE
+} from "../../utils/site";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
-  return posts.map((post) => ({
+  // Previous and next go by publication time, whatever is pinned.
+  const byTime = posts.toSorted((a, b) =>
+    postDates(a).published.localeCompare(postDates(b).published)
+  );
+  const link = (post?: Post) =>
+    post && {
+      title: post.data.title,
+      href: postUrl(post),
+      lang: post.data.lang
+    };
+  return byTime.map((post, index) => ({
     params: { slug: postSlug(post) },
-    props: { post }
+    props: {
+      post,
+      older: link(byTime[index - 1]),
+      newer: link(byTime[index + 1])
+    }
   }));
+}
+
+interface PostLink {
+  title: string;
+  href: string;
+  lang: string;
 }
 
 interface Props {
   post: Post;
+  older?: PostLink;
+  newer?: PostLink;
 }
 
-const { post } = Astro.props;
-const { Content } = await render(post);
-const { published, publishedDate, updated, updatedDate } = postDates(post);
+const { post, older, newer } = Astro.props;
+const { data } = post;
+const { Content, headings } = await render(post);
+const { published, publishedDate, updated, updatedDate, revisions } =
+  postDates(post);
+const toc = headings
+  // The footnotes' heading is for screen readers only.
+  .filter((heading) => heading.slug !== "footnote-label")
+  .map((heading) => ({
+    id: heading.slug,
+    text: heading.text,
+    level: heading.depth
+  }));
+const hasToc = toc.some((item) => item.level === 2 || item.level === 3);
+const meta = [
+  { label: publishedDate, datetime: published },
+  ...(data.category
+    ? [{ label: data.category, href: filterUrl("category", data.category) }]
+    : []),
+  `${readingMinutes(countWords(post.body ?? ""))} min`,
+  ...(revisions > 0 ? [`Revision ${revisions}`] : [])
+];
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description}>
-  <article lang={post.data.lang}>
-    <ArticleHeader title={post.data.title}>
-      <p class="post-meta" lang="en">
-        <time datetime={published}>{publishedDate}</time>
+<BaseLayout title={data.title} description={data.description} wide>
+  <ContentGrid stackRails="none" class="post-grid">
+    <article class="post" lang={data.lang}>
+      <header class="post__header">
+        <div lang="en"><PostMeta size="md" items={meta} /></div>
+        <h1 class="post__title">{data.title}</h1>
+      </header>
+
+      {data.image && <Figure src={data.image} alt="" zoom={false} loading="eager" class="post__cover" />}
+
+      <div class="prose">
+        {/* Code fences, tables and images become the design system's CodeBlock, TableScroll and Figure. */}
+        <Content components={components} />
+      </div>
+
+      <footer class="post__end" lang="en">
         {
-          updated && updatedDate !== publishedDate && (
-            <>
-              · Updated <time datetime={updated}>{updatedDate}</time>
-            </>
+          data.tags.length > 0 && (
+            <TagList items={data.tags.map((tag) => ({ label: tag, href: filterUrl("tag", tag) }))} />
           )
         }
-      </p>
-    </ArticleHeader>
+        <PostLicense
+          title={data.title}
+          href={new URL(postUrl(post), Astro.site).href}
+          author={AUTHOR}
+          published={{ label: publishedDate, datetime: published }}
+          updated={updated && updatedDate !== publishedDate ? { label: updatedDate ?? "", datetime: updated } : undefined}
+          license={POST_LICENSE}
+          lang={data.lang}
+          newTabNote={NEW_TAB_NOTE}
+        />
+        <PostNav prev={older} next={newer} />
+      </footer>
+    </article>
 
-    <div class="prose">
-      {/* Code fences, tables and images become the design system's CodeBlock, TableScroll and Figure. */}
-      <Content components={components} />
-    </div>
-  </article>
+    {
+      hasToc && (
+        <Fragment slot="right">
+          <SidebarCard title="On this page">
+            <TocList items={toc} maxHeight="calc(100vh - 12rem)" />
+          </SidebarCard>
+        </Fragment>
+      )
+    }
+  </ContentGrid>
+
+  {hasToc && <TocButton slot="controls" items={toc} />}
 </BaseLayout>
 
 <style>
-  .post-meta {
-    color: var(--text-muted);
-    font-family: var(--caption-family);
-    font-size: var(--caption-size);
-    font-weight: var(--caption-weight);
-    line-height: var(--caption-lh);
-    letter-spacing: var(--caption-ls);
+  .post {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    max-width: var(--container-reading);
+    min-width: 0;
+  }
+
+  .post__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .post__title {
+    color: var(--text-ink);
+    font-family: var(--display-lg-family);
+    font-size: var(--display-lg-size);
+    font-weight: var(--display-lg-weight);
+    letter-spacing: var(--display-lg-ls);
+    line-height: var(--display-lg-lh);
+    text-wrap: pretty;
+  }
+
+  /* The cover is the top of the post, so it has no caption gap under it. */
+  .post :global(.post__cover) {
+    margin: 0;
+  }
+
+  .post__end {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    margin-top: var(--space-xl);
+  }
+
+  @media (max-width: 768px) {
+    .post__title {
+      font-size: var(--display-md-size);
+      letter-spacing: var(--display-md-ls);
+      line-height: var(--display-md-lh);
+    }
   }
 </style>

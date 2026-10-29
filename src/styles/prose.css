@@ -59,3 +59,35 @@
   font-size: 0.875em;
   padding: 0.125em 0.375em;
 }
+
+/* Task lists: the checkbox takes the bullet's place. */
+.prose li:has(> input[type="checkbox"]) {
+  list-style: none;
+  margin-left: calc(-1 * var(--space-lg));
+}
+
+.prose li > input[type="checkbox"] {
+  accent-color: var(--color-primary);
+  margin-right: var(--space-xs);
+  vertical-align: -0.125em;
+}
+
+/* Footnotes: smaller and muted under a soft hairline. remark-gfm names the list with an h2 for
+   screen readers only, and its sr-only class has no styles of its own. */
+.prose [data-footnotes] {
+  border-top: 1px solid var(--hairline-soft);
+  color: var(--text-muted);
+  font-size: var(--body-sm-size);
+  line-height: var(--body-sm-lh);
+  margin-top: var(--space-xxl);
+  padding-top: var(--space-md);
+}
+
+.prose [data-footnotes] .sr-only {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

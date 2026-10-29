@@ -26,8 +26,8 @@ if (existsSync(dir)) {
   process.exit(1);
 }
 
-// The current moment in UTC+8, the author's time zone. `published` is its date, and
-// `publishedAt` orders posts published on the same day.
+// The current moment in UTC+8, the author's time zone. `publishedAt` keeps the time, which
+// orders posts published on the same day.
 const parts = Object.fromEntries(
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Shanghai",
@@ -50,14 +50,11 @@ const template = `---
 title: ""
 description: ""
 lang: zh
-published: ${date}
 publishedAt: ${date}T${time}+08:00
-# updated: ${date}
 # updatedAt: ${date}T${time}+08:00
 tags: []
 # category: ""
 # image: ./cover.png
-# revision: 1
 # pinned: true
 # comment: true
 # permalink: another-url

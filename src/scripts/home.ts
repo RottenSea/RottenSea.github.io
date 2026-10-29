@@ -54,6 +54,18 @@ function show() {
   pager?.setAttribute("page", String(page));
 }
 
+/** Scrolls to the top of the list, below the nav that floats over this page. */
+const toList = () => {
+  const main = document.getElementById("main");
+  if (!main) return;
+  const nav = Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue("--nav-height")
+  );
+  window.scrollTo({
+    top: window.scrollY + main.getBoundingClientRect().top - (nav || 0)
+  });
+};
+
 // Each list sends ds-select with its choice, or null when the reader clears it.
 const listen = (selector: string, key: keyof Filters) =>
   document.querySelector(selector)?.addEventListener("ds-select", (event) => {
@@ -68,7 +80,7 @@ listen(".home-calendar", "day");
 pager?.addEventListener("ds-page", (event) => {
   page = (event as CustomEvent<number>).detail;
   show();
-  document.getElementById("main")?.scrollIntoView({ block: "start" });
+  toList();
 });
 
 // The calendar was built with UTC dates; mark the days in the reader's own time zone instead.
@@ -79,7 +91,26 @@ if (calendar) {
   calendar.draw();
 }
 
+// A post's category and tags link here with ?category= or ?tag=. Filter by it once, go to the
+// list, and put the address back to "/", since filtering on this page never changes the address.
+// A #main in the link would be lost with the query before the browser scrolled to it.
+type Selectable = HTMLElement & { select(value: string | null): void };
+const query = new URLSearchParams(location.search);
+const fromQuery = (key: "category" | "tag", selector: string) => {
+  const value = query.get(key);
+  const list = document.querySelector<Selectable>(selector);
+  if (!value || !list?.querySelector(`[data-value="${CSS.escape(value)}"]`))
+    return;
+  filters[key] = value;
+  list.select(value);
+};
+fromQuery("category", ".home-categories");
+fromQuery("tag", ".home-tags");
 show();
+if (location.search) {
+  history.replaceState(history.state, "", location.pathname);
+  if (filters.category || filters.tag) toList();
+}
 
 const uptime = document.getElementById("uptime");
 if (uptime) {

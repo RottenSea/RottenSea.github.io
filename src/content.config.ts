@@ -1,7 +1,6 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
-import { authorDate, writtenDate } from "./utils/time";
 
 // Each post is a folder with its images beside it: blog/20260518/index.mdx.
 // Only those index files are loaded, so any other file in blog/, such as the notes in _topics.md,
@@ -19,13 +18,16 @@ const blog = defineCollection({
         description: z.string(),
         /** `en` or `zh`. The site's own text is English; this is the post's language. */
         lang: z.enum(["en", "zh"]),
-        /** A bare date means 11:00 UTC+8 that day. */
-        published: z.coerce.date(),
-        updated: z.coerce.date().optional(),
-        /** The exact moment, with its time zone, for ordering posts published the same day. */
-        publishedAt: z.coerce.date().optional(),
+        /**
+         * When the post was published: a bare date means 11:00 UTC+8 that day, and a time with its
+         * zone, such as 2026-05-18T21:30+08:00, orders posts published the same day.
+         */
+        publishedAt: z.coerce.date(),
+        /**
+         * When it was last changed, written the same way. Without it, the date of the last commit
+         * that changed the post. The revision count always comes from the commits.
+         */
         updatedAt: z.coerce.date().optional(),
-        revision: z.number().int().positive().optional(),
         tags: z.array(z.string()).default([]),
         category: z.string().optional(),
         pinned: z.boolean().default(false),
@@ -42,30 +44,8 @@ const blog = defineCollection({
           .optional(),
         draft: z.boolean().default(false)
       })
-      // Unknown keys are typos, such as `update` for `updated`, so they fail the build.
+      // Unknown keys are typos, such as `update` for `updatedAt`, so they fail the build.
       .strict()
-      .superRefine((data, ctx) => {
-        const pairs = [
-          ["publishedAt", data.publishedAt, data.published],
-          ["updatedAt", data.updatedAt, data.updated]
-        ] as const;
-        for (const [key, exact, day] of pairs) {
-          if (!exact) continue;
-          if (!day) {
-            ctx.addIssue({
-              code: "custom",
-              path: [key],
-              message: `${key} needs the matching date field too`
-            });
-          } else if (authorDate(exact) !== writtenDate(day)) {
-            ctx.addIssue({
-              code: "custom",
-              path: [key],
-              message: `${key} falls on ${authorDate(exact)} in UTC+8, not on ${writtenDate(day)}`
-            });
-          }
-        }
-      })
 });
 
 export const collections = { blog };

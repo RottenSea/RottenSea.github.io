@@ -8,7 +8,9 @@ It is built with [Astro](https://astro.build/) 7 on the personal-website system 
 
 Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's images beside it, referenced as `./cover.png`. The folder name is the post's URL: `src/content/blog/vibe-coding/` becomes `/blog/vibe-coding`, unless the post sets `permalink`. New posts get a short English name; the first five posts keep their date names, such as `20260518`, so their URLs stay the same.
 
-`pnpm new-post <name>` creates the folder with every frontmatter field in it, and fills in `published` and `publishedAt` with the current time in UTC+8. `publishedAt` orders posts published on the same day. The fields and their rules are in `src/content.config.ts`, and a post with an unknown or mistyped field fails the build.
+`pnpm new-post <name>` creates the folder with every frontmatter field in it, and fills in `publishedAt` with the current time in UTC+8, which orders posts published on the same day. `publishedAt` can also be a bare date, meaning 11:00 UTC+8 that day. The fields and their rules are in `src/content.config.ts`, and a post with an unknown or mistyped field fails the build.
+
+A post's revision count is the number of commits that changed its `index.mdx`, read from git when the site is built, and its update date is that of the last of them unless the post sets `updatedAt`. The build needs the full history: a shallow clone gives every post one revision, and the build warns about it.
 
 A post with `draft: true` shows up in `pnpm dev` but not in the built site. Only `index.md` or `index.mdx` one folder down becomes a post, so `src/content/blog/_quotes.md` is never published. It holds the quotes the home page shows one of at random: a line per quote, starting with `- `, with ` — ` before its source.
 

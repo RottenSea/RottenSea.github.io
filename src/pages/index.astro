@@ -1,4 +1,5 @@
 ---
+import { getImage } from "astro:assets";
 import {
   ArticleListCard,
   ContentGrid,
@@ -18,11 +19,18 @@ import { SITE_TITLE } from "../utils/site";
 
 const posts = await getPosts();
 
-const rows = posts.map((post) => {
-  const dates = postDates(post);
-  const words = countWords(post.body ?? "");
-  return { post, dates, words };
-});
+const rows = await Promise.all(
+  posts.map(async (post) => {
+    const dates = postDates(post);
+    const words = countWords(post.body ?? "");
+    // The card draws its cover 160px wide; 320 covers a 2x screen. A `cover` slot would count as
+    // filled even when empty, so the card gets a URL instead.
+    const cover =
+      post.data.image &&
+      (await getImage({ src: post.data.image, width: 320 })).src;
+    return { post, dates, words, cover };
+  })
+);
 
 /** Labels with how many posts carry each, the most common first. */
 const tally = (labels: string[]) =>
@@ -71,7 +79,7 @@ const days = rows.reduce<Record<string, number>>((counts, { dates }) => {
     <div class="home-posts">
       <p class="home-empty" hidden>No posts match. Press a selected filter again to clear it.</p>
       {
-        rows.map(({ post, dates, words }) => (
+        rows.map(({ post, dates, words, cover }) => (
           <ArticleListCard
             href={postUrl(post)}
             title={post.data.title}
@@ -81,6 +89,7 @@ const days = rows.reduce<Record<string, number>>((counts, { dates }) => {
             readTime={`${readingMinutes(words)} min`}
             tags={post.data.tags}
             pinned={post.data.pinned}
+            coverSrc={cover}
             level={2}
             lang={post.data.lang}
             data-post

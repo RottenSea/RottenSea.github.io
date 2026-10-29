@@ -76,7 +76,9 @@ const links = NAV.map(({ label, href }) => ({ label, href }));
         >.
       </Fragment>
     </Footer>
-    <FloatingControls />
+    <FloatingControls>
+      <slot name="controls" />
+    </FloatingControls>
   </body>
 </html>
 

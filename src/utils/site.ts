@@ -1,5 +1,8 @@
 export const SITE_TITLE = "The Key of Urala";
 
+/** Who writes the posts: the copyright card and the about page use it. */
+export const AUTHOR = "RottenTh";
+
 /** localStorage key for the theme the reader picked. */
 export const THEME_STORAGE_KEY = "theme-preference";
 
@@ -40,6 +43,13 @@ export const FOOTER_COLUMNS = [
   { title: "Site", links: NAV.map(({ label, href }) => ({ label, href })) },
   { title: "Elsewhere", links: SOCIAL }
 ];
+
+/**
+ * The home page with its list filtered to one category or tag. The home page reads the query once,
+ * filters, scrolls past the quote to the list, and puts its address back to `/`.
+ */
+export const filterUrl = (key: "category" | "tag", value: string) =>
+  `/?${new URLSearchParams({ [key]: value })}`;
 
 /** The licence posts are published under. */
 export const POST_LICENSE = {

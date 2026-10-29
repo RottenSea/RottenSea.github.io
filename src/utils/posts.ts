@@ -1,4 +1,5 @@
 import { type CollectionEntry, getCollection } from "astro:content";
+import { fileHistory } from "./git";
 import { formatDate, toInstant } from "./time";
 
 export type Post = CollectionEntry<"blog">;
@@ -13,19 +14,27 @@ export interface PostDates {
   published: string;
   /** Publication date as YYYY-MM-DD in UTC. */
   publishedDate: string;
-  updated?: string;
-  updatedDate?: string;
+  /** `updatedAt`, or else the last commit that changed the post, or else now, for a new post. */
+  updated: string;
+  updatedDate: string;
+  /** How many commits changed the post; 0 before its first. */
+  revisions: number;
 }
 
-export function postDates({ data }: Post): PostDates {
-  const published = toInstant(data.publishedAt ?? data.published);
-  const updatedValue = data.updatedAt ?? data.updated;
-  const updated = updatedValue && toInstant(updatedValue);
+export function postDates({ data, filePath }: Post): PostDates {
+  const published = toInstant(data.publishedAt);
+  const { revisions, lastChanged } = filePath
+    ? fileHistory(filePath)
+    : { revisions: 0, lastChanged: undefined };
+  const updated = data.updatedAt
+    ? toInstant(data.updatedAt)
+    : new Date(lastChanged ?? Date.now()).toISOString();
   return {
     published,
     publishedDate: formatDate(published),
     updated,
-    updatedDate: updated && formatDate(updated)
+    updatedDate: formatDate(updated),
+    revisions
   };
 }
 

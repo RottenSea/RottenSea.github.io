@@ -1,0 +1,100 @@
+---
+import {
+  Avatar,
+  ContentGrid,
+  SidebarCard
+} from "@rottensea/ds-personal-website/components";
+import type { ImageMetadata } from "astro";
+import SocialLinks from "../components/SocialLinks.astro";
+import { AUTHOR } from "../utils/site";
+import BaseLayout from "./BaseLayout.astro";
+
+// The about page, laid out like the handoff's personal-site template: the portrait, name and a
+// one-line bio over the page's text, and the author's other sites in the right rail. The rail
+// stays down to 768px and stacks under the text below that, since it is the only place the
+// links are.
+
+interface Props {
+  frontmatter: {
+    title: string;
+    bio: string;
+    description?: string;
+    lang?: string;
+  };
+}
+
+const { title, bio, description, lang } = Astro.props.frontmatter;
+// The portrait is whichever src/assets/avatar.* there is; without one, Avatar shows initials.
+const [portrait] = Object.values(
+  import.meta.glob<{ default: ImageMetadata }>(
+    "../assets/avatar.{png,jpg,jpeg,webp}",
+    { eager: true }
+  )
+).map((module) => module.default);
+---
+
+<BaseLayout title={title} description={description} wide>
+  <ContentGrid keepRails stackRails="right">
+    <article class="about" lang={lang}>
+      <header class="about__profile">
+        <Avatar src={portrait} name={AUTHOR} size="lg" />
+        <div class="about__intro">
+          <h1 class="about__name" lang="en">{AUTHOR}</h1>
+          <p class="about__bio">{bio}</p>
+        </div>
+      </header>
+      <div class="prose">
+        <slot />
+      </div>
+    </article>
+    <Fragment slot="right">
+      <SidebarCard title="Elsewhere">
+        <SocialLinks />
+      </SidebarCard>
+    </Fragment>
+  </ContentGrid>
+</BaseLayout>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    max-width: var(--container-reading);
+    min-width: 0;
+  }
+
+  .about__profile {
+    align-items: center;
+    display: flex;
+    gap: var(--space-md);
+  }
+
+  .about__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    min-width: 0;
+  }
+
+  .about__name {
+    color: var(--text-ink);
+    font-family: var(--display-lg-family);
+    font-size: var(--display-lg-size);
+    font-weight: var(--display-lg-weight);
+    letter-spacing: var(--display-lg-ls);
+    line-height: var(--display-lg-lh);
+  }
+
+  .about__bio {
+    color: var(--text-body);
+  }
+
+  @media (max-width: 768px) {
+    .about__name {
+      font-size: var(--display-md-size);
+      letter-spacing: var(--display-md-ls);
+      line-height: var(--display-md-lh);
+    }
+  }
+</style>

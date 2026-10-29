@@ -39,13 +39,3 @@ export function toInstant(date: Date): string {
 export function formatDate(instant: string): string {
   return toCalendarDate(parseAbsolute(instant, SITE_TIME_ZONE)).toString();
 }
-
-/** The YYYY-MM-DD of a moment in the author's time zone, for checking `publishedAt` against `published`. */
-export function authorDate(date: Date): string {
-  return toCalendarDate(fromDate(date, AUTHOR_TIME_ZONE)).toString();
-}
-
-/** The YYYY-MM-DD a bare frontmatter date was written as. */
-export function writtenDate(date: Date): string {
-  return toCalendarDate(fromDate(date, SITE_TIME_ZONE)).toString();
-}
