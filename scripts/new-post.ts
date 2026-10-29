@@ -1,26 +1,48 @@
-// Creates a new draft post: pnpm new-post <name>
-// The name is the post's folder and its URL, such as vibe-coding for /blog/vibe-coding. It is
-// required, so two posts published on the same day never share a URL.
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+// Creates a new draft post: pnpm new-post [name]
+// Its folder is the next number after the highest one in src/content/blog or in its git history,
+// six digits, so a deleted post's number is never used again. The URL is /blog/<number>, or
+// /blog/<name> when a name is given: the name goes into the post's `permalink`.
+import { execFileSync } from "node:child_process";
+import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
+const BLOG = join("src", "content", "blog");
 const name = process.argv[2];
 
-if (!name) {
-  console.error(
-    "Give the post a name: pnpm new-post <name>, such as pnpm new-post vibe-coding."
-  );
-  process.exit(1);
+if (name !== undefined) {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name) || !/\D/.test(name)) {
+    console.error(
+      `"${name}" is not a valid name: use lowercase letters, digits and single hyphens, with at least one letter.`
+    );
+    process.exit(1);
+  }
 }
 
-if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name)) {
-  console.error(
-    `"${name}" is not a valid name: use lowercase letters, digits and single hyphens.`
-  );
-  process.exit(1);
+const folders = readdirSync(BLOG, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name);
+// The folders of every path under src/content/blog that a commit touched: deleted posts' too.
+let committed: string[] = [];
+try {
+  committed = execFileSync(
+    "git",
+    // git prints and takes paths with forward slashes on every system.
+    ["log", "--all", "--name-only", "--format=", "--", "src/content/blog"],
+    { encoding: "utf8" }
+  )
+    .split("\n")
+    .map((path) => path.split("/")[3] ?? "");
+} catch {
+  console.warn("git could not be run, so only the folders here were counted.");
 }
-
-const dir = join("src", "content", "blog", name);
+const numbers = [...folders, ...committed]
+  .filter((folder) => /^\d{6}$/.test(folder))
+  .map(Number);
+const id = String(numbers.length ? Math.max(...numbers) + 1 : 0).padStart(
+  6,
+  "0"
+);
+const dir = join(BLOG, id);
 if (existsSync(dir)) {
   console.error(`${dir} already exists.`);
   process.exit(1);
@@ -57,7 +79,7 @@ tags: []
 # image: ./cover.png
 # pinned: true
 # comment: true
-# permalink: another-url
+${name ? `permalink: ${name}` : "# permalink: another-url"}
 draft: true
 ---
 
@@ -66,5 +88,5 @@ draft: true
 mkdirSync(dir, { recursive: true });
 writeFileSync(join(dir, "index.mdx"), template);
 console.log(
-  `Created ${join(dir, "index.mdx")}. Images for the post go in the same folder.`
+  `Created ${join(dir, "index.mdx")}, at /blog/${name ?? id}. Images for the post go in the same folder.`
 );

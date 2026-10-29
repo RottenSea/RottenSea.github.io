@@ -6,9 +6,9 @@ It is built with [Astro](https://astro.build/) 7 on the personal-website system 
 
 ## Writing
 
-Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's images beside it, referenced as `./cover.png`. The folder name is the post's URL: `src/content/blog/vibe-coding/` becomes `/blog/vibe-coding`, unless the post sets `permalink`. New posts get a short English name; the first five posts keep their date names, such as `20260518`, so their URLs stay the same.
+Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's images beside it, referenced as `./cover.png`. Folders are six-digit numbers in the order posts were created, from `000000`, and the number is the post's URL: `src/content/blog/000006/` becomes `/blog/000006`, unless the post sets `permalink`, which needs at least one letter. The first five posts were named by date before; `astro.config.ts` redirects those URLs.
 
-`pnpm new-post <name>` creates the folder with every frontmatter field in it, and fills in `publishedAt` with the current time in UTC+8, which orders posts published on the same day. `publishedAt` can also be a bare date, meaning 11:00 UTC+8 that day. The fields and their rules are in `src/content.config.ts`, and a post with an unknown or mistyped field fails the build.
+`pnpm new-post` creates the next numbered folder with every frontmatter field in it, and `pnpm new-post <name>` also sets `permalink` to the name. A deleted post's number is not used again, since the script also counts folders in the git history. Both fill in `publishedAt` with the current time in UTC+8, which orders posts published on the same day. `publishedAt` can also be a bare date, meaning 11:00 UTC+8 that day. The fields and their rules are in `src/content.config.ts`, and a post with an unknown or mistyped field fails the build.
 
 A post's revision count is the number of commits that changed its `index.mdx`, read from git when the site is built, and its update date is that of the last of them unless the post sets `updatedAt`. The build needs the full history: a shallow clone gives every post one revision, and the build warns about it.
 

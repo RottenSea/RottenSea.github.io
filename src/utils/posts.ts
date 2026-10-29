@@ -4,7 +4,10 @@ import { formatDate, toInstant } from "./time";
 
 export type Post = CollectionEntry<"blog">;
 
-/** The last part of a post's URL: its `permalink`, or else its folder name. */
+/** A post's folder name: six digits, numbered in the order posts were created. */
+export const POST_ID = /^\d{6}$/;
+
+/** The last part of a post's URL: its `permalink`, or else its folder's number. */
 export const postSlug = (post: Post) => post.data.permalink ?? post.id;
 
 export const postUrl = (post: Post) => `/blog/${postSlug(post)}`;
@@ -40,7 +43,7 @@ export function postDates({ data, filePath }: Post): PostDates {
 
 /**
  * Every post, pinned ones first, then newest first. Drafts show up in `astro dev` only.
- * Fails the build when two posts would get the same URL.
+ * Fails the build when a folder is not numbered or two posts would get the same URL.
  */
 export async function getPosts(): Promise<Post[]> {
   const posts = await getCollection(
@@ -49,6 +52,10 @@ export async function getPosts(): Promise<Post[]> {
   );
   const seen = new Map<string, string>();
   for (const post of posts) {
+    if (!POST_ID.test(post.id))
+      throw new Error(
+        `Post folder ${post.id} is not six digits; pnpm new-post names folders`
+      );
     const slug = postSlug(post);
     const other = seen.get(slug);
     if (other)

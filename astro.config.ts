@@ -13,9 +13,17 @@ const site = "https://rottenth.cafe";
 export default defineConfig({
   site,
   // Pages build to `about.html` rather than `about/index.html`, so URLs have no trailing slash:
-  // /about, /blog/20260518. GitHub Pages and Cloudflare both serve that file at that URL.
+  // /about, /blog/000000. GitHub Pages and Cloudflare both serve that file at that URL.
   build: { format: "file" },
   trailingSlash: "never",
+  // The first five posts were named by date before posts were numbered.
+  redirects: {
+    "/blog/20260518": "/blog/000000",
+    "/blog/20260519": "/blog/000001",
+    "/blog/20260520": "/blog/000002",
+    "/blog/20260616": "/blog/000003",
+    "/blog/20260617": "/blog/000004"
+  },
   // 4321, Astro's default, is the design-system docs site's.
   server: { port: 4173 },
   integrations: [mdx()],
