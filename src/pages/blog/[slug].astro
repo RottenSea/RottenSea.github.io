@@ -1,4 +1,5 @@
 ---
+import { getImage } from "astro:assets";
 import { render } from "astro:content";
 import {
   ContentGrid,
@@ -7,6 +8,7 @@ import {
   PostLicense,
   PostMeta,
   PostNav,
+  PostShare,
   SidebarCard,
   TagList,
   TocButton,
@@ -25,7 +27,8 @@ import {
   AUTHOR,
   filterUrl,
   NEW_TAB_NOTE,
-  POST_LICENSE
+  POST_LICENSE,
+  SITE_TITLE
 } from "../../utils/site";
 
 export async function getStaticPaths() {
@@ -84,13 +87,25 @@ const meta = [
   `${readingMinutes(countWords(post.body ?? ""))} min`,
   ...(revisions > 0 ? [`Revision ${revisions}`] : [])
 ];
+const url = new URL(postUrl(post), Astro.site).href;
+// The share poster draws the cover at 1080px wide.
+const cover =
+  data.image && (await getImage({ src: data.image, width: 1080 })).src;
 ---
 
 <BaseLayout title={data.title} description={data.description} wide>
   <ContentGrid stackRails="none" class="post-grid">
-    <article class="post" lang={data.lang}>
+    {/* Search indexes the post's title, text and tags, not the meta line or what follows the tags. */}
+    <article
+      class="post"
+      lang={data.lang}
+      data-pagefind-body
+    >
+      {/* What the search results show under the title. */}
+      <span hidden data-pagefind-meta={`date:${publishedDate}`}></span>
+      {data.category && <span hidden data-pagefind-meta={`category:${data.category}`}></span>}
       <header class="post__header">
-        <div lang="en"><PostMeta size="md" items={meta} /></div>
+        <div lang="en" data-pagefind-ignore><PostMeta size="md" items={meta} /></div>
         <h1 class="post__title">{data.title}</h1>
       </header>
 
@@ -107,9 +122,10 @@ const meta = [
             <TagList items={data.tags.map((tag) => ({ label: tag, href: filterUrl("tag", tag) }))} />
           )
         }
+        <div class="post__more" data-pagefind-ignore>
         <PostLicense
           title={data.title}
-          href={new URL(postUrl(post), Astro.site).href}
+          href={url}
           author={AUTHOR}
           published={{ label: publishedDate, datetime: published }}
           updated={updated && updatedDate !== publishedDate ? { label: updatedDate ?? "", datetime: updated } : undefined}
@@ -117,7 +133,17 @@ const meta = [
           lang={data.lang}
           newTabNote={NEW_TAB_NOTE}
         />
+        <PostShare
+          title={data.title}
+          description={data.description}
+          url={url}
+          site={SITE_TITLE}
+          date={publishedDate}
+          cover={cover}
+          filename={postSlug(post)}
+        />
         <PostNav prev={older} next={newer} />
+        </div>
       </footer>
     </article>
 
@@ -163,6 +189,11 @@ const meta = [
   /* The cover is the top of the post, so it has no caption gap under it. */
   .post :global(.post__cover) {
     margin: 0;
+  }
+
+  /* Out of the search index, but laid out as part of the end matter. */
+  .post__more {
+    display: contents;
   }
 
   .post__end {

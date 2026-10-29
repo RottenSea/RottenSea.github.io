@@ -23,12 +23,13 @@ Posts are MDX, so `<`, `{` and `}` in ordinary text have to be escaped (`\<`, `\
 | `src/content/blog/` | Posts |
 | `src/content.config.ts` | The post collection and its frontmatter schema |
 | `src/pages/` | Routes: the home page, about, 404 and `blog/[slug]` |
-| `src/layouts/` | `BaseLayout` is the page frame; `PageLayout` wraps MDX pages such as about |
-| `src/components/` | The site's own components; the page shell (nav, footer, theme switch) comes from the design system |
+| `src/layouts/` | `BaseLayout` is the page frame; `AboutLayout` lays out about.mdx with the avatar and the author's other sites |
+| `src/components/` | The site's own components; the page shell (nav, footer, search, display settings) comes from the design system |
 | `src/styles/` | `prose.css`, the running-text styles the design system leaves to the site |
 | `src/utils/` | Dates, the post list, reading time, the home page's quotes, and site constants |
-| `src/scripts/` | Scripts for one page: `home.ts` filters and pages the home page's posts and counts the uptime |
+| `src/scripts/` | `home.ts` filters and pages the home page's posts and counts the uptime; `search.ts` answers the nav's search from the Pagefind index |
 | `scripts/new-post.ts` | The `pnpm new-post` script |
+| `pagefind.yml` | Pagefind's settings: one Chinese index of the posts, without screen-reader text |
 
 Markdown runs through the unified processor (`@astrojs/markdown-remark`) rather than Astro 7's default, Sätteri, because the design system's plugins are remark and rehype plugins. They turn directives such as `:::tip` into the design system's components, typeset math, and add heading anchors and the new-tab mark on links to other sites; the post page passes the design system's `components` map so code fences, tables and images become its components too.
 
@@ -38,7 +39,7 @@ Markdown runs through the unified processor (`@astrojs/markdown-remark`) rather 
 | --- | --- |
 | `pnpm install` | Installs Astro and the design system |
 | `pnpm dev` | Starts a local server on port 4173 that reloads on changes |
-| `pnpm build` | Builds the site into `dist/` |
+| `pnpm build` | Builds the site into `dist/`, then indexes the posts for search with Pagefind; `pnpm dev` has no index |
 | `pnpm preview` | Serves the built site on port 4173 |
 | `pnpm check` | Type checks the Astro files, then runs Biome's format and lint checks |
 | `pnpm format` | Formats and fixes what Biome can fix |

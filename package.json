@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind",
     "preview": "astro preview",
     "check": "astro check && biome check .",
     "format": "biome check --write .",
@@ -18,7 +18,7 @@
     "@astrojs/markdown-remark": "7.3.4",
     "@astrojs/mdx": "8.1.1",
     "@internationalized/date": "3.12.4",
-    "@rottensea/ds-personal-website": "https://github.com/RottenSea/design-system/releases/download/personal-website-v0.6.0/rottensea-ds-personal-website-0.6.0.tgz",
+    "@rottensea/ds-personal-website": "https://github.com/RottenSea/design-system/releases/download/personal-website-v0.7.0/rottensea-ds-personal-website-0.7.0.tgz",
     "astro": "7.4.2",
     "sharp": "0.35.5",
     "simple-icons": "16.36.0",
@@ -29,6 +29,7 @@
     "@biomejs/biome": "2.6.3",
     "@types/hast": "3.0.5",
     "@types/node": "24.19.2",
+    "pagefind": "1.5.2",
     "typescript": "6.0.3"
   }
 }

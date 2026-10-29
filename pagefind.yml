@@ -1,0 +1,9 @@
+# Pagefind's settings. `pnpm build` runs it on the built site after Astro.
+site: dist
+# Posts are mostly Chinese, but <html lang> is the site's own English. One Chinese index splits
+# Chinese into words, and English words still match whole.
+force_language: zh
+# Text for screen readers: the heading anchors' "Link to section" and the new-tab notes.
+exclude_selectors:
+  - ".ds-heading__anchor"
+  - ".ds-visually-hidden"

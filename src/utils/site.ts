@@ -6,6 +6,9 @@ export const AUTHOR = "RottenTh";
 /** localStorage key for the theme the reader picked. */
 export const THEME_STORAGE_KEY = "theme-preference";
 
+/** localStorage key for the reader's Reduce motion setting. */
+export const MOTION_STORAGE_KEY = "reduce-motion";
+
 /** Read by screen readers after a link that opens in a new tab (WCAG technique G201). */
 export const NEW_TAB_NOTE = " (opens in a new tab)";
 
