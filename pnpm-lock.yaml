@@ -78,6 +78,31 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
 
+  sites/home:
+    dependencies:
+      "@astrojs/markdown-remark":
+        specifier: 7.3.4
+        version: 7.3.4
+      "@rottensea/ds-personal-website":
+        specifier: https://github.com/RottenSea/design-system/releases/download/personal-website-v0.7.4/rottensea-ds-personal-website-0.7.4.tgz
+        version: https://github.com/RottenSea/design-system/releases/download/personal-website-v0.7.4/rottensea-ds-personal-website-0.7.4.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))
+      astro:
+        specifier: 7.4.2
+        version: 7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(yaml@2.9.1)
+      sharp:
+        specifier: 0.35.5
+        version: 0.35.5(@types/node@24.19.2)
+    devDependencies:
+      "@astrojs/check":
+        specifier: 0.9.12
+        version: 0.9.12(@emnapi/runtime@1.11.3)(prettier@3.9.10)(typescript@6.0.3)
+      "@types/node":
+        specifier: 24.19.2
+        version: 24.19.2
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
 packages:
   "@antfu/install-pkg@2.1.0":
     resolution:
@@ -1139,6 +1164,17 @@ packages:
       astro: ^7.2.0
       sharp: ^0.35.4
 
+  "@rottensea/ds-personal-website@https://github.com/RottenSea/design-system/releases/download/personal-website-v0.7.4/rottensea-ds-personal-website-0.7.4.tgz":
+    resolution:
+      {
+        tarball: https://github.com/RottenSea/design-system/releases/download/personal-website-v0.7.4/rottensea-ds-personal-website-0.7.4.tgz,
+      }
+    version: 0.7.4
+    peerDependencies:
+      "@astrojs/markdown-remark": ^7.3.0
+      astro: ^7.2.0
+      sharp: ^0.35.4
+
   "@shikijs/core@4.5.0":
     resolution:
       {
@@ -1847,6 +1883,12 @@ packages:
         integrity: sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==,
       }
     engines: { node: ">=22.12.0" }
+
+  commander@2.20.3:
+    resolution:
+      {
+        integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==,
+      }
 
   commander@7.2.0:
     resolution:
@@ -4159,6 +4201,13 @@ packages:
         integrity: sha512-B6Ykif5HflC3AdDkS4Zst/2muYVfeXoVMy+KorqH80s/1x4vunIORpNySH681X7fjj+dFM9MDKD6/Hsccjb87Q==,
       }
 
+  topojson-client@3.1.0:
+    resolution:
+      {
+        integrity: sha512-605uxS6bcYxGXw9qi62XyrV6Q3xwbndjachmNxu8HWTtVPxZfEJN9fd/SZS1Q54Sn2y0TMyMxFj/cJINqGHrKw==,
+      }
+    hasBin: true
+
   trim-lines@3.0.1:
     resolution:
       {
@@ -4627,6 +4676,12 @@ packages:
     resolution:
       {
         integrity: sha512-iBdZ57RDvnOR9AGBhML2vFZf7h8vmBjhoaZqODJBFWHVtKkDmKuHai3cx5PgVMrX5YDNp27AofYbAwctSS+vhQ==,
+      }
+
+  world-atlas@2.0.2:
+    resolution:
+      {
+        integrity: sha512-IXfV0qwlKXpckz1FhwXVwKRjiIhOnWttOskm5CtxMsjgE/MXAYRHWJqgXOpM8IkcPBoXnyTU5lFHcYa5ChG0LQ==,
       }
 
   wrap-ansi@6.2.0:
@@ -5364,6 +5419,28 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  "@rottensea/ds-personal-website@https://github.com/RottenSea/design-system/releases/download/personal-website-v0.7.4/rottensea-ds-personal-website-0.7.4.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))":
+    dependencies:
+      "@astrojs/markdown-remark": 7.3.4
+      "@shikijs/themes": 4.5.0
+      "@shikijs/transformers": 4.5.0
+      "@unocss/reset": 66.10.5
+      astro: 7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(yaml@2.9.1)
+      katex: 0.19.1
+      mdast-util-to-string: 4.0.0
+      medium-zoom: 1.1.2
+      mermaid: 12.2.0
+      qrcode: 1.5.4
+      remark-directive: 4.0.0
+      remark-math: 6.0.0
+      sharp: 0.35.5(@types/node@24.19.2)
+      shiki: 4.5.0
+      topojson-client: 3.1.0
+      unist-util-visit: 5.2.0
+      world-atlas: 2.0.2
+    transitivePeerDependencies:
+      - supports-color
+
   "@shikijs/core@4.5.0":
     dependencies:
       "@shikijs/primitive": 4.5.0
@@ -5850,6 +5927,8 @@ snapshots:
   commander@11.1.0: {}
 
   commander@15.0.0: {}
+
+  commander@2.20.3: {}
 
   commander@7.2.0: {}
 
@@ -7616,6 +7695,10 @@ snapshots:
 
   tinyps@0.5.1: {}
 
+  topojson-client@3.1.0:
+    dependencies:
+      commander: 2.20.3
+
   trim-lines@3.0.1: {}
 
   trough@2.2.0: {}
@@ -7855,6 +7938,8 @@ snapshots:
   web-namespaces@2.0.1: {}
 
   which-module@2.0.1: {}
+
+  world-atlas@2.0.2: {}
 
   wrap-ansi@6.2.0:
     dependencies:

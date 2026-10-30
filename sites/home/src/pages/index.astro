@@ -1,0 +1,131 @@
+---
+// Rainbow Stone, the way in to the other sites: one screen with the name, two links, and the
+// design system's DotGlobe turning under them. As the handoff's Rainbow Stone.dc.html, without
+// its About dialog (round AJ5), and in the light theme too (AJ7): the page follows the reader's
+// system setting, with no switch of its own.
+import "@rottensea/ds-personal-website/index.css";
+import {
+  DotGlobe,
+  Fonts,
+  ThemeScript
+} from "@rottensea/ds-personal-website/components";
+
+const LINKS = [
+  { label: "Article", href: "https://article.rottenth.cafe" },
+  { label: "Archive", href: "https://archive.rottenth.cafe" }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rainbow Stone</title>
+    <link rel="canonical" href={new URL("/", Astro.site).href} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <ThemeScript />
+    <Fonts />
+  </head>
+  <body>
+    <DotGlobe />
+    <main>
+      <h1>Rainbow Stone</h1>
+      <nav aria-label="Sites">
+        {LINKS.map(({ label, href }) => <a href={href}>{label}</a>)}
+      </nav>
+    </main>
+  </body>
+</html>
+
+<style>
+  /* The handoff's backdrop: a dark fall from night to ink with a coral glow rising from the
+     bottom, where the globe is. The light theme keeps the shape on cream. */
+  :global(html) {
+    --home-top: var(--cream-50);
+    --home-middle: var(--cream-50);
+    --home-bottom: var(--cream-100);
+    --home-glow: var(--coral-500);
+    --home-glow-strength: 14%;
+    height: 100%;
+  }
+
+  :global(html[data-theme="dark"]) {
+    --home-top: var(--night-850);
+    --home-middle: var(--night-900);
+    --home-bottom: var(--ink-900);
+    --home-glow: var(--coral-700);
+    --home-glow-strength: 20%;
+  }
+
+  body {
+    background:
+      radial-gradient(
+        120% 70% at 50% 118%,
+        color-mix(in srgb, var(--home-glow) var(--home-glow-strength), transparent) 0%,
+        color-mix(in srgb, var(--home-glow) 7%, transparent) 42%,
+        transparent 72%
+      ),
+      linear-gradient(180deg, var(--home-top) 0%, var(--home-middle) 55%, var(--home-bottom) 100%);
+    height: 100%;
+    overflow: hidden;
+  }
+
+  main {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    left: 0;
+    padding: 0 var(--space-lg);
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 34%;
+  }
+
+  h1 {
+    color: var(--text-ink);
+    font-family: var(--font-display);
+    font-size: clamp(38px, 6vw, 64px);
+    font-weight: 400;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin: 0;
+    max-width: 16em;
+    text-wrap: balance;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    justify-content: center;
+  }
+
+  /* Hairline pills in the uppercase caption style, as the handoff draws them. */
+  a {
+    border: 1px solid color-mix(in srgb, var(--text-muted) 28%, transparent);
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    line-height: 1.4;
+    padding: var(--space-xs) var(--space-md);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      background-color var(--motion-fast) var(--ease-enter),
+      border-color var(--motion-fast) var(--ease-enter),
+      color var(--motion-fast) var(--ease-enter);
+  }
+
+  a:hover,
+  a:focus-visible {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border-color: var(--color-primary);
+    color: var(--text-ink);
+  }
+</style>
