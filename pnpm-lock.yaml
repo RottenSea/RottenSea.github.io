@@ -6,6 +6,12 @@ settings:
 
 importers:
   .:
+    devDependencies:
+      "@biomejs/biome":
+        specifier: 2.6.3
+        version: 2.6.3
+
+  sites/article:
     dependencies:
       "@astrojs/markdown-remark":
         specifier: 7.3.4
@@ -53,9 +59,6 @@ importers:
       "@astrojs/check":
         specifier: 0.9.12
         version: 0.9.12(@emnapi/runtime@1.11.3)(prettier@3.9.10)(typescript@6.0.3)
-      "@biomejs/biome":
-        specifier: 2.6.3
-        version: 2.6.3
       "@types/hast":
         specifier: 3.0.5
         version: 3.0.5

@@ -1,0 +1,4 @@
+# One site per folder in sites/, named for its address on rottenth.cafe: home (www), article,
+# archive.
+packages:
+  - sites/*

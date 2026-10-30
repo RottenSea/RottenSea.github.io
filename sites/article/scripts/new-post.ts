@@ -21,17 +21,26 @@ if (name !== undefined) {
 const folders = readdirSync(BLOG, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name);
-// The folders of every path under src/content/blog that a commit touched: deleted posts' too.
+// The folders of every post a commit touched: deleted posts' too. Before the sites moved into
+// sites/, the posts were in src/content/blog at the repository's root, so both places are
+// searched. git prints paths from the repository's root, with forward slashes on every system.
 let committed: string[] = [];
 try {
   committed = execFileSync(
     "git",
-    // git prints and takes paths with forward slashes on every system.
-    ["log", "--all", "--name-only", "--format=", "--", "src/content/blog"],
+    [
+      "log",
+      "--all",
+      "--name-only",
+      "--format=",
+      "--",
+      ":(top)src/content/blog",
+      ":(top)sites/article/src/content/blog"
+    ],
     { encoding: "utf8" }
   )
     .split("\n")
-    .map((path) => path.split("/")[3] ?? "");
+    .map((path) => path.match(/content\/blog\/([^/]+)\//)?.[1] ?? "");
 } catch {
   console.warn("git could not be run, so only the folders here were counted.");
 }

@@ -33,12 +33,13 @@ jobs:
           cache: pnpm
       - uses: actions/configure-pages@v6
       - run: pnpm install --frozen-lockfile
-      # Type checks the Astro files and runs Biome's format and lint checks.
+      # Runs Biome's format and lint checks over the whole repository, and type checks every site.
       - run: pnpm check
-      - run: pnpm build
+      # GitHub Pages serves the personal website, in sites/article.
+      - run: pnpm --filter article build
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: dist
+          path: sites/article/dist
 
   deploy:
     needs: build
