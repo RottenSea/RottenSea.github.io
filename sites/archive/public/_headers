@@ -1,0 +1,12 @@
+# Response headers for Cloudflare, which reads this file from the built site. The three sites use
+# the same one. HTML gets Cloudflare's default, max-age=0 and must-revalidate with an ETag, so a
+# browser asks for a newer page every time.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Astro names its built files after a hash of their content, so a browser can keep each one a year.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

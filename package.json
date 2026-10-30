@@ -13,9 +13,11 @@
     "dev:home": "pnpm --filter home dev",
     "dev:article": "pnpm --filter article dev",
     "dev:archive": "pnpm --filter archive dev",
-    "new-post": "pnpm --filter article new-post"
+    "new-post": "pnpm --filter article new-post",
+    "build:article": "node scripts/full-history.ts && pnpm --filter article build"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.3"
+    "@biomejs/biome": "2.6.3",
+    "wrangler": "4.156.0"
   }
 }
