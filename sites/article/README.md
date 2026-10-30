@@ -10,7 +10,7 @@ Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's 
 
 `pnpm new-post` creates the next numbered folder with every frontmatter field in it, and `pnpm new-post <name>` also sets `permalink` to the name. A deleted post's number is not used again, since the script also counts folders in the git history. Both fill in `publishedAt` with the current time in UTC+8, which orders posts published on the same day. `publishedAt` can also be a bare date, meaning 11:00 UTC+8 that day. The fields and their rules are in `src/content.config.ts`, and a post with an unknown or mistyped field fails the build.
 
-A post's revision count is the number of commits that changed its `index.mdx`, read from git when the site is built, and its update date is that of the last of them unless the post sets `updatedAt`. The build needs the full history: a shallow clone gives every post one revision, and the build warns about it.
+A post's revision count is the number of commits that changed its `index.mdx`, read from git when the site is built, and its update date is that of the last of them unless the post sets `updatedAt`. A commit that only moved the file without changing it does not count, so renumbering the posts and moving the site into `sites/` left the counts alone. The build needs the full history: a shallow clone gives every post one revision, and the build warns about it.
 
 A post with `draft: true` shows up in `pnpm dev` but not in the built site. Only `index.md` or `index.mdx` one folder down becomes a post, so `src/content/blog/_quotes.md` is never published. It holds the quotes the home page shows one of at random: a line per quote, starting with `- `, with ` — ` before its source.
 

@@ -1,6 +1,7 @@
 // A post's revisions, read from the repository's history at build time. Every commit that changed
-// the post's file counts as one, following the file through renames. Node only: the browser never
-// imports this.
+// the post's file counts as one, following the file through renames. A commit that only moved the
+// file, its contents untouched, does not count: renumbering the posts and moving the site into
+// sites/ were such commits. Node only: the browser never imports this.
 import { execFileSync } from "node:child_process";
 
 export interface FileHistory {
@@ -34,9 +35,21 @@ export function fileHistory(path: string): FileHistory {
         "this is a shallow clone, so revision counts and update dates are incomplete. Fetch the full history first, such as with `git fetch --unshallow`."
       );
     }
-    const dates = git("log", "--follow", "--format=%aI", "--", path)
-      .split("\n")
-      .filter(Boolean);
+    // Each commit prints as a NUL, its date, then a status line such as "M\tpath" or
+    // "R100\told\tnew"; R100 is a rename with identical contents.
+    const dates = git(
+      "log",
+      "--follow",
+      "--format=%x00%aI",
+      "--name-status",
+      "--",
+      path
+    )
+      .split("\0")
+      .filter(Boolean)
+      .map((entry) => entry.trim().split(/\s+/))
+      .filter(([, status]) => status !== "R100")
+      .map(([date]) => date);
     history = { revisions: dates.length, lastChanged: dates[0] };
   } catch {
     warn("git could not be run, so posts show no revision counts.");
