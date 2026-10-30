@@ -4,11 +4,11 @@
 // its About dialog (round AJ5), and in the light theme too (AJ7): the page follows the reader's
 // system setting, with no switch of its own.
 import "@rottensea/ds-personal-website/index.css";
-import {
-  DotGlobe,
-  Fonts,
-  ThemeScript
-} from "@rottensea/ds-personal-website/components";
+// Each by its own path: the components index would pull every component's scripts into the
+// build, Mermaid and KaTeX among them, though the page loads none of them.
+import Fonts from "@rottensea/ds-personal-website/components/head/Fonts.astro";
+import ThemeScript from "@rottensea/ds-personal-website/components/head/ThemeScript.astro";
+import DotGlobe from "@rottensea/ds-personal-website/components/layout/DotGlobe.astro";
 
 const LINKS = [
   { label: "Article", href: "https://article.rottenth.cafe" },
