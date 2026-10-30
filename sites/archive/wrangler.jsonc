@@ -1,0 +1,22 @@
+// Devil's Footprints on Cloudflare Workers: the built site as static files, no Worker script.
+// Workers Builds runs from the repository's root, so the commands are
+//   build:  pnpm --filter archive build
+//   deploy: npx wrangler deploy --config sites/archive/wrangler.jsonc
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "rottenth-archive",
+  "compatibility_date": "2026-10-30",
+  // The site is reached only at its own address: no workers.dev address, no preview addresses.
+  "workers_dev": false,
+  "preview_urls": false,
+  // The first deploy binds the address to this Worker and adds its DNS record and certificate.
+  "routes": [{ "pattern": "archive.rottenth.cafe", "custom_domain": true }],
+  "assets": {
+    "directory": "./dist",
+    // URLs have no trailing slash, as Astro builds them: /about serves about.html, and /about/
+    // or /about.html redirect to /about.
+    "html_handling": "drop-trailing-slash",
+    // Pages that do not exist get the site's own 404 page.
+    "not_found_handling": "404-page"
+  }
+}
