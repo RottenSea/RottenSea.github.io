@@ -93,11 +93,25 @@ const links = NAV.map(({ label, href }) => ({ label, href }));
 </script>
 
 <style>
-  /* One reading column, or the grid's width for a page with rails. */
+  /* A page shorter than the window still ends with the footer at the bottom edge. dvh follows a
+     phone's address bar as it shows and hides, so the footer stays on the edge either way. */
+  :global(body) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  :global(body > .ds-footer) {
+    margin-top: auto;
+  }
+
+  /* One reading column, or the grid's width for a page with rails. The width is set because a
+     flex item with auto side margins would otherwise shrink to its content. */
   .site-main {
     margin-inline: auto;
     max-width: 42.5rem;
     padding: var(--space-xl) var(--space-lg) var(--space-section);
+    width: 100%;
   }
 
   .site-main--wide {
