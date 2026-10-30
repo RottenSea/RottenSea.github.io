@@ -1,5 +1,7 @@
-# Checks and builds the Astro site and deploys it to GitHub Pages, following
-# https://docs.astro.build/en/guides/deploy/github/
+# Checks the repository and deploys GitHub Pages, which at rottensea.github.io only sends readers on
+# to the personal website at article.rottenth.cafe: one redirect page for each of its pages, at the
+# same path, from scripts/pages-redirect.ts. The three sites themselves are built and deployed by
+# Cloudflare Workers Builds. The steps follow https://docs.astro.build/en/guides/deploy/github/.
 name: Deploy
 
 on:
@@ -35,11 +37,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # Runs Biome's format and lint checks over the whole repository, and type checks every site.
       - run: pnpm check
-      # GitHub Pages serves the personal website, in sites/article.
+      # The personal website is built only for the list of its pages.
       - run: pnpm --filter article build
+      - run: node scripts/pages-redirect.ts sites/article/dist pages-redirect
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: sites/article/dist
+          path: pages-redirect
 
   deploy:
     needs: build

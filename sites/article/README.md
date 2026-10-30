@@ -1,6 +1,6 @@
 # The Key of Urala
 
-The personal website, served at [rottensea.github.io](https://rottensea.github.io) until it moves to `article.rottenth.cafe`.
+The personal website, at [article.rottenth.cafe](https://article.rottenth.cafe).
 
 It is built with [Astro](https://astro.build/) 7 on the personal-website system from [RottenSea/design-system](https://github.com/RottenSea/design-system). The VitePress version that came before it is in this repository's history up to commit `52c6356`; until the sites moved into `sites/`, this site was the whole repository.
 
@@ -45,4 +45,4 @@ Run these in this folder, or from the repository's root with `pnpm --filter arti
 | `pnpm check` | Type checks the Astro files |
 | `pnpm new-post` | Creates a draft post |
 
-Pushing to `main` checks the repository, then builds this site and deploys it to GitHub Pages through `.github/workflows/deploy.yml`.
+Cloudflare Workers Builds builds it from `main` with `pnpm build:article` at the repository's root, which first fetches the whole git history if the clone is shallow, and deploys it with `npx wrangler deploy --config sites/article/wrangler.jsonc`.

@@ -10,3 +10,6 @@ dist/
 
 # Wrangler's local state from wrangler dev
 .wrangler/
+
+# GitHub Pages' redirect pages, from scripts/pages-redirect.ts
+pages-redirect/
