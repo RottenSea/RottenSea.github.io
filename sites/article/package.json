@@ -17,7 +17,7 @@
     "@fontsource/manrope": "5.3.0",
     "@fontsource/noto-serif": "5.3.0",
     "@internationalized/date": "3.12.4",
-    "@rottensea/ds-personal-website": "https://github.com/RottenSea/design-system/releases/download/personal-website-v0.7.4/rottensea-ds-personal-website-0.7.4.tgz",
+    "@rottensea/ds-personal-website": "https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz",
     "astro": "7.4.2",
     "opentype.js": "2.0.0",
     "sanitize-html": "2.18.1",
