@@ -8,7 +8,7 @@ import { AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from "../utils/site";
  * newest first (round AH3).
  */
 export async function GET({ site }: APIContext) {
-  const base = site ?? new URL("https://rottenth.cafe");
+  const base = site ?? new URL("https://article.rottenth.cafe");
   const posts = (await getPosts()).toSorted((a, b) =>
     postDates(b).published.localeCompare(postDates(a).published)
   );

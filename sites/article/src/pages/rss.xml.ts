@@ -121,7 +121,7 @@ function clean(html: string, page: URL) {
 }
 
 export async function GET(context: APIContext) {
-  const site = context.site ?? new URL("https://rottenth.cafe");
+  const site = context.site ?? new URL("https://article.rottenth.cafe");
   const container = await AstroContainer.create({
     renderers: await loadRenderers([getContainerRenderer()])
   });

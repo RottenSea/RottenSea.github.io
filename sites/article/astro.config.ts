@@ -9,7 +9,7 @@ import {
 } from "@rottensea/ds-personal-website/markdown";
 import { defineConfig } from "astro/config";
 
-const site = "https://rottenth.cafe";
+const site = "https://article.rottenth.cafe";
 
 export default defineConfig({
   site,
