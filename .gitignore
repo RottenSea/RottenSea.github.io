@@ -7,3 +7,6 @@ dist/
 
 # Obsidian settings, when src/content/blog is opened as a vault
 .obsidian/
+
+# Wrangler's local state from wrangler dev
+.wrangler/
