@@ -15,6 +15,7 @@ import {
   TocList
 } from "@rottensea/ds-personal-website/components";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { cardSize } from "../../utils/images";
 import {
   getPosts,
   type Post,
@@ -91,9 +92,51 @@ const url = new URL(postUrl(post), Astro.site).href;
 // The share poster draws the cover at 1080px wide.
 const cover =
   data.image && (await getImage({ src: data.image, width: 1080 })).src;
+// A shared link's card shows the cover cut to the card's 1200:630, or else the site's image.
+// Astro never enlarges an image, so a cover smaller than the card is cut at its own size.
+const shareSize = data.image && cardSize(data.image.width, data.image.height);
+const shareImage =
+  data.image && shareSize
+    ? (
+        await getImage({
+          src: data.image,
+          ...shareSize,
+          fit: "cover",
+          format: "jpg"
+        })
+      ).src
+    : "/og.png";
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: data.title,
+  description: data.description,
+  url,
+  mainEntityOfPage: url,
+  datePublished: published,
+  dateModified: updated,
+  inLanguage: data.lang === "zh" ? "zh-CN" : "en",
+  image: new URL(shareImage, Astro.site).href,
+  keywords: data.tags,
+  ...(data.category ? { articleSection: data.category } : {}),
+  author: {
+    "@type": "Person",
+    name: AUTHOR,
+    url: new URL("/about", Astro.site).href
+  },
+  license: POST_LICENSE.href
+};
 ---
 
-<BaseLayout title={data.title} description={data.description} wide>
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  wide
+  image={shareImage}
+  imageSize={shareSize}
+  article={{ published, modified: updated, tags: data.tags }}
+  jsonLd={jsonLd}
+>
   <ContentGrid stackRails="none" mainWidth="var(--container-reading)" class="post-grid">
     {/* Search indexes the post's title, text and tags, not the meta line or what follows the tags. */}
     <article

@@ -20,6 +20,7 @@ import {
   NEW_TAB_NOTE,
   POST_LICENSE,
   pagePath,
+  SITE_DESCRIPTION,
   SITE_TITLE,
   THEME_STORAGE_KEY
 } from "../utils/site";
@@ -32,18 +33,33 @@ interface Props {
   overlayNav?: boolean;
   /** The main column runs to the grid's width, for a page with rails. */
   wide?: boolean;
+  /** The share card's image at 1200:630: a path on this site. Without one, the site's own. */
+  image?: string;
+  /** The image's size in px, when it is not the site's own 1200 by 630. */
+  imageSize?: { width: number; height: number };
+  /** `article` for a post, with its dates as ISO instants. */
+  article?: { published: string; modified: string; tags: string[] };
+  /** Structured data for search engines: one schema.org object or several. */
+  jsonLd?: object | object[];
 }
 
 const {
   title,
-  description = "欢迎来到 RottenTh 的咖啡角~",
+  description = SITE_DESCRIPTION,
   overlayNav = false,
-  wide = false
+  wide = false,
+  image = "/og.png",
+  imageSize = { width: 1200, height: 630 },
+  article,
+  jsonLd
 } = Astro.props;
 const fullTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 const path = pagePath(Astro.url);
 const active = NAV.find((item) => item.matches(path))?.label;
 const links = NAV.map(({ label, href }) => ({ label, href }));
+const canonical = new URL(path, Astro.site).href;
+// JSON in a <script> ends at the first "</script", so "<" is written as an escape.
+const structured = jsonLd && JSON.stringify(jsonLd).replaceAll("<", "\\u003c");
 ---
 
 <!doctype html>
@@ -53,7 +69,33 @@ const links = NAV.map(({ label, href }) => ({ label, href }));
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={new URL(path, Astro.site)} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />
+    {/* The card a link shows when it is shared: Open Graph, which X reads too. */}
+    <meta property="og:type" content={article ? "article" : "website"} />
+    <meta property="og:site_name" content={SITE_TITLE} />
+    <meta property="og:title" content={title ?? SITE_TITLE} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(image, Astro.site).href} />
+    <meta property="og:image:width" content={String(imageSize.width)} />
+    <meta property="og:image:height" content={String(imageSize.height)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {
+      article && (
+        <>
+          <meta property="article:published_time" content={article.published} />
+          <meta property="article:modified_time" content={article.modified} />
+          {article.tags.map((tag) => (
+            <meta property="article:tag" content={tag} />
+          ))}
+        </>
+      )
+    }
+    {structured && <script type="application/ld+json" set:html={structured} />}
     {/* Sets data-theme before the first paint: the reader's choice, or else the OS setting. */}
     <ThemeScript storageKey={THEME_STORAGE_KEY} motionKey={MOTION_STORAGE_KEY} />
     {/*

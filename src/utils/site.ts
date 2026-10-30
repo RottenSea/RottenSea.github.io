@@ -1,5 +1,8 @@
 export const SITE_TITLE = "The Key of Urala";
 
+/** The site in one line: pages without their own description, the feed and llms.txt use it. */
+export const SITE_DESCRIPTION = "欢迎来到 RottenTh 的咖啡角~";
+
 /** Who writes the posts: the copyright card and the about page use it. */
 export const AUTHOR = "RottenTh";
 
@@ -41,10 +44,10 @@ export const SOCIAL = [
   { label: "Bluesky", href: "https://bsky.app/profile/rottenth.bsky.social" }
 ];
 
-/** The footer's link columns. RSS joins Elsewhere once the site has a feed. */
+/** The footer's link columns: the site's pages, and the author's other sites with the feed. */
 export const FOOTER_COLUMNS = [
   { title: "Site", links: NAV.map(({ label, href }) => ({ label, href })) },
-  { title: "Elsewhere", links: SOCIAL }
+  { title: "Elsewhere", links: [...SOCIAL, { label: "RSS", href: "/rss.xml" }] }
 ];
 
 /**

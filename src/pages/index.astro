@@ -15,9 +15,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getPosts, postDates, postUrl } from "../utils/posts";
 import { QUOTES } from "../utils/quotes";
 import { countWords, readingMinutes } from "../utils/reading";
-import { SITE_TITLE } from "../utils/site";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../utils/site";
 
 const posts = await getPosts();
+// The site itself, for search engines.
+const WEBSITE = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  url: new URL("/", Astro.site).href
+};
 
 const rows = await Promise.all(
   posts.map(async (post) => {
@@ -68,7 +76,7 @@ const days = rows.reduce<Record<string, number>>((counts, { dates }) => {
 }, {});
 ---
 
-<BaseLayout overlayNav wide>
+<BaseLayout overlayNav wide jsonLd={WEBSITE}>
   <QuoteBand slot="hero" eyebrow="欢迎来到 RottenTh 的咖啡角~" quotes={QUOTES} />
   <h1 class="ds-visually-hidden">{SITE_TITLE}</h1>
   <ContentGrid>

@@ -1,5 +1,6 @@
 import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
 import {
   rehypeDsExternalLinks,
   rehypeDsHeadingAnchors,
@@ -26,7 +27,8 @@ export default defineConfig({
   },
   // 4321, Astro's default, is the design-system docs site's.
   server: { port: 4173 },
-  integrations: [mdx()],
+  // The sitemap lists every page but the 404 one; drafts are never built for production.
+  integrations: [mdx(), sitemap({ filter: (page) => !page.endsWith("/404") })],
   markdown: {
     // Astro 7 defaults to Sätteri. Unified runs the design system's remark and rehype plugins.
     processor: unified({

@@ -22,11 +22,11 @@ Posts are MDX, so `<`, `{` and `}` in ordinary text have to be escaped (`\<`, `\
 | --- | --- |
 | `src/content/blog/` | Posts |
 | `src/content.config.ts` | The post collection and its frontmatter schema |
-| `src/pages/` | Routes: the home page, about, 404 and `blog/[slug]` |
+| `src/pages/` | Routes: the home page, about, 404 and `blog/[slug]`; and files made at build time: the feed (`rss.xml`, every post in full), `llms.txt`, `robots.txt`, the icons and the default share image (`og.png`) |
 | `src/layouts/` | `BaseLayout` is the page frame; `AboutLayout` lays out about.mdx with the avatar and the author's other sites |
 | `src/components/` | The site's own components; the page shell (nav, footer, search, display settings) comes from the design system |
 | `src/styles/` | `prose.css`, the running-text styles the design system leaves to the site |
-| `src/utils/` | Dates, the post list, reading time, the home page's quotes, and site constants |
+| `src/utils/` | Dates, the post list, reading time, the home page's quotes, site constants, and `images.ts`, which draws the icons and share image from the design system's logo with `sharp` |
 | `src/scripts/` | `home.ts` filters and pages the home page's posts and counts the uptime; `search.ts` answers the nav's search from the Pagefind index |
 | `scripts/new-post.ts` | The `pnpm new-post` script |
 | `pagefind.yml` | Pagefind's settings: one Chinese index of the posts, without screen-reader text |
