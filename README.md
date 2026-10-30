@@ -10,7 +10,7 @@ The sites on rottenth.cafe, one folder each in `sites/`, named for its address:
 
 Each site is its own Astro project and its own README says how it is laid out and what its commands do. They are built on the systems from [RottenSea/design-system](https://github.com/RottenSea/design-system), whose docs are on GitHub Pages at `rottensea.github.io/design-system`.
 
-Cloudflare Workers Builds builds each site from `main` and deploys it with Wrangler; the site's `wrangler.jsonc` names its Worker and its address, and `public/_headers` its response headers. The personal website used to be at [rottensea.github.io](https://rottensea.github.io); GitHub Pages now serves only redirect pages there, one for each of the site's pages, made by `scripts/pages-redirect.ts` in `.github/workflows/deploy.yml`. The repository keeps its name because GitHub Pages serves a repository named so at that address.
+Cloudflare Workers Builds builds each site from `main` and deploys it with Wrangler; the site's `wrangler.jsonc` names its Worker and its address, and `public/_headers` its response headers. The personal website used to be at [rottensea.github.io](https://rottensea.github.io); GitHub Pages now serves only redirect pages there, made by `scripts/pages-redirect.ts` in `.github/workflows/deploy.yml`. Its home page goes to www.rottenth.cafe and every other page to the same path on article.rottenth.cafe. The repository keeps its name because GitHub Pages serves a repository named so at that address.
 
 ## Commands
 

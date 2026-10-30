@@ -1,6 +1,6 @@
 # Checks the repository and deploys GitHub Pages, which at rottensea.github.io only sends readers on
-# to the personal website at article.rottenth.cafe: one redirect page for each of its pages, at the
-# same path, from scripts/pages-redirect.ts. The three sites themselves are built and deployed by
+# to rottenth.cafe: the home page to www.rottenth.cafe, and every other page of the personal website
+# to the same path at article.rottenth.cafe, from scripts/pages-redirect.ts. The three sites themselves are built and deployed by
 # Cloudflare Workers Builds. The steps follow https://docs.astro.build/en/guides/deploy/github/.
 name: Deploy
 
