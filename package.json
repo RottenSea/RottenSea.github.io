@@ -12,6 +12,7 @@
     "build": "pnpm -r run build",
     "dev:home": "pnpm --filter home dev",
     "dev:article": "pnpm --filter article dev",
+    "dev:archive": "pnpm --filter archive dev",
     "new-post": "pnpm --filter article new-post"
   },
   "devDependencies": {

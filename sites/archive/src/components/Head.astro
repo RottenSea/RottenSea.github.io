@@ -1,0 +1,10 @@
+---
+// Starlight's head, plus the personal-website system's fonts, loaded without holding up the page
+// as on the other two sites.
+import Default from "@astrojs/starlight/components/Head.astro";
+// By its own path: the components index would pull every component's scripts into the build.
+import Fonts from "@rottensea/ds-personal-website/components/head/Fonts.astro";
+---
+
+<Default />
+<Fonts />

@@ -1,0 +1,79 @@
+---
+title: 在这里写一篇教程
+description: 教程放在哪、开头写什么、怎么在本地看效果。
+sidebar:
+  order: 1
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+这一篇是示例教程，也说明这个网站的教程怎么写。下面的提示框、步骤和代码块，教程里都能用。
+
+## 文件放在哪
+
+每篇教程是 `sites/archive/src/content/docs/tutorials/` 里的一个文件，`.md` 和 `.mdx` 都可以。文件名就是网址的最后一段：`install-node.md` 的网址是 `/tutorials/install-node`。
+
+用到下面的步骤组件就写 `.mdx`，只有文字和代码的话 `.md` 就够了。
+
+## 开头写什么
+
+文件开头是一段 frontmatter：
+
+```yaml
+---
+title: 安装 Node.js
+description: 一句话说明这篇教程做什么。
+sidebar:
+  order: 2
+---
+```
+
+- `title` 是页面标题，侧栏里也显示它。
+- `description` 是页面的描述，搜索引擎和分享卡片会用到。
+- `sidebar.order` 决定侧栏里的顺序，数字小的在前。不写就按文件名排。
+
+## 在本地看效果
+
+<Steps>
+
+1. 在仓库根目录装好依赖：
+
+   ```sh
+   pnpm install
+   ```
+
+2. 启动教程站的本地服务器：
+
+   ```sh
+   pnpm dev:archive
+   ```
+
+3. 打开 `http://localhost:4175`。文件改了，页面会自己刷新。
+
+</Steps>
+
+:::note
+本地服务器上搜索用不了。要试搜索，先构建再预览：`pnpm --filter archive build`，然后 `pnpm --filter archive preview`。
+:::
+
+## 提示框
+
+提示框有四种，用三个冒号包起来：
+
+```md
+:::tip
+一个小技巧。
+:::
+```
+
+:::tip
+`note` 写补充说明，`tip` 写小技巧。
+:::
+
+:::caution
+`caution` 写容易出错的地方。
+:::
+
+:::danger
+`danger` 写会丢数据、做了改不回来的操作。
+:::

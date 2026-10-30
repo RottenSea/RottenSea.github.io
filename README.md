@@ -8,7 +8,7 @@ The sites on rottenth.cafe, one folder each in `sites/`, named for its address:
 | `sites/article` | The Key of Urala, the personal website | `article.rottenth.cafe` |
 | `sites/archive` | Devil's Footprints, tutorials | `archive.rottenth.cafe` |
 
-`sites/archive` is still to come. Each site is its own Astro project and its own README says how it is laid out and what its commands do. They are built on the systems from [RottenSea/design-system](https://github.com/RottenSea/design-system), whose docs are on GitHub Pages at `rottensea.github.io/design-system`.
+Each site is its own Astro project and its own README says how it is laid out and what its commands do. They are built on the systems from [RottenSea/design-system](https://github.com/RottenSea/design-system), whose docs are on GitHub Pages at `rottensea.github.io/design-system`.
 
 Until the sites move to rottenth.cafe, the personal website is served at [rottensea.github.io](https://rottensea.github.io). The repository keeps that name because GitHub Pages serves a repository named so at that address.
 
@@ -24,6 +24,7 @@ The repository is a [pnpm](https://pnpm.io/) workspace. From the root:
 | `pnpm build` | Builds every site |
 | `pnpm dev:home` | Starts Rainbow Stone's local server, on port 4174 |
 | `pnpm dev:article` | Starts the personal website's local server, on port 4173 |
+| `pnpm dev:archive` | Starts Devil's Footprints' local server, on port 4175 |
 | `pnpm new-post` | Creates a draft post on the personal website |
 
 `pnpm --filter <folder name> <command>` runs any of a site's own commands from here, such as `pnpm --filter article preview`.

@@ -1,0 +1,85 @@
+/*
+ * Starlight in the personal-website system's terms. Starlight keeps its styles in cascade layers,
+ * so these plain rules win over them. The system's tokens follow data-theme on <html>, the same
+ * attribute Starlight's theme select writes, so one set of rules covers both themes.
+ */
+:root {
+  /* Starlight's grey scale runs from the strongest text (white) to the page (black). */
+  --sl-color-white: var(--text-ink);
+  --sl-color-gray-1: var(--text-body-strong);
+  --sl-color-gray-2: var(--text-body);
+  --sl-color-gray-3: var(--text-muted);
+  --sl-color-gray-4: var(--text-muted-soft);
+  --sl-color-gray-5: var(--hairline);
+  --sl-color-gray-6: var(--surface-card);
+  --sl-color-gray-7: var(--surface-soft);
+  --sl-color-black: var(--surface-canvas);
+
+  --sl-color-accent-low: color-mix(
+    in srgb,
+    var(--color-primary) 18%,
+    var(--surface-canvas)
+  );
+  --sl-color-accent: var(--color-primary);
+  --sl-color-accent-high: var(--color-primary);
+  --sl-color-text-accent: var(--text-link);
+  /* Text on the accent, such as the sidebar's current page: dark ink reads on coral in both themes. */
+  --sl-color-text-invert: var(--ink-900);
+
+  --sl-color-bg: var(--surface-canvas);
+  --sl-color-bg-nav: var(--surface-canvas);
+  --sl-color-bg-sidebar: var(--surface-canvas);
+  --sl-color-bg-inline-code: var(--surface-card);
+  --sl-color-hairline: var(--hairline-soft);
+  --sl-color-hairline-light: var(--hairline);
+  --sl-color-hairline-shade: var(--hairline);
+
+  --sl-font: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+
+  --sl-shadow-sm: var(--shadow-hover);
+  --sl-shadow-md: var(--shadow-float);
+  --sl-shadow-lg: var(--shadow-float);
+}
+
+/* The site's name in ink, as the brand in the personal website's top nav. */
+.site-title {
+  color: var(--text-ink);
+}
+
+/* Titles in the system's display serif, as on the personal website. */
+:is(.sl-markdown-content :is(h1, h2, h3), h1#_top, .hero h1) {
+  font-family: var(--font-display);
+}
+
+/* Asides as the system's admonitions: a card with its label in the kind's colour. */
+.starlight-aside {
+  background: var(--surface-card);
+  border: 0;
+  border-radius: var(--radius-lg);
+}
+
+.starlight-aside--note {
+  --sl-color-asides-text-accent: var(--accent-teal);
+}
+
+.starlight-aside--tip {
+  --sl-color-asides-text-accent: var(--status-success);
+}
+
+.starlight-aside--caution {
+  --sl-color-asides-text-accent: var(--status-warning);
+}
+
+.starlight-aside--danger {
+  --sl-color-asides-text-accent: var(--status-error);
+}
+
+/* The system's radii on Starlight's boxes. */
+:is(
+  site-search button[data-open-modal],
+  .sl-markdown-content :not(pre) > code,
+  .pagination-links a
+) {
+  border-radius: var(--radius-md);
+}
