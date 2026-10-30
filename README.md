@@ -8,7 +8,7 @@ The sites on rottenth.cafe, one folder each in `sites/`, named for its address:
 | `sites/article` | The Key of Urala, the personal website | `article.rottenth.cafe` |
 | `sites/archive` | Devil's Footprints, tutorials | `archive.rottenth.cafe` |
 
-`sites/archive` is still to come. Each site is its own Astro project and its own README says how it is laid out and what its commands do. They are built on the systems from [RottenSea/design-system](https://github.com/RottenSea/design-system), whose docs will be at `design.rottenth.cafe`.
+`sites/archive` is still to come. Each site is its own Astro project and its own README says how it is laid out and what its commands do. They are built on the systems from [RottenSea/design-system](https://github.com/RottenSea/design-system), whose docs are on GitHub Pages at `rottensea.github.io/design-system`.
 
 Until the sites move to rottenth.cafe, the personal website is served at [rottensea.github.io](https://rottensea.github.io). The repository keeps that name because GitHub Pages serves a repository named so at that address.
 
