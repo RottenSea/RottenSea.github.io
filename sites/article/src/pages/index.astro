@@ -77,7 +77,14 @@ const days = rows.reduce<Record<string, number>>((counts, { dates }) => {
 ---
 
 <BaseLayout overlayNav wide jsonLd={WEBSITE}>
-  <QuoteBand slot="hero" eyebrow="欢迎来到 RottenTh 的咖啡角~" quotes={QUOTES} />
+  {/* Bare, so the sky shows through; ink keeps the text in the theme's colours. */}
+  <QuoteBand
+    slot="hero"
+    tone="bare"
+    overlayTone="ink"
+    eyebrow="欢迎来到 RottenTh 的咖啡角~"
+    quotes={QUOTES}
+  />
   <h1 class="ds-visually-hidden">{SITE_TITLE}</h1>
   <ContentGrid>
     <Fragment slot="left">
