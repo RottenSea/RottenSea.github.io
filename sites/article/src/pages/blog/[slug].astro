@@ -155,7 +155,7 @@ const jsonLd = {
       {data.category && <span hidden data-pagefind-meta={`category:${data.category}`}></span>}
       <header class="post__header">
         <div lang="en" data-pagefind-ignore><PostMeta size="md" items={meta}>
-          <ViewCount server={COMMENT_SERVER} path={commentPath} title={data.title} />
+          <ViewCount server={COMMENT_SERVER} path={commentPath} title={data.title} oncePerDay />
         </PostMeta></div>
         <h1 class="post__title">{data.title}</h1>
       </header>
