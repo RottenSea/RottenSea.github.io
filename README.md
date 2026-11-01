@@ -28,9 +28,12 @@ The repository is a [pnpm](https://pnpm.io/) workspace. From the root:
 | `pnpm dev:article` | Starts the personal website's local server, on port 4173 |
 | `pnpm dev:archive` | Starts Devil's Footprints' local server, on port 4175 |
 | `pnpm new-post` | Creates a draft post on the personal website |
+| `pnpm test` | Tests the three sites' last builds in a real browser: accessibility with axe, and what the pages do. Build first (`pnpm build`); it uses the Chrome installed on this computer and runs here only, not in CI |
 | `pnpm build:comment` | Builds the comment service; the first time, it fetches and builds Twikoo, which takes some minutes |
 | `pnpm dev:comment` | Runs the comment service at `http://localhost:8787`, with a database of its own in `workers/comment/.wrangler/`; the personal website's local server uses it, so trying a post leaves nothing in the real comments |
 
 `pnpm --filter <folder name> <command>` runs any of a site's own commands from here, such as `pnpm --filter article preview`.
+
+The tests are in `tests/`, a folder for each site, with `playwright.config.ts` at the root. They start each site's `astro preview` themselves, block every request to the comment service so no real view count moves, and leave colour contrast out of the axe check: the design system keeps three low-contrast colour pairs on purpose.
 
 Biome's settings in `biome.json` are shared by every site. It formats the TypeScript files and the script parts of `.astro` files; it leaves the HTML in `.astro` files, Markdown, MDX and SVG files alone.

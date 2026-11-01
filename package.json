@@ -16,10 +16,13 @@
     "new-post": "pnpm --filter article new-post",
     "build:article": "node scripts/full-history.ts && pnpm --filter article build",
     "build:comment": "node workers/comment/build.ts",
-    "dev:comment": "node workers/comment/build.ts && wrangler dev --config workers/comment/wrangler.jsonc"
+    "dev:comment": "node workers/comment/build.ts && wrangler dev --config workers/comment/wrangler.jsonc",
+    "test": "playwright test"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@biomejs/biome": "2.6.3",
+    "@playwright/test": "1.64.1",
     "wrangler": "4.156.0"
   }
 }

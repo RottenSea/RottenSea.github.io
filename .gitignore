@@ -16,3 +16,7 @@ pages-redirect/
 
 # Twikoo's source, which workers/comment/build.ts fetches and builds
 .twikoo/
+
+# Playwright: results and reports from pnpm test
+test-results/
+playwright-report/
