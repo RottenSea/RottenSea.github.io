@@ -20,7 +20,7 @@
     {
       "binding": "DB",
       "database_name": "rottenth-comment",
-      "database_id": "00000000-0000-0000-0000-000000000000"
+      "database_id": "8c6b89d2-0031-4cdb-a021-dff62365f215"
     }
   ],
   "observability": { "enabled": true }
