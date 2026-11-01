@@ -160,7 +160,7 @@ const jsonLd = {
         <h1 class="post__title">{data.title}</h1>
       </header>
 
-      {data.image && <Figure src={data.image} alt="" zoom={false} loading="eager" class="post__cover" />}
+      {data.image && <Figure src={data.image} alt="" zoom={false} loading="eager" sizes="(min-width: 720px) 680px, 100vw" class="post__cover" />}
 
       <div class="prose">
         {/* Code fences, tables and images become the design system's CodeBlock, TableScroll and Figure. */}

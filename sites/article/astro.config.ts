@@ -25,6 +25,9 @@ export default defineConfig({
     "/blog/20260616": "/blog/000003",
     "/blog/20260617": "/blog/000004"
   },
+  // Every image gets several widths and a `sizes` that follows its own width, so a phone loads a
+  // smaller file. The design system's components size the images; Astro adds no styles of its own.
+  image: { layout: "constrained" },
   // 4321, Astro's default, is the design-system docs site's.
   server: { port: 4173 },
   // The sitemap lists every page but the 404 one; drafts are never built for production.
