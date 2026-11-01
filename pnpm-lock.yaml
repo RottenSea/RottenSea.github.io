@@ -24,8 +24,8 @@ importers:
         specifier: 0.42.7
         version: 0.42.7(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1))(typescript@6.0.3)
       '@rottensea/ds-personal-website':
-        specifier: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz
-        version: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))
+        specifier: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.1/rottensea-ds-personal-website-1.0.1.tgz
+        version: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.1/rottensea-ds-personal-website-1.0.1.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))
       astro:
         specifier: 7.4.2
         version: 7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
@@ -67,8 +67,8 @@ importers:
         specifier: 3.12.4
         version: 3.12.4
       '@rottensea/ds-personal-website':
-        specifier: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz
-        version: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))
+        specifier: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.1/rottensea-ds-personal-website-1.0.1.tgz
+        version: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.1/rottensea-ds-personal-website-1.0.1.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))
       astro:
         specifier: 7.4.2
         version: 7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
@@ -116,8 +116,8 @@ importers:
         specifier: 7.3.4
         version: 7.3.4
       '@rottensea/ds-personal-website':
-        specifier: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz
-        version: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))
+        specifier: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.1/rottensea-ds-personal-website-1.0.1.tgz
+        version: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.1/rottensea-ds-personal-website-1.0.1.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))
       astro:
         specifier: 7.4.2
         version: 7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
@@ -1065,9 +1065,9 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@rottensea/ds-personal-website@https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz':
-    resolution: {tarball: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz}
-    version: 1.0.0
+  '@rottensea/ds-personal-website@https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.1/rottensea-ds-personal-website-1.0.1.tgz':
+    resolution: {tarball: https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.1/rottensea-ds-personal-website-1.0.1.tgz}
+    version: 1.0.1
     peerDependencies:
       '@astrojs/markdown-remark': ^7.3.0
       astro: ^7.2.0
@@ -1117,6 +1117,9 @@ packages:
 
   '@swc/helpers@0.5.23':
     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
+
+  '@twikoojs/shared@2.0.17':
+    resolution: {integrity: sha512-pE3scZcxAiVrQjpDCtUlZxXax7F3FL7YJS/+epZqJX9Ja9qJWrCxl6Y2aOG7bqzmnnGDR/QNB88jrq67lYtYPQ==}
 
   '@tybys/wasm-util@0.10.4':
     resolution: {integrity: sha512-W3c4gRigFS0T/Ma4qIYF3GDAc5AQdHb1yL5znJT1Zv1YaD9Kitx656wBjvr19qbiosmZT8lWDM5BEMynUqX65A==}
@@ -2864,6 +2867,9 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
+  twikoo@2.0.17:
+    resolution: {integrity: sha512-TX8y0jUoaIZkTUAvW6zzJoZr9/F8iWmoM/q1DqVROHtjfEqGz2FFLZ8II0yyRu92SL41fodk1Ay/L+xAU7mJhw==}
+
   typesafe-path@0.2.2:
     resolution: {integrity: sha512-OJabfkAg1WLZSqJAJ0Z6Sdt3utnbzr/jh+NAHoyWHJe8CMSy79Gm085094M9nvTPy22KzTVn5Zq5mbapCI/hPA==}
 
@@ -4070,7 +4076,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@rottensea/ds-personal-website@https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.0/rottensea-ds-personal-website-1.0.0.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))':
+  '@rottensea/ds-personal-website@https://github.com/RottenSea/design-system/releases/download/personal-website-v1.0.1/rottensea-ds-personal-website-1.0.1.tgz(@astrojs/markdown-remark@7.3.4)(astro@7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1))(sharp@0.35.5(@types/node@24.19.2))':
     dependencies:
       '@astrojs/markdown-remark': 7.3.4
       '@shikijs/themes': 4.5.0
@@ -4087,6 +4093,7 @@ snapshots:
       sharp: 0.35.5(@types/node@24.19.2)
       shiki: 4.5.0
       topojson-client: 3.1.0
+      twikoo: 2.0.17
       unist-util-visit: 5.2.0
       world-atlas: 2.0.2
     transitivePeerDependencies:
@@ -4144,6 +4151,8 @@ snapshots:
   '@swc/helpers@0.5.23':
     dependencies:
       tslib: 2.8.1
+
+  '@twikoojs/shared@2.0.17': {}
 
   '@tybys/wasm-util@0.10.4':
     dependencies:
@@ -6537,6 +6546,10 @@ snapshots:
   ts-dedent@2.3.0: {}
 
   tslib@2.8.1: {}
+
+  twikoo@2.0.17:
+    dependencies:
+      '@twikoojs/shared': 2.0.17
 
   typesafe-path@0.2.2: {}
 
