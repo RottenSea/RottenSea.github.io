@@ -57,6 +57,15 @@ export const FOOTER_COLUMNS = [
 export const filterUrl = (key: "category" | "tag", value: string) =>
   `/?${new URLSearchParams({ [key]: value })}`;
 
+/**
+ * The comment service, Twikoo at comment.rottenth.cafe: posts' comments and view counts. In
+ * development it is the copy pnpm dev:comment runs on this computer, so trying a draft leaves
+ * nothing in the real comments.
+ */
+export const COMMENT_SERVER = import.meta.env.DEV
+  ? "http://localhost:8787"
+  : "https://comment.rottenth.cafe";
+
 /** The licence posts are published under. */
 export const POST_LICENSE = {
   name: "CC BY-NC-SA 4.0",

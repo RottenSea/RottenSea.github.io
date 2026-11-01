@@ -2,6 +2,7 @@
 import { getImage } from "astro:assets";
 import { render } from "astro:content";
 import {
+  Comments,
   ContentGrid,
   components,
   Figure,
@@ -12,7 +13,8 @@ import {
   SidebarCard,
   TagList,
   TocButton,
-  TocList
+  TocList,
+  ViewCount
 } from "@rottensea/ds-personal-website/components";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { cardSize } from "../../utils/images";
@@ -26,6 +28,7 @@ import {
 import { countWords, readingMinutes } from "../../utils/reading";
 import {
   AUTHOR,
+  COMMENT_SERVER,
   filterUrl,
   NEW_TAB_NOTE,
   POST_LICENSE,
@@ -89,6 +92,9 @@ const meta = [
   ...(revisions > 0 ? [`Revision ${revisions}`] : [])
 ];
 const url = new URL(postUrl(post), Astro.site).href;
+// Comments and the view count are kept under the post's folder name, which never changes, so a
+// new permalink keeps them.
+const commentPath = `/blog/${post.id}`;
 // The share poster draws the cover at 1080px wide.
 const cover =
   data.image && (await getImage({ src: data.image, width: 1080 })).src;
@@ -148,7 +154,9 @@ const jsonLd = {
       <span hidden data-pagefind-meta={`date:${publishedDate}`}></span>
       {data.category && <span hidden data-pagefind-meta={`category:${data.category}`}></span>}
       <header class="post__header">
-        <div lang="en" data-pagefind-ignore><PostMeta size="md" items={meta} /></div>
+        <div lang="en" data-pagefind-ignore><PostMeta size="md" items={meta}>
+          <ViewCount server={COMMENT_SERVER} path={commentPath} title={data.title} />
+        </PostMeta></div>
         <h1 class="post__title">{data.title}</h1>
       </header>
 
@@ -188,6 +196,12 @@ const jsonLd = {
         <PostNav prev={older} next={newer} />
         </div>
       </footer>
+
+      {data.comment && (
+        <div data-pagefind-ignore>
+          <Comments server={COMMENT_SERVER} path={commentPath} />
+        </div>
+      )}
     </article>
 
     {

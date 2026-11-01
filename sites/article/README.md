@@ -12,6 +12,8 @@ Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's 
 
 A post's revision count is the number of commits that changed its `index.mdx`, read from git when the site is built, and its update date is that of the last of them unless the post sets `updatedAt`. A commit that only moved the file without changing it does not count, so renumbering the posts and moving the site into `sites/` left the counts alone. The build needs the full history: a shallow clone gives every post one revision, and the build warns about it.
 
+A post with `comment: true` has comments at its end, and every post shows its view count in its meta line. Both come from the comment service at `comment.rottenth.cafe` and are kept under the post's folder number, so a new `permalink` keeps them. `pnpm dev` uses the local copy that `pnpm dev:comment` runs instead (see the repository's README); without it, the comments show an error and the meta line goes without the count.
+
 A post with `draft: true` shows up in `pnpm dev` but not in the built site. Only `index.md` or `index.mdx` one folder down becomes a post, so `src/content/blog/_quotes.md` is never published. It holds the quotes the home page shows one of at random: a line per quote, starting with `- `, with ` — ` before its source.
 
 Posts are MDX, so `<`, `{` and `}` in ordinary text have to be escaped (`\<`, `\{`, `\}`), and HTML comments are written `{/* ... */}`. Code blocks and inline code are not affected.
