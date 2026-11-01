@@ -1,0 +1,27 @@
+// The comment service at comment.rottenth.cafe: Twikoo's Cloudflare Workers backend, with the
+// comments, page view counts and Twikoo's settings in D1. build.ts builds it into .twikoo/.
+// Workers Builds runs from the repository's root, so the commands are
+//   build:  pnpm build:comment
+//   deploy: npx wrangler deploy --config workers/comment/wrangler.jsonc
+// pnpm dev:comment runs it on this computer instead, at http://localhost:8787, with a local copy of
+// the database in .wrangler/.
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "rottenth-comment",
+  "main": ".twikoo/packages/server-cloudflare/dist/index.js",
+  "compatibility_date": "2026-10-30",
+  // Twikoo uses Node's APIs, as its Cloudflare backend says it must.
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "comment.rottenth.cafe", "custom_domain": true }],
+  // Twikoo creates its tables on its first request.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "rottenth-comment",
+      "database_id": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
+  "observability": { "enabled": true }
+}

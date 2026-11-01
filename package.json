@@ -14,7 +14,9 @@
     "dev:article": "pnpm --filter article dev",
     "dev:archive": "pnpm --filter archive dev",
     "new-post": "pnpm --filter article new-post",
-    "build:article": "node scripts/full-history.ts && pnpm --filter article build"
+    "build:article": "node scripts/full-history.ts && pnpm --filter article build",
+    "build:comment": "node workers/comment/build.ts",
+    "dev:comment": "node workers/comment/build.ts && wrangler dev --config workers/comment/wrangler.jsonc"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",

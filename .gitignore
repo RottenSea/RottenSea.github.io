@@ -13,3 +13,6 @@ dist/
 
 # GitHub Pages' redirect pages, from scripts/pages-redirect.ts
 pages-redirect/
+
+# Twikoo's source, which workers/comment/build.ts fetches and builds
+.twikoo/
