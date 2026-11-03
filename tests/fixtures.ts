@@ -42,7 +42,10 @@ export async function accessibilityProblems(
         .map((node) => node.target.join(" "))
         .filter(
           (target) =>
-            !(id === "label-content-name-mismatch" && target.includes(".ds-spoiler"))
+            !(
+              id === "label-content-name-mismatch" &&
+              target.includes(".ds-spoiler")
+            )
         )
         .slice(0, 5)
     }))
