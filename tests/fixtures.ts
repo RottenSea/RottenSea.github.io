@@ -20,6 +20,9 @@ export { expect };
  * The page's accessibility problems, as axe finds them under WCAG 2.2 A and AA. Colour contrast is
  * left out: three low-contrast pairs from the design handoff are kept on purpose. So is Twikoo's
  * comment area, whose markup is Twikoo's own. A site can leave out more with `exclude`.
+ *
+ * A covered Spoiler is not counted against "label in name": its text is drawn in the cover's own
+ * colour, so none of it is visible to match the button's name, but axe cannot tell.
  */
 export async function accessibilityProblems(
   page: Page,
@@ -31,9 +34,17 @@ export async function accessibilityProblems(
     .exclude(".ds-comments .twikoo");
   for (const selector of exclude) axe = axe.exclude(selector);
   const { violations } = await axe.analyze();
-  return violations.map(({ id, help, nodes }) => ({
-    id,
-    help,
-    where: nodes.map((node) => node.target.join(" ")).slice(0, 5)
-  }));
+  return violations
+    .map(({ id, help, nodes }) => ({
+      id,
+      help,
+      where: nodes
+        .map((node) => node.target.join(" "))
+        .filter(
+          (target) =>
+            !(id === "label-content-name-mismatch" && target.includes(".ds-spoiler"))
+        )
+        .slice(0, 5)
+    }))
+    .filter(({ where }) => where.length > 0);
 }
