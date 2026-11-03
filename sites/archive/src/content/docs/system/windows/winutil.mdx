@@ -1,0 +1,112 @@
+---
+title: 用 WinUtil 清理
+description: 用 Chris Titus Tech Windows Utility 关掉遥测、广告和用不到的服务，每个选项是做什么的，推荐开哪些。
+sidebar:
+  order: 6
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+**Chris Titus Tech Windows Utility**（简称 WinUtil）是一款免费开源的 Windows 优化和维护工具，由技术博主 Chris Titus 开发。它其实是一个带图形界面的 PowerShell 脚本，集成了大量脚本和设置，可以一站式完成系统精简、性能优化、隐私设置和软件安装。
+
+<Steps>
+
+1. **以管理员身份打开 PowerShell**
+
+2. **运行下面的命令**
+
+   ```powershell
+   irm https://christitus.com/win | iex
+   ```
+
+   :::note
+   这条命令会从 Chris Titus 的网站下载 PowerShell 脚本并直接运行。脚本是开源的，可以放心运行。
+   :::
+
+3. **打开 Tweaks 页**
+
+   WinUtil 启动后，切换到顶部的 Tweaks。下面三张表是这一页所有的选项，“推荐”一栏打了 ✅ 的是笔者推荐执行的。
+
+</Steps>
+
+:::tip
+动手前先执行 Essential Tweaks 里的 “Restore Point - Create”，创建一个系统还原点。所有改动也都可以选中后点击 **Undo Selected Tweaks**（撤销所选优化）还原。
+:::
+
+## Essential Tweaks（基础优化）
+
+| 选项 | 作用 | 备注 | 推荐 |
+| --- | --- | --- | --- |
+| Activity History - Disable | 禁用活动历史记录，Windows 不再记录你打开的文档、运行历史、剪贴板内容等使用习惯 | 保护隐私，防止他人或应用查看操作记录 |  |
+| ConsumerFeatures - Disable | 禁用消费者功能，关掉开始菜单里“推荐”的应用、锁屏建议等推广内容 | 减少干扰，界面更干净 | ✅ |
+| Disk Cleanup - Run | 运行磁盘清理，删除临时文件、回收站内容、系统缓存等 | 释放磁盘空间 |  |
+| End Task With Right Click - Enable | 右键任务栏图标就能选“结束任务” | 不用再打开任务管理器 |  |
+| File Explorer Automatic Folder Discovery - Disable | 禁止文件资源管理器自动发现网络设备和媒体服务器 | 减少资源管理器的网络延迟和卡顿 | ✅ |
+| Hibernation - Disable | 禁用休眠并删除休眠文件（hiberfil.sys） | 释放几 GB 的磁盘空间，适合台式机 |  |
+| Location Tracking - Disable | 禁用系统级定位服务，应用无法获取地理位置 | 保护位置隐私 |  |
+| Microsoft Store Recommended Search Results - Disable | 关掉微软商店搜索结果里的推荐内容和广告 | 搜索结果更干净 | ✅ |
+| PowerShell 7 Telemetry - Disable | 阻止 PowerShell 7 向微软发送使用数据 | 保护隐私 | ✅ |
+| Restore Point - Create | 立即创建一个系统还原点 | 强烈建议在优化前先点这个 |  |
+| Services - Set to Manual | 把大量非关键服务（如 Xbox 相关、智能卡等）从“自动”改成“手动” | 明显减少开机自启的进程，省内存和 CPU | ✅ |
+| Start Menu Previous Layout - Enable | 把 Windows 11 的开始菜单换回旧版布局 | 去掉“推荐的项目”，菜单更简洁 |  |
+| Telemetry - Disable | 全面禁止 Windows 向微软发送诊断和使用数据 | 减少系统和微软服务器之间的频繁通信 | ✅ |
+| Temporary Files - Remove | 清理临时文件夹（%TEMP%）里的文件 | 释放磁盘空间 |  |
+| Unwanted Pre-Installed Apps - Remove | 卸载大量预装的臃肿软件（如 Skype、Xbox Game Bar 等） | 开始菜单和系统更干净 |  |
+| Widgets - Remove | 彻底移除“小组件”（<kbd>Win</kbd> + <kbd>W</kbd> 打开的面板） | 节省资源，任务栏少一个图标 | ✅ |
+| Windows Platform Binary Table (WPBT) - Disable | 禁用 Windows 平台二进制表，阻止厂商通过固件自动安装软件 | 具体作用可能随版本变化 |  |
+
+## Advanced Tweaks（高级优化）
+
+| 选项 | 作用 | 备注 | 推荐 |
+| --- | --- | --- | --- |
+| Adobe URL Block List - Enable | 阻止系统或 Adobe 软件和 Adobe 服务器通信 | 保护隐私，但可能影响 Adobe 软件的激活和更新 |  |
+| Background Apps - Disable | 禁止所有（或大部分）应用在后台运行 | 节省资源，但可能影响邮件、日历等应用的通知 |  |
+| Brave Browser - Debloat | 去掉 Brave 浏览器里的推广内容、加密钱包和奖励功能 | 浏览器更精简 |  |
+| Date & Time - Set Time to UTC | 把硬件时钟设为 UTC（协调世界时） | 只适合 Linux 和 Windows 双系统用户 |  |
+| File Explorer Home and Gallery - Disable | 去掉文件资源管理器左侧导航栏的“主文件夹”和“图库” | 界面更简洁 |  |
+| Fullscreen Optimizations - Disable | 关掉“全屏优化” | 可能改善老游戏或特定应用的性能和兼容性 |  |
+| IPv6 - Disable | 完全禁用 IPv6 | ⚠️ 一般不推荐，只在网络环境有兼容问题时用 |  |
+| IPv6 - Set IPv4 as Preferred | 让系统优先使用 IPv4 | 比完全禁用 IPv6 温和，IPv6 仍然可用 |  |
+| Microsoft Edge - Debloat | 去掉 Edge 里不必要的组件、推广内容和后台进程 | 不会卸载 Edge，只是让它更干净 | ✅ |
+| Microsoft Edge - Remove | 彻底卸载 Edge，并阻止它以后自动装回来 | ⚠️ 非常激进，依赖 Edge 的系统功能可能失效 |  |
+| Microsoft OneDrive - Remove | 彻底卸载 OneDrive 客户端 | 适合用其他网盘或不用网盘的人 |  |
+| Razer Software Auto-Install - Disable | 插入雷蛇外设时，不再自动下载安装雷蛇的配置软件 | 适合不用雷蛇官方软件的人 |  |
+| RDP Unsigned File Warnings - Disable | 关掉远程桌面连接对未签名文件的安全警告 | 连接更快，但安全性降低 |  |
+| Right-Click Menu Previous Layout - Enable | 把 Windows 11 的新版右键菜单换回 Windows 10 的经典样式 | 不用再点“显示更多选项” | ✅ |
+| Storage Sense - Disable | 关掉“存储感知”的自动清理 | 适合习惯手动管理磁盘空间的人 |  |
+| System Tray Notifications & Calendar - Disable | 隐藏任务栏右下角的通知中心和日历面板 | 任务栏更简洁 |  |
+| Teredo - Disable | 关掉 Teredo 隧道协议（IPv6 过渡用） | 一般用户可以关，减少网络开销 | ✅ |
+| Visual Effects - Set to Best Performance | 把所有视觉效果设为“最佳性能” | 老旧或低配电脑会明显变快，但界面会变“朴素” |  |
+| Windows AI - Disable | 关掉 Windows 11 里所有 AI 相关功能（如 Copilot、回顾） | 节省资源，保护隐私 | ✅ |
+| Xbox & Gaming Components - Remove | 卸载所有 Xbox 相关的应用和服务（Game Bar、Xbox Live、游戏模式等） | 适合不在电脑上玩游戏的人 |  |
+
+## Customize Preferences（偏好设置）
+
+这些开关在 WinUtil 里拨一下就会生效。
+
+| 选项 | 说明 | 推荐 |
+| --- | --- | --- |
+| BSoD Verbose Mode | 蓝屏时显示详细的错误信息，便于排查问题 | ❌ 关闭 |
+| Cross-Device Resume | 在手机和电脑之间“接力”使用应用（如继续编辑文档） | ❌ 关闭 |
+| Dark Theme for Windows | 系统界面使用深色主题 | 个人喜好 |
+| File Explorer File Extensions | 文件资源管理器显示文件扩展名（如 .txt） | ✅ 开启 |
+| File Explorer Hidden Files | 文件资源管理器显示隐藏的文件和文件夹 | ✅ 开启 |
+| Logon Screen Acrylic Blur | 登录界面背景使用亚克力模糊效果 | 个人喜好 |
+| Logon Verbose Mode | 登录、注销时显示详细的启动或关闭信息 | ✅ 开启 |
+| Microsoft Outlook New Version | 用新版 Outlook 替代经典版 | ❌ 关闭 |
+| Mouse Acceleration | 鼠标加速（移动越快，指针走得越远） | ❌ 关闭 |
+| Multiplane Overlay | 多平面覆盖（MPO），禁用可以解决部分显卡的闪烁问题 | ✅ 开启 |
+| Num Lock on Startup | 开机后自动打开数字小键盘的 Num Lock | ❌ 关闭 |
+| S0 Sleep Network Connectivity | “现代待机”时保持网络连接 | ✅ 开启 |
+| S3 Sleep | 尝试启用传统的 S3 睡眠，替代现代待机 | ❌ 关闭 |
+| Scrollbars Always Visible | 滚动条始终显示，不自动隐藏 | ✅ 开启 |
+| Settings Home Page | 打开设置时显示“主页” | ❌ 关闭 |
+| Start Menu Bing Search | 开始菜单的搜索结果里显示 Bing 网页搜索 | ❌ 关闭 |
+| Start Menu Recommendations | 开始菜单里显示“推荐”的应用和文件 | ❌ 关闭 |
+| Sticky Keys | 粘滞键（组合键可以一个一个按） | ❌ 关闭 |
+| System Tray Battery Percentage | 任务栏电池图标旁显示电量百分比 | 个人喜好 |
+| Taskbar Centered Icons | 任务栏图标居中（Windows 11 默认） | ✅ 开启 |
+| Taskbar Search Icon | 任务栏显示搜索图标（放大镜） | ✅ 开启 |
+| Taskbar Task View Icon | 任务栏显示“任务视图”图标 | ❌ 关闭 |
+
+用 WinUtil 处理完，你的 Windows 现在应该相当干净了，congratulations！最后一步：[常用软件](/system/windows/apps)。

@@ -83,3 +83,22 @@
 ) {
   border-radius: var(--radius-md);
 }
+
+/* A key to press, as in Win + I: a key cap on the card surface, with a thicker bottom edge.
+   Starlight has no style for <kbd>. */
+.sl-markdown-content kbd {
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  color: var(--text-ink);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 0.05em 0.4em;
+  white-space: nowrap;
+}
+
+/* A narrow column's heading, such as 推荐, stays on one line instead of one character a line. */
+.sl-markdown-content th {
+  white-space: nowrap;
+}

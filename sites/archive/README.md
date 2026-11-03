@@ -7,12 +7,13 @@ The tutorials are written in Chinese and the interface is in English. The site's
 | Path | What it holds |
 | --- | --- |
 | `src/content/docs/index.mdx` | The front page |
-| `src/content/docs/tutorials/` | The tutorials, one file each; the sidebar lists them in `sidebar.order` |
+| `src/content/docs/start.md` | The start page, which the front page's button opens |
+| `src/content/docs/system/windows/` | A series, one page a file; the sidebar lists its pages in `sidebar.order`, and `index.mdx` is its first page |
 | `src/styles/theme.css` | Starlight's colour, font and shadow variables set to the system's tokens, and its asides drawn as the system's admonitions |
 | `src/components/Head.astro` | Starlight's head with the system's `Fonts` |
 | `src/pages/favicon.svg.ts` | The design system's logo as the tab icon |
 
-`src/content/docs/tutorials/write-a-tutorial.mdx` is the sample tutorial and says how to write one.
+Each subject is a folder under `src/content/docs/` and a group in the sidebar in `astro.config.ts`; each series is a folder in it, and the sidebar takes its pages from the folder. A page's file name is the last part of its URL, so `system/windows/prepare.mdx` is `/system/windows/prepare`.
 
 | Command | What it does |
 | --- | --- |

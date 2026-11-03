@@ -30,10 +30,18 @@ export default defineConfig({
           uiFontFamily: "var(--font-sans)"
         }
       },
+      // The start page, then one group per subject, each holding a series read top to bottom; a
+      // series lists its pages in their sidebar.order.
       sidebar: [
+        { label: "Start here", link: "/start" },
         {
-          label: "Tutorials",
-          items: [{ autogenerate: { directory: "tutorials" } }]
+          label: "System",
+          items: [
+            {
+              label: "Windows",
+              items: [{ autogenerate: { directory: "system/windows" } }]
+            }
+          ]
         }
       ]
     })
