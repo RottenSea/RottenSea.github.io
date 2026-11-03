@@ -1,6 +1,7 @@
 ---
 import "@rottensea/ds-personal-website/index.css";
 import "@rottensea/ds-personal-website/page-transitions.css";
+import Logo from "@rottensea/ds-personal-website/assets/logo-colored.svg";
 import {
   FloatingControls,
   Fonts,
@@ -115,6 +116,7 @@ const structured = jsonLd && JSON.stringify(jsonLd).replaceAll("<", "\\u003c");
     <Starfield />
     <SkipLink />
     <TopNav brand={SITE_TITLE} links={links} active={active} overlay={overlayNav}>
+      <Logo slot="logo" width={24} height={24} aria-hidden="true" />
       <IconButton slot="actions" icon="search" label="Search" data-ds-search-open="site-search" />
       <SettingsMenu slot="actions" storageKey={THEME_STORAGE_KEY} motionKey={MOTION_STORAGE_KEY} />
     </TopNav>

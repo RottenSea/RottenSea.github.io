@@ -124,7 +124,16 @@ const days = rows.reduce<Record<string, number>>((counts, { dates }) => {
         <StatList items={stats} />
       </SidebarCard>
       <SidebarCard title="Calendar">
-        <MiniCalendar counts={days} weekStart="sun" navigable selectable class="home-calendar" />
+        {/* Shown by the calendar while a day is selected. */}
+        <button slot="action" type="button" data-ds-calendar-clear="home-calendar" hidden>Clear</button>
+        <MiniCalendar
+          id="home-calendar"
+          counts={days}
+          weekStart="sun"
+          navigable
+          selectable
+          class="home-calendar"
+        />
       </SidebarCard>
     </Fragment>
   </ContentGrid>

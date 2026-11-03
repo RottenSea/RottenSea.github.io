@@ -5,6 +5,7 @@ import sitemap from "@astrojs/sitemap";
 import {
   rehypeDsExternalLinks,
   rehypeDsHeadingAnchors,
+  rehypeDsTaskLists,
   remarkDsDirectives,
   shikiTransformers
 } from "@rottensea/ds-personal-website/markdown";
@@ -52,11 +53,13 @@ export default defineConfig({
     processor: unified({
       // Directives such as :::tip become the design system's components, and $...$ becomes math.
       remarkPlugins: [remarkDsDirectives],
-      // A "#" link beside each heading, and links to other sites open in a new tab with a note
-      // for screen readers. `site` tells the second plugin which links stay on this site.
+      // A "#" link beside each heading, links to other sites open in a new tab with a note for
+      // screen readers, and each task list checkbox is named by its task. `site` tells the second
+      // plugin which links stay on this site.
       rehypePlugins: [
         rehypeDsHeadingAnchors,
-        [rehypeDsExternalLinks, { site }]
+        [rehypeDsExternalLinks, { site }],
+        rehypeDsTaskLists
       ],
       // Keep punctuation exactly as written: posts mix Chinese text with ASCII quotes and dashes.
       smartypants: false
