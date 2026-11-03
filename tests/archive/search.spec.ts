@@ -25,3 +25,13 @@ test("search finds a page of a series", async ({ page }) => {
     dialog.locator("a[href*='/system/windows/prepare']").first()
   ).toBeVisible();
 });
+
+test("robots.txt lets every crawler in and points to the sitemap", async ({
+  request
+}) => {
+  const text = await (await request.get("/robots.txt")).text();
+  expect(text).toContain("User-agent: *\nAllow: /");
+  expect(text).toContain(
+    "Sitemap: https://archive.rottenth.cafe/sitemap-index.xml"
+  );
+});

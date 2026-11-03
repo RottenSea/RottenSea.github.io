@@ -4,7 +4,8 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   site: "https://archive.rottenth.cafe",
   // The same URL shape as the other two sites: no trailing slash, /404 rather than /404/.
-  build: { format: "file" },
+  // The CSS goes into the page, so the first paint needs only the HTML (as on the personal website).
+  build: { format: "file", inlineStylesheets: "always" },
   trailingSlash: "never",
   // 4173 is the personal website's, 4174 Rainbow Stone's and 4321 the design-system docs site's.
   server: { port: 4175 },

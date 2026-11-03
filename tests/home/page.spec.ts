@@ -15,3 +15,9 @@ test("the page leads to the personal website and the tutorials", async ({
     page.locator("a[href='https://archive.rottenth.cafe']")
   ).toBeVisible();
 });
+
+test("robots.txt lets every crawler in", async ({ request }) => {
+  const response = await request.get("/robots.txt");
+  expect(response.ok()).toBe(true);
+  expect(await response.text()).toContain("User-agent: *\nAllow: /");
+});

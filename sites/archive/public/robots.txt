@@ -1,0 +1,5 @@
+# Every crawler is welcome, as on the personal website (round AH4); the sitemap lists the pages.
+User-agent: *
+Allow: /
+
+Sitemap: https://archive.rottenth.cafe/sitemap-index.xml

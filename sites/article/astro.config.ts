@@ -36,7 +36,9 @@ export default defineConfig({
   site,
   // Pages build to `about.html` rather than `about/index.html`, so URLs have no trailing slash:
   // /about, /blog/000000. GitHub Pages and Cloudflare both serve that file at that URL.
-  build: { format: "file" },
+  // The CSS goes into each page, so the first paint needs only the HTML: before it, the browser
+  // shows a blank tab in its own colours, white for a reader in the dark theme on a light system.
+  build: { format: "file", inlineStylesheets: "always" },
   trailingSlash: "never",
   // Every image gets several widths and a `sizes` that follows its own width, so a phone loads a
   // smaller file. The design system's components size the images; Astro adds no styles of its own.

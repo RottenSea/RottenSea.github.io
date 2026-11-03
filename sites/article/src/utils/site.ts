@@ -44,10 +44,26 @@ export const SOCIAL = [
   { label: "Bluesky", href: "https://bsky.app/profile/rottenth.bsky.social" }
 ];
 
-/** The footer's link columns: the site's pages, and the author's other sites with the feed. */
+/**
+ * The footer's link columns: this site's pages with its feed, the other two sites on rottenth.cafe
+ * (the way in, which lists them all, and the tutorials), and the author's pages elsewhere.
+ */
 export const FOOTER_COLUMNS = [
-  { title: "Site", links: NAV.map(({ label, href }) => ({ label, href })) },
-  { title: "Elsewhere", links: [...SOCIAL, { label: "RSS", href: "/rss.xml" }] }
+  {
+    title: "Site",
+    links: [
+      ...NAV.map(({ label, href }) => ({ label, href })),
+      { label: "RSS", href: "/rss.xml" }
+    ]
+  },
+  {
+    title: "Network",
+    links: [
+      { label: "Rainbow Stone", href: "https://www.rottenth.cafe" },
+      { label: "Devil's Footprints", href: "https://archive.rottenth.cafe" }
+    ]
+  },
+  { title: "Elsewhere", links: SOCIAL }
 ];
 
 /**
