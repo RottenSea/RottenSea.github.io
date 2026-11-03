@@ -42,6 +42,12 @@
   --sl-shadow-lg: var(--shadow-float);
 }
 
+/* The scrollbar's room is kept on every page, as on the personal website, so a page short enough to
+   need none does not sit wider than the next one. */
+html {
+  scrollbar-gutter: stable;
+}
+
 /* The site's name in ink, as the brand in the personal website's top nav. */
 .site-title {
   color: var(--text-ink);
