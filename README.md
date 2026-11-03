@@ -37,3 +37,7 @@ The repository is a [pnpm](https://pnpm.io/) workspace. From the root:
 The tests are in `tests/`, a folder for each site, with `playwright.config.ts` at the root. They start each site's `astro preview` themselves, block every request to the comment service so no real view count moves, and leave colour contrast out of the axe check: the design system keeps three low-contrast colour pairs on purpose.
 
 Biome's settings in `biome.json` are shared by every site. It formats the TypeScript files and the script parts of `.astro` files; it leaves the HTML in `.astro` files, Markdown, MDX and SVG files alone.
+
+## License
+
+The code is licensed under the Apache License 2.0; see `LICENSE`. The posts in `sites/article/src/content/blog/` are licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), as each post page says.

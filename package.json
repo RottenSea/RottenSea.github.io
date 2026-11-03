@@ -1,6 +1,7 @@
 {
   "name": "rottenth-cafe",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "packageManager": "pnpm@10.23.0",
   "engines": {
