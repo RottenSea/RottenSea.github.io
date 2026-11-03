@@ -22,16 +22,19 @@ if (name !== undefined) {
 const folders = readdirSync(BLOG, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name);
-// The folders of every post a commit after HISTORY_START touched, on any branch: deleted posts'
-// too. The posts before it were all removed, so their numbers are free again. git prints paths
-// from the repository's root, with forward slashes on every system.
+// The folders of every post a commit after HISTORY_START touched, on any branch here or on the
+// remote: deleted posts' too. The posts before it were all removed, so their numbers are free
+// again. Branches only, not --all: other refs, such as a tool's checkpoints, can hold commits from
+// before HISTORY_START that are not its ancestors. git prints paths from the repository's root,
+// with forward slashes on every system.
 let committed: string[] = [];
 try {
   committed = execFileSync(
     "git",
     [
       "log",
-      "--all",
+      "--branches",
+      "--remotes",
       `^${HISTORY_START}`,
       "--name-only",
       "--format=",
