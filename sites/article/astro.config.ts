@@ -17,14 +17,6 @@ export default defineConfig({
   // /about, /blog/000000. GitHub Pages and Cloudflare both serve that file at that URL.
   build: { format: "file" },
   trailingSlash: "never",
-  // The first five posts were named by date before posts were numbered.
-  redirects: {
-    "/blog/20260518": "/blog/000000",
-    "/blog/20260519": "/blog/000001",
-    "/blog/20260520": "/blog/000002",
-    "/blog/20260616": "/blog/000003",
-    "/blog/20260617": "/blog/000004"
-  },
   // Every image gets several widths and a `sizes` that follows its own width, so a phone loads a
   // smaller file. The design system's components size the images; Astro adds no styles of its own.
   image: { layout: "constrained" },
