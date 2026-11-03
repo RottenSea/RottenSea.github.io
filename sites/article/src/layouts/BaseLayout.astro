@@ -125,6 +125,14 @@ const structured = jsonLd && JSON.stringify(jsonLd).replaceAll("<", "\\u003c");
       <slot />
     </main>
     <Footer brand={SITE_TITLE} columns={FOOTER_COLUMNS}>
+      <Logo slot="logo" width={24} height={24} aria-hidden="true" />
+      <img
+        slot="brand-extra"
+        src="/written-by-humans.svg"
+        alt="Written by Humans, Not by AI"
+        width="131"
+        height="42"
+      />
       <Fragment slot="note">
         © 2026 RottenTh. Posts are licensed under
         <a class="ds-external" href={POST_LICENSE.href} target="_blank" rel="license noreferrer"
