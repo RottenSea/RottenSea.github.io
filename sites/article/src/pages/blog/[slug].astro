@@ -19,6 +19,7 @@ import {
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { cardSize } from "../../utils/images";
 import {
+  getAllPosts,
   getPosts,
   type Post,
   postDates,
@@ -36,9 +37,9 @@ import {
 } from "../../utils/site";
 
 export async function getStaticPaths() {
-  const posts = await getPosts();
-  // Previous and next go by publication time, whatever is pinned.
-  const byTime = posts.toSorted((a, b) =>
+  // Previous and next go by publication time, whatever is pinned, among the listed posts. A draft
+  // has a page but is in no list, so it has neither and is no one's neighbour.
+  const byTime = (await getPosts()).toSorted((a, b) =>
     postDates(a).published.localeCompare(postDates(b).published)
   );
   const link = (post?: Post) =>
@@ -47,14 +48,17 @@ export async function getStaticPaths() {
       href: postUrl(post),
       lang: post.data.lang
     };
-  return byTime.map((post, index) => ({
-    params: { slug: postSlug(post) },
-    props: {
-      post,
-      older: link(byTime[index - 1]),
-      newer: link(byTime[index + 1])
-    }
-  }));
+  return (await getAllPosts()).map((post) => {
+    const index = byTime.indexOf(post);
+    return {
+      params: { slug: postSlug(post) },
+      props: {
+        post,
+        older: index < 0 ? undefined : link(byTime[index - 1]),
+        newer: index < 0 ? undefined : link(byTime[index + 1])
+      }
+    };
+  });
 }
 
 interface PostLink {
@@ -142,13 +146,17 @@ const jsonLd = {
   imageSize={shareSize}
   article={{ published, modified: updated, tags: data.tags }}
   jsonLd={jsonLd}
+  noindex={data.draft}
 >
   <ContentGrid stackRails="none" mainWidth="var(--container-reading)" class="post-grid">
-    {/* Search indexes the post's title, text and tags, not the meta line or what follows the tags. */}
+    {/*
+      Search indexes the post's title, text and tags, not the meta line or what follows the tags.
+      A draft is left out of the index, as it is out of every list.
+    */}
     <article
       class="post"
       lang={data.lang}
-      data-pagefind-body
+      data-pagefind-body={data.draft ? undefined : ""}
     >
       {/* What the search results show under the title. */}
       <span hidden data-pagefind-meta={`date:${publishedDate}`}></span>

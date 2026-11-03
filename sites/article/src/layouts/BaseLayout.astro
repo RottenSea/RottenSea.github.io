@@ -42,6 +42,8 @@ interface Props {
   article?: { published: string; modified: string; tags: string[] };
   /** Structured data for search engines: one schema.org object or several. */
   jsonLd?: object | object[];
+  /** Asks search engines to leave the page out, as for a draft. */
+  noindex?: boolean;
 }
 
 const {
@@ -52,7 +54,8 @@ const {
   image = "/og.png",
   imageSize = { width: 1200, height: 630 },
   article,
-  jsonLd
+  jsonLd,
+  noindex = false
 } = Astro.props;
 const fullTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 const path = pagePath(Astro.url);
@@ -70,6 +73,7 @@ const structured = jsonLd && JSON.stringify(jsonLd).replaceAll("<", "\\u003c");
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

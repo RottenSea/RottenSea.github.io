@@ -1,8 +1,10 @@
 // A post's revisions, read from the repository's history at build time. Every commit that changed
 // the post's file counts as one, following the file through renames. A commit that only moved the
 // file, its contents untouched, does not count: renumbering the posts and moving the site into
-// sites/ were such commits. Node only: the browser never imports this.
+// sites/ were such commits. Only commits after HISTORY_START count (history.ts). Node only: the
+// browser never imports this.
 import { execFileSync } from "node:child_process";
+import { HISTORY_RANGE } from "./history";
 
 export interface FileHistory {
   /** How many commits changed the file. 0 for a file never committed. */
@@ -39,6 +41,7 @@ export function fileHistory(path: string): FileHistory {
     // "R100\told\tnew"; R100 is a rename with identical contents.
     const dates = git(
       "log",
+      HISTORY_RANGE,
       "--follow",
       "--format=%x00%aI",
       "--name-status",

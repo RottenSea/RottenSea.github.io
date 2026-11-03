@@ -1,10 +1,11 @@
 // Creates a new draft post: pnpm new-post [name]
-// Its folder is the next number after the highest one in src/content/blog or in its git history,
-// six digits, so a deleted post's number is never used again. The URL is /blog/<number>, or
-// /blog/<name> when a name is given: the name goes into the post's `permalink`.
+// Its folder is the next number after the highest one in src/content/blog or in its git history
+// since HISTORY_START, six digits, so a deleted post's number is never used again. The URL is
+// /blog/<number>, or /blog/<name> when a name is given: the name goes into the post's `permalink`.
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { HISTORY_START } from "../src/utils/history.ts";
 
 const BLOG = join("src", "content", "blog");
 const name = process.argv[2];
@@ -21,9 +22,9 @@ if (name !== undefined) {
 const folders = readdirSync(BLOG, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name);
-// The folders of every post a commit touched: deleted posts' too. Before the sites moved into
-// sites/, the posts were in src/content/blog at the repository's root, so both places are
-// searched. git prints paths from the repository's root, with forward slashes on every system.
+// The folders of every post a commit after HISTORY_START touched, on any branch: deleted posts'
+// too. The posts before it were all removed, so their numbers are free again. git prints paths
+// from the repository's root, with forward slashes on every system.
 let committed: string[] = [];
 try {
   committed = execFileSync(
@@ -31,10 +32,10 @@ try {
     [
       "log",
       "--all",
+      `^${HISTORY_START}`,
       "--name-only",
       "--format=",
       "--",
-      ":(top)src/content/blog",
       ":(top)sites/article/src/content/blog"
     ],
     { encoding: "utf8" }

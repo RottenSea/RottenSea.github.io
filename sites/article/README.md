@@ -6,7 +6,7 @@ It is built with [Astro](https://astro.build/) 7 on the personal-website system 
 
 ## Writing
 
-Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's images beside it, referenced as `./cover.png`. Folders are six-digit numbers in the order posts were created, from `000000`, and the number is the post's URL: `src/content/blog/000006/` becomes `/blog/000006`, unless the post sets `permalink`, which needs at least one letter. The first five posts were named by date before; `astro.config.ts` redirects those URLs.
+Each post is a folder in `src/content/blog/` with an `index.mdx` and the post's images beside it, referenced as `./cover.png`. Folders are six-digit numbers in the order posts were created, from `000000`, and the number is the post's URL: `src/content/blog/000006/` becomes `/blog/000006`, unless the post sets `permalink`, which needs at least one letter. Every post up to 2026-11-03 was removed then, and the example post moved into `000000`; revision counts and new numbers only read the history after that commit (`src/utils/history.ts`).
 
 `pnpm new-post` creates the next numbered folder with every frontmatter field in it, and `pnpm new-post <name>` also sets `permalink` to the name. A deleted post's number is not used again, since the script also counts folders in the git history. Both fill in `publishedAt` with the current time in UTC+8, which orders posts published on the same day. `publishedAt` can also be a bare date, meaning 11:00 UTC+8 that day. The fields and their rules are in `src/content.config.ts`, and a post with an unknown or mistyped field fails the build.
 
@@ -14,7 +14,7 @@ A post's revision count is the number of commits that changed its `index.mdx`, r
 
 A post with `comment: true` has comments at its end, and every post shows its view count in its meta line. Both come from the comment service at `comment.rottenth.cafe` and are kept under the post's folder number, so a new `permalink` keeps them. `pnpm dev` uses the local copy that `pnpm dev:comment` runs instead (see the repository's README); without it, the comments show an error and the meta line goes without the count.
 
-A post with `draft: true` shows up in `pnpm dev` but not in the built site. Only `index.md` or `index.mdx` one folder down becomes a post, so `src/content/blog/_quotes.md` is never published. It holds the quotes the home page shows one of at random: a line per quote, starting with `- `, with ` — ` before its source.
+A post with `draft: true` gets its page in the built site, but only a link reaches it: it is left out of the home page, previous and next, the search index, the RSS feed, `llms.txt` and the sitemap, and asks search engines not to index it. In `pnpm dev` it is listed with the others. Only `index.md` or `index.mdx` one folder down becomes a post, so `src/content/blog/_quotes.md` is never published. It holds the quotes the home page shows one of at random: a line per quote, starting with `- `, with ` — ` before its source.
 
 Posts are MDX, so `<`, `{` and `}` in ordinary text have to be escaped (`\<`, `\{`, `\}`), and HTML comments are written `{/* ... */}`. Code blocks and inline code are not affected.
 

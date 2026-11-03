@@ -1,15 +1,8 @@
 import { accessibilityProblems, expect, test } from "../fixtures";
 
-// The home page, the about page, the 404 page, and posts with code, tables, math and pictures.
-const pages = [
-  "/",
-  "/about",
-  "/404",
-  "/blog/000000",
-  "/blog/000001",
-  "/blog/000003",
-  "/blog/000004"
-];
+// The home page, the about page, the 404 page, and the example post, which has every kind of
+// content a post can have.
+const pages = ["/", "/about", "/404", "/blog/000000"];
 
 for (const path of pages) {
   test(`${path} has no accessibility problems`, async ({ page }) => {
