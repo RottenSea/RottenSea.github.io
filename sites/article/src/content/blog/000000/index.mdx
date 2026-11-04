@@ -193,6 +193,34 @@ main()
 pnpm --filter article exec astro build --site https://article.rottenth.cafe --outDir ./dist/a/very/long/output/directory/name
 ```
 
+超过 12 行的代码块一开始折叠，只显示前 10 行：
+
+```ts title="astro.config.ts"
+import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
+import { defineConfig } from "astro/config";
+import {
+  markdown,
+  rehypeDsExternalLinks,
+  rehypeDsHeadingAnchors,
+  shikiTransformers
+} from "@rottensea/ds-personal-website/markdown";
+
+export default defineConfig({
+  site: "https://article.rottenth.cafe",
+  trailingSlash: "never",
+  build: { format: "file" },
+  integrations: [mdx(), sitemap()],
+  markdown: {
+    remarkPlugins: [markdown],
+    rehypePlugins: [rehypeDsHeadingAnchors, rehypeDsExternalLinks],
+    shikiConfig: {
+      transformers: shikiTransformers()
+    }
+  }
+});
+```
+
 不认识的语言，或者纯文字：
 
 ```text
