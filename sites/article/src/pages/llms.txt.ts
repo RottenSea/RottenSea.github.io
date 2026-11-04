@@ -2,11 +2,7 @@ import type { APIContext } from "astro";
 import { getPosts, postDates, postUrl } from "../utils/posts";
 import { AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from "../utils/site";
 
-/**
- * A guide to the site for language models, in the llms.txt format (llmstxt.org): the name, one
- * line about it with the posts' categories, then every post as a link with its `description`,
- * newest first (round AH3).
- */
+/** llms.txt (llmstxt.org): the site, then every post with its `description`, newest first. */
 export async function GET({ site }: APIContext) {
   const base = site ?? new URL("https://article.rottenth.cafe");
   const posts = (await getPosts()).toSorted((a, b) =>

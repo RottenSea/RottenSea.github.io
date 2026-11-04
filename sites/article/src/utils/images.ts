@@ -5,9 +5,7 @@ import opentype from "opentype.js";
 import sharp from "sharp";
 import { SITE_TITLE } from "./site";
 
-// The site's icons and its default share image, made at build time from the design system's
-// logo. Colours are the light theme's tokens: cream-50 for the canvas, ink-900 for the name,
-// ink-500 for muted text, coral-500 for the rule.
+// The site's icons and default share image, made at build time in the light theme's colours.
 const CANVAS = "#faf9f5";
 const INK = "#141413";
 const MUTED = "#6c6a64";
@@ -19,10 +17,7 @@ export { logo };
 export const logoPng = (size: number) =>
   sharp(Buffer.from(logo)).resize(size, size).png().toBuffer();
 
-/**
- * The icon "Add to Home Screen" uses. iOS fills a transparent icon with black and rounds the
- * corners itself, so the logo sits on the canvas colour with room around it.
- */
+/** The Home Screen icon, on the canvas colour: iOS fills transparency with black. */
 export async function touchIcon(size: number) {
   const inner = Math.round(size * 0.8);
   return sharp({
@@ -54,11 +49,7 @@ function font(file: string) {
   );
 }
 
-/**
- * SVG path data for a line of text. opentype.js 2.0's own toPathData() writes NaN for some
- * points when it shortens the data, which cut the address off after "rott"; the commands
- * themselves are sound, so they are written out here as they are.
- */
+/** opentype.js 2.0's toPathData() writes NaN for some points, so the commands are written here. */
 function outline(
   face: opentype.Font,
   text: string,
@@ -88,11 +79,7 @@ function outline(
     .join("");
 }
 
-/**
- * The share image for a page without a cover of its own, 1200 by 630: the logo at the left, and
- * the site's name in the display serif over a short coral rule and the address. The text is
- * turned into outlines here, so the image does not depend on the fonts the build machine has.
- */
+/** The 1200 by 630 share image, with text as outlines so the build machine's fonts do not matter. */
 export async function defaultShareImage(address: string) {
   const width = 1200;
   const height = 630;
@@ -120,10 +107,7 @@ export async function defaultShareImage(address: string) {
     .toBuffer();
 }
 
-/**
- * The largest 1200:630 box, at most 1200 wide, that fits inside an image of this size: what a
- * share card shows of a cover, with nothing enlarged.
- */
+/** The largest 1200:630 box, at most 1200 wide, inside an image of this size. */
 export function cardSize(width: number, height: number) {
   const ratio = 1200 / 630;
   const cardWidth = Math.min(1200, width, Math.floor(height * ratio));

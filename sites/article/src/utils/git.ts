@@ -1,8 +1,5 @@
-// A post's revisions, read from the repository's history at build time. Every commit that changed
-// the post's file counts as one, following the file through renames. A commit that only moved the
-// file, its contents untouched, does not count: renumbering the posts and moving the site into
-// sites/ were such commits. Only commits after HISTORY_START count (history.ts). Node only: the
-// browser never imports this.
+// A post's revisions from git at build time: commits after HISTORY_START that changed the file,
+// following renames; a pure move (R100) does not count.
 import { execFileSync } from "node:child_process";
 import { HISTORY_RANGE } from "./history";
 

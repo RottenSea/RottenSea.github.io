@@ -41,21 +41,14 @@ export function postDates({ data, filePath }: Post): PostDates {
   };
 }
 
-/**
- * The posts the site lists, pinned ones first, then newest first: the home page, the feeds,
- * previous and next. Drafts are left out, except in `astro dev`; a draft still gets its page
- * (getAllPosts), which only a link reaches.
- */
+/** Listed posts, pinned first, then newest; drafts only in `astro dev`. */
 export async function getPosts(): Promise<Post[]> {
   return (await getAllPosts()).filter(
     ({ data }) => import.meta.env.DEV || !data.draft
   );
 }
 
-/**
- * Every post, drafts too, in the order of getPosts: each one gets a page.
- * Fails the build when a folder is not numbered or two posts would get the same URL.
- */
+/** Every post that gets a page, drafts too; fails on an unnumbered folder or a duplicate URL. */
 export async function getAllPosts(): Promise<Post[]> {
   const posts = await getCollection("blog");
   const seen = new Map<string, string>();

@@ -1,11 +1,7 @@
-// Builds the comment service: Twikoo's Cloudflare Workers backend, which Twikoo does not publish to
-// npm. This fetches Twikoo's source at the release below into .twikoo/ and builds the backend there,
-// with the pnpm version Twikoo names; wrangler.jsonc deploys what it builds.
-// Usage: node workers/comment/build.ts
-//
-// To update Twikoo, change both lines: the tag, and the commit it points to now, from
+// Builds Twikoo's Cloudflare backend, which is not on npm, from source in .twikoo/.
+// To update, change TAG and COMMIT together, from
 //   git ls-remote https://github.com/twikoojs/twikoo.git refs/tags/<tag>
-// The build stops if the tag has moved to another commit.
+// The build stops if the tag has moved.
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -58,8 +54,7 @@ if (existsSync(stamp) && readFileSync(stamp, "utf8") === COMMIT) {
     "--filter",
     "@twikoojs/cloudflare..."
   ]);
-  // The repository keeps every version at 0.0.0 and Twikoo's release sets the real one, which the
-  // admin panel compares with the browser script's.
+  // The source says 0.0.0; the admin panel compares the real version with the browser script's.
   run("node", ["scripts/release-set-version.mjs", TAG]);
   run("npx", [
     "--yes",

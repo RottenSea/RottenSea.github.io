@@ -1,7 +1,6 @@
-// Creates a new draft post: pnpm new-post [name]
-// Its folder is the next number after the highest one in src/content/blog or in its git history
-// since HISTORY_START, six digits, so a deleted post's number is never used again. The URL is
-// /blog/<number>, or /blog/<name> when a name is given: the name goes into the post's `permalink`.
+// pnpm new-post [name]: a draft in the next folder number after those in src/content/blog and its
+// history since HISTORY_START, so a deleted post's number is never reused. The name becomes
+// `permalink`.
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -22,11 +21,9 @@ if (name !== undefined) {
 const folders = readdirSync(BLOG, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name);
-// The folders of every post a commit after HISTORY_START touched, on any branch here or on the
-// remote: deleted posts' too. The posts before it were all removed, so their numbers are free
-// again. Branches only, not --all: other refs, such as a tool's checkpoints, can hold commits from
-// before HISTORY_START that are not its ancestors. git prints paths from the repository's root,
-// with forward slashes on every system.
+// Folders any commit after HISTORY_START touched, on local and remote branches. Not --all: other
+// refs, such as a tool's checkpoints, can hold older commits that are not HISTORY_START's
+// descendants.
 let committed: string[] = [];
 try {
   committed = execFileSync(
@@ -61,8 +58,7 @@ if (existsSync(dir)) {
   process.exit(1);
 }
 
-// The current moment in UTC+8, the author's time zone. `publishedAt` keeps the time, which
-// orders posts published on the same day.
+// Now in UTC+8; the time orders posts published on the same day.
 const parts = Object.fromEntries(
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Shanghai",

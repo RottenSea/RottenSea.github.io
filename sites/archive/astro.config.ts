@@ -3,8 +3,7 @@ import { defineConfig } from "astro/config";
 
 export default defineConfig({
   site: "https://archive.rottenth.cafe",
-  // The same URL shape as the other two sites: no trailing slash, /404 rather than /404/.
-  // The CSS goes into the page, so the first paint needs only the HTML (as on the personal website).
+  // No trailing slash, and inlined CSS, as on the other two sites.
   build: { format: "file", inlineStylesheets: "always" },
   trailingSlash: "never",
   // 4173 is the personal website's, 4174 Rainbow Stone's and 4321 the design-system docs site's.
@@ -13,12 +12,8 @@ export default defineConfig({
     starlight({
       title: "Devil's Footprints",
       favicon: "/favicon.svg",
-      // The tutorials are written in Chinese, so the pages say so: screen readers read them in
-      // Chinese and Pagefind splits Chinese words. The interface stays in English through
-      // src/content/i18n/zh-CN.json, which puts back every string Starlight would show in Chinese.
+      // zh-CN for screen readers and Pagefind; src/content/i18n/zh-CN.json keeps the interface in English.
       locales: { root: { label: "简体中文", lang: "zh-CN" } },
-      // The personal-website system's fonts; the system's colours, radii and shadows in Starlight's
-      // terms.
       components: { Head: "./src/components/Head.astro" },
       customCss: [
         "@rottensea/ds-personal-website/tokens.css",
@@ -31,8 +26,7 @@ export default defineConfig({
           uiFontFamily: "var(--font-sans)"
         }
       },
-      // The start page, then one group per subject, each holding a series read top to bottom; a
-      // series lists its pages in their sidebar.order.
+      // A series lists its pages in their sidebar.order.
       sidebar: [
         { label: "Start here", link: "/start" },
         {

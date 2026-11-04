@@ -34,14 +34,11 @@ const drafts = new Set(
 
 export default defineConfig({
   site,
-  // Pages build to `about.html` rather than `about/index.html`, so URLs have no trailing slash:
-  // /about, /blog/000000. GitHub Pages and Cloudflare both serve that file at that URL.
-  // The CSS goes into each page, so the first paint needs only the HTML: before it, the browser
-  // shows a blank tab in its own colours, white for a reader in the dark theme on a light system.
+  // URLs without a trailing slash. CSS is inlined so the first paint needs only the HTML; until
+  // then the browser shows a blank tab in its own colours.
   build: { format: "file", inlineStylesheets: "always" },
   trailingSlash: "never",
-  // Every image gets several widths and a `sizes` that follows its own width, so a phone loads a
-  // smaller file. The design system's components size the images; Astro adds no styles of its own.
+  // Several widths per image; the design system's components size them, so Astro adds no styles.
   image: { layout: "constrained" },
   // 4321, Astro's default, is the design-system docs site's.
   server: { port: 4173 },
@@ -55,9 +52,7 @@ export default defineConfig({
     processor: unified({
       // Directives such as :::tip become the design system's components, and $...$ becomes math.
       remarkPlugins: [remarkDsDirectives],
-      // A "#" link beside each heading, links to other sites open in a new tab with a note for
-      // screen readers, and each task list checkbox is named by its task. `site` tells the second
-      // plugin which links stay on this site.
+      // `site` tells the external-links plugin which links stay on this site.
       rehypePlugins: [
         rehypeDsHeadingAnchors,
         [rehypeDsExternalLinks, { site }],
@@ -68,8 +63,7 @@ export default defineConfig({
     }),
     shikiConfig: {
       themes: { light: "github-light", dark: "github-dark" },
-      // Both themes' colors go into CSS variables; the design system's CodeBlock picks one with
-      // the page's color-scheme, so a [data-theme] subtree shows the right one too.
+      // Both themes' colours go into CSS variables, and CodeBlock picks one.
       defaultColor: false,
       // A fence's title, highlighted lines and Shiki's [!code ...] notations.
       transformers: shikiTransformers()

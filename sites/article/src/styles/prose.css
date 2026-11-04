@@ -1,12 +1,9 @@
-/* Styles for a post's running text that the design system leaves to the site. Code blocks,
-   tables, images, heading anchors and links to other sites are the design system's components
-   and plugins, with their own styles. Unlayered, so these win over the design system's base layer. */
+/* Running text that the design system leaves to the site. */
 .prose > * + * {
   margin-top: var(--space-md);
 }
 
-/* rehypeDsHeadingAnchors wraps h2 to h4 in a div.ds-heading with the "#" link, so the spacing
-   goes on that wrapper and the type on the heading inside it. */
+/* Headings sit in rehypeDsHeadingAnchors' div.ds-heading, which takes the spacing. */
 .prose h2 {
   font-family: var(--display-sm-family);
   font-size: var(--display-sm-size);
@@ -60,8 +57,7 @@
   padding: 0.125em 0.375em;
 }
 
-/* Task lists: the checkbox takes the bullet's place. rehypeDsTaskLists puts it and its text in a
-   label, inside the item's paragraph when the list is loose. */
+/* Task lists: the checkbox takes the bullet's place. */
 .prose
   li:has(
     > label > input[type="checkbox"],
@@ -77,8 +73,7 @@
   vertical-align: -0.125em;
 }
 
-/* Footnotes: smaller and muted under a soft hairline. remark-gfm names the list with an h2 for
-   screen readers only, and its sr-only class has no styles of its own. */
+/* remark-gfm's sr-only footnote heading has no styles of its own. */
 .prose [data-footnotes] {
   border-top: 1px solid var(--hairline-soft);
   color: var(--text-muted);
@@ -97,8 +92,7 @@
   width: 1px;
 }
 
-/* The links in the footnotes are underlined: on the muted text their colour alone does not set
-   them apart. */
+/* On muted text, colour alone does not set the links apart. */
 .prose [data-footnotes] a {
   text-decoration: underline;
 }

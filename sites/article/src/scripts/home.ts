@@ -91,9 +91,8 @@ if (calendar) {
   calendar.draw();
 }
 
-// A post's category and tags link here with ?category= or ?tag=. Filter by it once, go to the
-// list, and put the address back to "/", since filtering on this page never changes the address.
-// A #main in the link would be lost with the query before the browser scrolled to it.
+// ?category= and ?tag= from a post filter once and are dropped from the address; a #main in the
+// link would be lost with the query before the browser scrolled to it.
 type Selectable = HTMLElement & { select(value: string | null): void };
 const query = new URLSearchParams(location.search);
 const fromQuery = (key: "category" | "tag", selector: string) => {

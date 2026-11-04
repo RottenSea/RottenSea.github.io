@@ -1,4 +1,4 @@
-# Every crawler is welcome, as on the personal website (round AH4); the sitemap lists the pages.
+# Every crawler is welcome; the sitemap lists the pages.
 User-agent: *
 Allow: /
 

@@ -6,8 +6,7 @@ import { test as base, expect, type Page } from "@playwright/test";
 const COMMENT_SERVICE = "https://comment.rottenth.cafe/**";
 
 export const test = base.extend({
-  // A test that loaded a post would otherwise add to its real view count. The comments and the
-  // count stay empty instead, as when the service does not answer.
+  // A loaded post would otherwise add to its real view count.
   page: async ({ page }, use) => {
     await page.route(COMMENT_SERVICE, (route) => route.abort());
     await use(page);
@@ -17,12 +16,9 @@ export const test = base.extend({
 export { expect };
 
 /**
- * The page's accessibility problems, as axe finds them under WCAG 2.2 A and AA. Colour contrast is
- * left out: three low-contrast pairs from the design handoff are kept on purpose. So is Twikoo's
- * comment area, whose markup is Twikoo's own. A site can leave out more with `exclude`.
- *
- * A covered Spoiler is not counted against "label in name": its text is drawn in the cover's own
- * colour, so none of it is visible to match the button's name, but axe cannot tell.
+ * axe under WCAG 2.2 A and AA. Colour contrast is skipped, since three low-contrast pairs are kept
+ * on purpose, and so is Twikoo's markup. A covered Spoiler's text is invisible, which axe cannot
+ * tell, so it is not counted against "label in name".
  */
 export async function accessibilityProblems(
   page: Page,

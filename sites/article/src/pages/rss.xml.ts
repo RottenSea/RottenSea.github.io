@@ -10,12 +10,8 @@ import { getPosts, postDates, postUrl } from "../utils/posts";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../utils/site";
 
 /**
- * The feed, RSS 2.0 with each post in full (round AH2). Every post is rendered as its page
- * renders it, with the design system's components, then cut down to what a feed reader shows:
- * no scripts, styles or classes; no buttons, heading anchors, code-block bars or text meant only
- * for screen readers; every link and image address made absolute. Components without their CSS
- * fall back to plain HTML: a callout is a few paragraphs, a code group is its blocks one after
- * another, a diagram is its source.
+ * RSS 2.0 with each post in full, rendered as its page renders it, then stripped of scripts,
+ * styles, controls and screen-reader text, with absolute addresses.
  */
 
 /** Parts of a component that mean nothing without its CSS and scripts. */

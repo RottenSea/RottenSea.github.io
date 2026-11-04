@@ -1,11 +1,7 @@
-// GitHub Pages at rottensea.github.io, where the personal website used to be, only sends readers
-// on to the sites at rottenth.cafe. Usage: node scripts/pages-redirect.ts <the site's dist> <output>
-//
-// Its home page goes to www.rottenth.cafe, the way in to all the sites. Every other page the
-// personal website builds gets a page at the same path that redirects to the same path at
-// article.rottenth.cafe, so an old link still lands on its post: a meta refresh, which search engines treat as a permanent
-// redirect, a canonical link, and a script that keeps the query and fragment. Its 404 page does
-// the same for any other path, from the address bar. Nothing else is copied: no feed, no images.
+// Redirect pages for rottensea.github.io: node scripts/pages-redirect.ts <dist> <output>
+// The home page goes to www.rottenth.cafe and every other page to the same path on
+// article.rottenth.cafe, with a meta refresh, a canonical link and a script that keeps the query
+// and fragment; the 404 page does the same from the address bar.
 import {
   mkdirSync,
   readdirSync,

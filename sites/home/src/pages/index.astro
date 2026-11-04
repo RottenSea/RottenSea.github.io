@@ -1,8 +1,5 @@
 ---
-// Rainbow Stone, the way in to the other sites: one screen with the name, two links, and the
-// design system's DotGlobe turning under them. As the handoff's Rainbow Stone.dc.html, without
-// its About dialog (round AJ5), and in the light theme too (AJ7): the page follows the reader's
-// system setting, with no switch of its own.
+// Rainbow Stone, the way in to the other sites. It follows the system theme, with no switch.
 import "@rottensea/ds-personal-website/index.css";
 // Each by its own path: the components index would pull every component's scripts into the
 // build, Mermaid and KaTeX among them, though the page loads none of them.
@@ -40,8 +37,7 @@ const LINKS = [
 </html>
 
 <style>
-  /* The handoff's backdrop: a dark fall from night to ink with a coral glow rising from the
-     bottom, where the globe is. The light theme keeps the shape on cream. */
+  /* Night to ink with a coral glow rising behind the globe; the light theme keeps it on cream. */
   :global(html) {
     --home-top: var(--cream-50);
     --home-middle: var(--cream-50);
@@ -104,7 +100,6 @@ const LINKS = [
     justify-content: center;
   }
 
-  /* Hairline pills in the uppercase caption style, as the handoff draws them. */
   a {
     border: 1px solid color-mix(in srgb, var(--text-muted) 28%, transparent);
     border-radius: var(--radius-pill);

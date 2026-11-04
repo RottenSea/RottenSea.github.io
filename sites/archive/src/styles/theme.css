@@ -1,7 +1,6 @@
 /*
- * Starlight in the personal-website system's terms. Starlight keeps its styles in cascade layers,
- * so these plain rules win over them. The system's tokens follow data-theme on <html>, the same
- * attribute Starlight's theme select writes, so one set of rules covers both themes.
+ * Starlight in the system's tokens. Unlayered, so these win over Starlight's layers; the tokens
+ * follow the same data-theme Starlight writes.
  */
 :root {
   /* Starlight's grey scale runs from the strongest text (white) to the page (black). */
@@ -42,8 +41,7 @@
   --sl-shadow-lg: var(--shadow-float);
 }
 
-/* The scrollbar's room is kept on every page, as on the personal website, so a page short enough to
-   need none does not sit wider than the next one. */
+/* A short page does not sit wider than a long one. */
 html {
   scrollbar-gutter: stable;
 }
@@ -90,8 +88,7 @@ html {
   border-radius: var(--radius-md);
 }
 
-/* A key to press, as in Win + I: a key cap on the card surface, with a thicker bottom edge.
-   Starlight has no style for <kbd>. */
+/* Starlight has no style for <kbd>. */
 .sl-markdown-content kbd {
   background: var(--surface-card);
   border: 1px solid var(--hairline);

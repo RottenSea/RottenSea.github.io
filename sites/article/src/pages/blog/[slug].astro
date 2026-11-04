@@ -37,8 +37,7 @@ import {
 } from "../../utils/site";
 
 export async function getStaticPaths() {
-  // Previous and next go by publication time, whatever is pinned, among the listed posts. A draft
-  // has a page but is in no list, so it has neither and is no one's neighbour.
+  // By publication time, ignoring pins; a draft is in no list, so it has no neighbours.
   const byTime = (await getPosts()).toSorted((a, b) =>
     postDates(a).published.localeCompare(postDates(b).published)
   );
@@ -96,14 +95,12 @@ const meta = [
   ...(revisions > 0 ? [`Revision ${revisions}`] : [])
 ];
 const url = new URL(postUrl(post), Astro.site).href;
-// Comments and the view count are kept under the post's folder name, which never changes, so a
-// new permalink keeps them.
+// Keyed by folder name, so a new permalink keeps the comments and view count.
 const commentPath = `/blog/${post.id}`;
 // The share poster draws the cover at 1080px wide.
 const cover =
   data.image && (await getImage({ src: data.image, width: 1080 })).src;
-// A shared link's card shows the cover cut to the card's 1200:630, or else the site's image.
-// Astro never enlarges an image, so a cover smaller than the card is cut at its own size.
+// The share card's cover is cut to 1200:630; Astro never enlarges, so a small cover is cut smaller.
 const shareSize = data.image && cardSize(data.image.width, data.image.height);
 const shareImage =
   data.image && shareSize
@@ -149,10 +146,7 @@ const jsonLd = {
   noindex={data.draft}
 >
   <ContentGrid stackRails="none" mainWidth="var(--container-reading)" class="post-grid">
-    {/*
-      Search indexes the post's title, text and tags, not the meta line or what follows the tags.
-      A draft is left out of the index, as it is out of every list.
-    */}
+    {/* Search indexes the title, text and tags; drafts are left out. */}
     <article
       class="post"
       lang={data.lang}
@@ -171,7 +165,6 @@ const jsonLd = {
       {data.image && <Figure src={data.image} alt="" zoom={false} loading="eager" sizes="(min-width: 720px) 680px, 100vw" class="post__cover" />}
 
       <div class="prose">
-        {/* Code fences, tables and images become the design system's CodeBlock, TableScroll and Figure. */}
         <Content components={components} />
       </div>
 

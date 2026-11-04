@@ -15,10 +15,7 @@ export const MOTION_STORAGE_KEY = "reduce-motion";
 /** Read by screen readers after a link that opens in a new tab (WCAG technique G201). */
 export const NEW_TAB_NOTE = " (opens in a new tab)";
 
-/**
- * A page's public URL path. With `build.format: "file"`, Astro.url.pathname is the built file's
- * path during a build (/about.html, /index.html) but the clean path in `astro dev` (/about, /).
- */
+/** With `build.format: "file"`, Astro.url.pathname is /about.html in a build but /about in dev. */
 export function pagePath(url: URL): string {
   const path = url.pathname.replace(/\.html$/, "").replace(/\/index$/, "/");
   return path || "/";
@@ -44,10 +41,7 @@ export const SOCIAL = [
   { label: "Bluesky", href: "https://bsky.app/profile/rottenth.bsky.social" }
 ];
 
-/**
- * The footer's link columns: this site's pages with its feed, the other two sites on rottenth.cafe
- * (the way in, which lists them all, and the tutorials), and the author's pages elsewhere.
- */
+/** The footer's link columns. */
 export const FOOTER_COLUMNS = [
   {
     title: "Site",
@@ -66,18 +60,11 @@ export const FOOTER_COLUMNS = [
   { title: "Elsewhere", links: SOCIAL }
 ];
 
-/**
- * The home page with its list filtered to one category or tag. The home page reads the query once,
- * filters, scrolls past the quote to the list, and puts its address back to `/`.
- */
+/** The home page filtered to one category or tag; the page reads the query once and drops it. */
 export const filterUrl = (key: "category" | "tag", value: string) =>
   `/?${new URLSearchParams({ [key]: value })}`;
 
-/**
- * The comment service, Twikoo at comment.rottenth.cafe: posts' comments and view counts. In
- * development it is the copy pnpm dev:comment runs on this computer, so trying a draft leaves
- * nothing in the real comments.
- */
+/** Twikoo for comments and view counts; in development the local copy from pnpm dev:comment. */
 export const COMMENT_SERVER = import.meta.env.DEV
   ? "http://localhost:8787"
   : "https://comment.rottenth.cafe";

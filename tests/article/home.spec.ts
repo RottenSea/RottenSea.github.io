@@ -82,9 +82,9 @@ test("a filter that matches nothing says so", async ({ page }) => {
 
 test("search opens with / and finds a post", async ({ page }) => {
   await needPosts(page);
-  const title = (
-    await posts(page).first().locator("h2, h3").first().innerText()
-  ).trim();
+  const title =
+    // biome-ignore lint/performance/useDomNodeTextContent: a Playwright locator; the title as shown.
+    (await posts(page).first().locator("h2, h3").first().innerText()).trim();
   await page.keyboard.press("/");
   const search = page.getByRole("dialog", { name: "Search" });
   await expect(search).toBeVisible();
