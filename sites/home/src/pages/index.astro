@@ -54,13 +54,6 @@ const LINKS = [
     --home-glow: var(--coral-700);
     --home-glow-strength: 20%;
   }
-
-  /* Lighter dots on cream: 60% coral-500 mixed with cream-50. A hex value, because the canvas
-     cannot read a color-mix(). Outranks DotGlobe's own light value, not its dark one. */
-  :global(html:not([data-theme="dark"]) ds-dot-globe) {
-    --ds-globe-dot: #e6ab96;
-  }
-
   body {
     background:
       radial-gradient(
