@@ -6,9 +6,9 @@ The design is the handoff's `Rainbow Stone.dc.html`, without its About dialog. T
 
 | Command | What it does |
 | --- | --- |
-| `pnpm dev` | Starts a local server on port 4174 |
+| `pnpm dev` | Starts a local server on port 4173 |
 | `pnpm build` | Builds the site into `dist/` |
-| `pnpm preview` | Serves the built site on port 4174 |
+| `pnpm preview` | Serves the built site on port 4173 |
 | `pnpm check` | Type checks the Astro files |
 
 Run them here, or from the repository's root with `pnpm --filter home <command>`.

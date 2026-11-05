@@ -4,8 +4,8 @@
 import { defineConfig } from "@playwright/test";
 
 const sites = [
-  { name: "home", port: 4174 },
-  { name: "article", port: 4173 },
+  { name: "home", port: 4173 },
+  { name: "article", port: 4174 },
   { name: "archive", port: 4175 }
 ];
 

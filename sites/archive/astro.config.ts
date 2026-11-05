@@ -6,7 +6,7 @@ export default defineConfig({
   // No trailing slash, and inlined CSS, as on the other two sites.
   build: { format: "file", inlineStylesheets: "always" },
   trailingSlash: "never",
-  // 4173 is the personal website's, 4174 Rainbow Stone's and 4321 the design-system docs site's.
+  // 4173 is Rainbow Stone's, 4174 the personal website's and 4321 the design-system docs site's.
   server: { port: 4175 },
   integrations: [
     starlight({

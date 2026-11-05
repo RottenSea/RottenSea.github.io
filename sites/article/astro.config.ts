@@ -40,8 +40,8 @@ export default defineConfig({
   trailingSlash: "never",
   // Several widths per image; the design system's components size them, so Astro adds no styles.
   image: { layout: "constrained" },
-  // 4321, Astro's default, is the design-system docs site's.
-  server: { port: 4173 },
+  // 4173 is Rainbow Stone's and 4321, Astro's default, the design-system docs site's.
+  server: { port: 4174 },
   // The sitemap lists every page but the 404 one and the drafts.
   integrations: [
     mdx(),

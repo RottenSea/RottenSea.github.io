@@ -24,8 +24,8 @@ The repository is a [pnpm](https://pnpm.io/) workspace. From the root:
 | `pnpm check` | Runs Biome's format and lint checks over the repository, then type checks every site |
 | `pnpm format` | Formats and fixes what Biome can fix |
 | `pnpm build` | Builds every site |
-| `pnpm dev:home` | Starts Rainbow Stone's local server, on port 4174 |
-| `pnpm dev:article` | Starts the personal website's local server, on port 4173 |
+| `pnpm dev:home` | Starts Rainbow Stone's local server, on port 4173 |
+| `pnpm dev:article` | Starts the personal website's local server, on port 4174 |
 | `pnpm dev:archive` | Starts Devil's Footprints' local server, on port 4175 |
 | `pnpm new-post` | Creates a draft post on the personal website |
 | `pnpm test` | Tests the three sites' last builds in a real browser: accessibility with axe, and what the pages do. Build first (`pnpm build`); it uses the Chrome installed on this computer and runs here only, not in CI |

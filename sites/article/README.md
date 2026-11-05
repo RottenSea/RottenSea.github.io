@@ -41,9 +41,9 @@ Run these in this folder, or from the repository's root with `pnpm --filter arti
 
 | Command | What it does |
 | --- | --- |
-| `pnpm dev` | Starts a local server on port 4173 that reloads on changes |
+| `pnpm dev` | Starts a local server on port 4174 that reloads on changes |
 | `pnpm build` | Builds the site into `dist/`, then indexes the posts for search with Pagefind; `pnpm dev` has no index |
-| `pnpm preview` | Serves the built site on port 4173 |
+| `pnpm preview` | Serves the built site on port 4174 |
 | `pnpm check` | Type checks the Astro files |
 | `pnpm new-post` | Creates a draft post |
 
