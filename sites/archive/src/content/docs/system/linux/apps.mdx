@@ -2,7 +2,7 @@
 title: 常用软件
 description: 装 AUR 助手 paru，再装笔者在 Arch Linux 上用的浏览器、编辑器、字体和小工具。
 sidebar:
-  order: 6
+  order: 5
 ---
 
 import { Steps } from "@astrojs/starlight/components";
@@ -22,7 +22,15 @@ AUR 里的包谁都能上传，Arch 官方不审核。装一个不熟悉的包�
 
 1. **装 AUR 助手 paru**
 
-   AUR 助手替你完成下载、编译、安装这几步，用起来和 `pacman` 差不多。paru 自己也在 AUR 里，第一次要手动装：
+   AUR 助手替你完成下载、编译、安装这几步，用起来和 `pacman` 差不多。paru 自己也在 AUR 里，第一次要手动装。
+
+   paru 是用 Rust 写的，编译要用 Rust 的 `cargo`。安装时装的是 rustup，它负责下载和切换 Rust 的工具链，自己不带编译器，先装上稳定版：
+
+   ```sh
+   rustup default stable
+   ```
+
+   以后自己写 Rust 也用这一套，`rustup update` 更新工具链。然后编译安装 paru：
 
    ```sh
    git clone https://aur.archlinux.org/paru.git
@@ -45,7 +53,7 @@ AUR 里的包谁都能上传，Arch 官方不审核。装一个不熟悉的包�
 | 传文件 | LocalSend | `paru -S localsend-bin` | 在局域网里的设备之间传文件。 |
 | 系统信息 | fastfetch | 安装时已装好 | 在终端里显示系统和硬件信息。 |
 | 等宽字体 | Maple Mono NF CN | `paru -S maplemononl-nf-cn` | 带中文和图标的编程字体，终端和编辑器用。 |
-| 鼠标指针 | Breeze | 安装时已装好 | KDE 的指针主题。 |
+| 鼠标指针 | Breeze | 安装时已装好 | KDE 的指针主题，在 niri 配置的[可选设置](/system/linux/desktop#可选的设置)里换上。 |
 
 ### 让 kitty 用 Maple Mono
 
@@ -58,19 +66,6 @@ font_family Maple Mono NL NF CN Medium
 ```
 
 保存后，在 kitty 里按 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F5</kbd> 重新加载配置。
-
-### 换鼠标指针
-
-在 niri 的配置文件里加上：
-
-```kdl title="~/.config/niri/config.kdl"
-cursor {
-    xcursor-theme "breeze_cursors"
-    xcursor-size 24
-}
-```
-
-重新登录后生效。
 
 ## 日常维护
 

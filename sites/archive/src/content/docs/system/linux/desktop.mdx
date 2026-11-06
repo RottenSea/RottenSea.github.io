@@ -1,13 +1,13 @@
 ---
 title: niri 和 Noctalia
-description: 改好 niri 的配置和快捷键，进入 niri 和 Noctalia 的桌面，再设置 Noctalia 的登录界面。
+description: 在命令行里改好 niri、Noctalia、输入法、密钥环和登录界面的配置，重启后从 Noctalia 的登录界面进入桌面。
 sidebar:
   order: 4
 ---
 
 import { Steps } from "@astrojs/starlight/components";
 
-要用的软件安装时都装好了。这一页还是从命令行开始：先联网、改两行配置，进桌面看一眼；剩下的配置在桌面里的终端改，最后设置登录界面。
+要用的软件安装时都装好了。这一页的配置全部在命令行里用 vim 改，改完再重启，从 Noctalia 的登录界面进入桌面。
 
 ## 联网
 
@@ -19,103 +19,156 @@ nmcli device wifi connect 你的Wi-Fi名称 password 你的密码
 
 也可以输入 `nmtui`，在一个文字界面里选网络、输密码。
 
-## 第一次进桌面
+## 配置 niri
+
+niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录）。第 2 到第 7 步都在这个文件里改，全部改完再保存退出。
 
 <Steps>
 
-1. **复制 niri 的默认配置**
-
-   niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录）。先把软件包里带的默认配置复制过去：
+1. **复制默认配置并打开**
 
    ```sh
    mkdir -p ~/.config/niri
    cp /usr/share/doc/niri/default-config.kdl ~/.config/niri/config.kdl
-   ```
-
-   默认配置里每个选项都有英文注释，以后想改什么，先在这个文件里找。
-
-2. **改两行配置**
-
-   ```sh
    vim ~/.config/niri/config.kdl
    ```
 
-   在 vim 里按 <kbd>/</kbd> 搜索，找到下面两行：
+   默认配置是软件包里带的，每个选项都有英文注释，以后想改什么，先在这个文件里找。下面要找某一行时，按 <kbd>Esc</kbd> 后输入 `/` 加要找的内容回车。
+
+2. **启动 Noctalia 和 Fcitx5**
+
+   找到这一行：
 
    ```kdl
    spawn-at-startup "waybar"
-   Mod+T hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
    ```
 
-   改成：
+   换成下面两行：
 
-   ```kdl
+   ```kdl title="~/.config/niri/config.kdl"
    spawn-at-startup "noctalia"
-   Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
+   spawn-at-startup "fcitx5"
    ```
 
-   第一行让 niri 启动时一起启动 Noctalia，第二行把 <kbd>Super</kbd> + <kbd>T</kbd> 打开的终端换成 kitty。改完按 <kbd>Esc</kbd>，输入 `:wq` 回车保存退出。
+   niri 启动时会一起启动 Noctalia 和输入法 Fcitx5。
 
-3. **启动 niri**
+3. **设置输入法的环境变量**
 
-   ```sh
-   niri-session
+   在文件开头加上：
+
+   ```kdl title="~/.config/niri/config.kdl"
+   environment {
+       XMODIFIERS "@im=fcitx"
+       GTK_IM_MODULE "fcitx"
+       QT_IM_MODULE "fcitx"
+   }
    ```
 
-   屏幕会切到桌面，Noctalia 的状态栏出现在屏幕边上。按 <kbd>Super</kbd> + <kbd>T</kbd> 打开 kitty。<kbd>Super</kbd> 是键盘左下角带徽标的那个键，niri 的配置里写作 `Mod`。
+   `XMODIFIERS` 让只支持 X11 的老程序也能用输入法。另外两行让 GTK 和 Qt 写的程序通过 Fcitx5 自己的模块输入。
 
-   按 <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd> 能看到所有快捷键。常用的几个：
+   :::note
+   原生的 Wayland 程序可以通过 Wayland 自己的输入协议（text-input）用输入法，按 ArchWiki 的 [Fcitx5](https://wiki.archlinux.org/title/Fcitx5) 一页，`GTK_IM_MODULE` 和 `QT_IM_MODULE` 并不是必需的。笔者加上它们，是因为有的程序不设就打不出字，或者候选框的位置不对。遇到问题时，可以用 `fcitx5-diagnose` 检查输入法的环境。
+   :::
 
-   | 快捷键 | 作用 |
-   | --- | --- |
-   | <kbd>Super</kbd> + <kbd>←</kbd> / <kbd>→</kbd> | 切到左边或右边的窗口 |
-   | <kbd>Super</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd> | 切到上一个或下一个工作区 |
-   | 单按一下 <kbd>Super</kbd> | 总览：缩小显示所有工作区和窗口 |
-   | <kbd>Super</kbd> + <kbd>Q</kbd> | 关闭窗口 |
-   | <kbd>Super</kbd> + <kbd>R</kbd> | 切换窗口宽度 |
-   | <kbd>Super</kbd> + <kbd>F</kbd> | 窗口占满整列 |
-   | <kbd>Print</kbd> | 截图：框选区域，<kbd>Ctrl</kbd> + <kbd>Print</kbd> 截整个屏幕，<kbd>Alt</kbd> + <kbd>Print</kbd> 截当前窗口 |
+4. **注释掉用不上的默认快捷键**
 
-</Steps>
-
-## 配置 niri
-
-下面在 kitty 里改配置。niri 保存配置文件后会立即生效，不用重启；改错了会弹出提示，并继续用上一次正确的配置。
-
-<Steps>
-
-1. **打开配置文件**
-
-   ```sh
-   vim ~/.config/niri/config.kdl
-   ```
-
-   用 kitty 时，复制粘贴是 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> 和 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>。
-
-2. **换掉用不上的快捷键**
-
-   默认配置的启动器、锁屏、音量和亮度键调用的是没装的程序。在 `binds { ... }` 里找到这几行：
+   在 `binds { ... }` 里找到下面这些行，每行前面加 `//`：
 
    ```kdl
+   Mod+T hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
    Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+   Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+10%"; }
    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
+   Mod+Comma  { consume-window-into-column; }
+   Mod+Period { expel-window-from-column; }
+   Mod+W { toggle-column-tabbed-display; }
+   Print { screenshot; }
+   Ctrl+Print { screenshot-screen; }
+   Alt+Print { screenshot-window; }
    Mod+Shift+E { quit; }
+   Ctrl+Alt+Delete { quit; }
    ```
 
-   每行前面加 `//` 注释掉，再在 `binds {` 的下一行加上 Noctalia 的快捷键：
+   终端、启动器、锁屏、音量、亮度、截图和退出这几项，第 6 步会换成 kitty 和 Noctalia 的。fuzzel、swaylock 和亮度要用的 brightnessctl 都没有装。`Super+Alt+S` 开关读屏程序 Orca，也没有装。`Mod+Comma` 和 `Mod+Period` 把窗口并入、移出当前列，`Mod+W` 把一列里的窗口显示成标签页，笔者不用这三个。
+
+5. **上下方向改成切换工作区**
+
+   默认配置里，<kbd>Super</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd> 在同一列的几个窗口之间上下切换，<kbd>Super</kbd> + <kbd>U</kbd> / <kbd>I</kbd> 才是切换工作区。这一步把两者对调，带 <kbd>Ctrl</kbd>、<kbd>Shift</kbd> 的组合也跟着对调。
+
+   找到下面这些行，把花括号里的动作改成这样：
 
    ```kdl title="~/.config/niri/config.kdl"
+   Mod+Down  { focus-workspace-down; }
+   Mod+Up    { focus-workspace-up; }
+   Mod+J     { focus-workspace-down; }
+   Mod+K     { focus-workspace-up; }
+
+   Mod+Ctrl+Down  { move-column-to-workspace-down; }
+   Mod+Ctrl+Up    { move-column-to-workspace-up; }
+   Mod+Ctrl+J     { move-column-to-workspace-down; }
+   Mod+Ctrl+K     { move-column-to-workspace-up; }
+
+   Mod+Shift+Down  { move-workspace-down; }
+   Mod+Shift+Up    { move-workspace-up; }
+   Mod+Shift+J     { move-workspace-down; }
+   Mod+Shift+K     { move-workspace-up; }
+
+   Mod+U              { focus-window-down; }
+   Mod+I              { focus-window-up; }
+   Mod+Ctrl+U         { move-window-down; }
+   Mod+Ctrl+I         { move-window-up; }
+
+   Mod+Shift+U         { focus-monitor-down; }
+   Mod+Shift+I         { focus-monitor-up; }
+   ```
+
+   再找到这两行，前面加 `//`：
+
+   ```kdl
+   Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
+   Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
+   ```
+
+   在它们下面加上：
+
+   ```kdl title="~/.config/niri/config.kdl"
+   Mod+Shift+Ctrl+U     { move-column-to-monitor-down; }
+   Mod+Shift+Ctrl+I     { move-column-to-monitor-up; }
+   ```
+
+   | 快捷键 | 改完以后 |
+   | --- | --- |
+   | <kbd>Super</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd>，<kbd>Super</kbd> + <kbd>K</kbd> / <kbd>J</kbd> | 切到上一个或下一个工作区 |
+   | 加 <kbd>Ctrl</kbd> | 把当前列移到上一个或下一个工作区 |
+   | 加 <kbd>Shift</kbd> | 把整个工作区往上或往下移 |
+   | <kbd>Super</kbd> + <kbd>I</kbd> / <kbd>U</kbd> | 在同一列的窗口之间往上或往下切换 |
+   | 加 <kbd>Ctrl</kbd> | 把窗口在列里往上或往下移 |
+   | 加 <kbd>Shift</kbd> | 切到上方或下方的显示器 |
+   | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>Ctrl</kbd> + <kbd>I</kbd> / <kbd>U</kbd> | 把当前列移到上方或下方的显示器 |
+
+6. **加上新的快捷键**
+
+   在 `binds {` 的下一行加上：
+
+   ```kdl title="~/.config/niri/config.kdl"
+   Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
+   Mod+E hotkey-overlay-title="Open Files: Thunar" { spawn-sh "thunar"; }
    Mod+S hotkey-overlay-title="Noctalia launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
    Mod+D { spawn-sh "noctalia msg panel-toggle control-center"; }
    Mod+Shift+Comma { spawn-sh "noctalia msg settings-toggle"; }
    Mod+Tab { spawn-sh "noctalia msg window-switcher"; }
    Mod+Shift+E { spawn-sh "noctalia msg panel-toggle session"; }
    Super+Alt+L { spawn-sh "noctalia msg session lock"; }
+   Mod+Space { spawn-sh "fcitx5-remote -t"; }
+
+   Print { spawn-sh "noctalia msg screenshot-region"; }
+   Ctrl+Print { spawn-sh "noctalia msg screenshot-fullscreen"; }
+   Mod+Shift+S { spawn-sh "noctalia msg screenshot-region"; }
 
    XF86AudioRaiseVolume { spawn-sh "noctalia msg volume-up"; }
    XF86AudioLowerVolume { spawn-sh "noctalia msg volume-down"; }
@@ -126,20 +179,23 @@ nmcli device wifi connect 你的Wi-Fi名称 password 你的密码
 
    | 快捷键 | 作用 |
    | --- | --- |
+   | <kbd>Super</kbd> + <kbd>T</kbd> | 打开 kitty |
+   | <kbd>Super</kbd> + <kbd>E</kbd> | 打开文件管理器 Thunar |
    | <kbd>Super</kbd> + <kbd>S</kbd> | 启动器：输入名字打开程序 |
    | <kbd>Super</kbd> + <kbd>D</kbd> | 控制中心：网络、蓝牙、音量、电源模式 |
    | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>,</kbd> | Noctalia 的设置 |
    | <kbd>Super</kbd> + <kbd>Tab</kbd> | 切换窗口 |
-   | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | 注销、重启、关机 |
+   | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | 会话面板：注销、重启、关机 |
    | <kbd>Super</kbd> + <kbd>Alt</kbd> + <kbd>L</kbd> | 锁屏 |
-
-   原来的 <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> 是直接退出 niri，换成 Noctalia 的会话面板后，退出、重启、关机都在面板里选。截图继续用 niri 自带的 <kbd>Print</kbd>。
+   | <kbd>Super</kbd> + <kbd>Space</kbd> | 在英文和拼音之间切换（Fcitx5 自带的 <kbd>Ctrl</kbd> + <kbd>Space</kbd> 也能用） |
+   | <kbd>Print</kbd> 或 <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> | 框选区域截图 |
+   | <kbd>Ctrl</kbd> + <kbd>Print</kbd> | 截当前屏幕 |
 
    :::caution
    同一个快捷键只能出现一次，重复了 niri 会报错。加新的快捷键前，先搜一下文件里有没有同样的组合。
    :::
 
-3. **加上 Noctalia 建议的设置**
+7. **加上 Noctalia 建议的设置**
 
    在文件末尾加上：
 
@@ -178,9 +234,169 @@ nmcli device wifi connect 你的Wi-Fi名称 password 你的密码
 
    壁纸还有别的摆法（例如总览时显示模糊的壁纸），见 Noctalia 文档的 [Niri](https://docs.noctalia.dev/noctalia/compositor-settings/niri/) 一页。
 
-4. **设置文件选择框**
+8. **保存并检查**
 
-   niri 默认用 GNOME 的门户打开文件选择框，它要求装 GNOME 的文件管理器 Nautilus。不想装的话，让文件选择框改用 GTK 的门户：
+   按 <kbd>Esc</kbd>，输入 `:wq` 回车保存退出，再检查一遍配置：
+
+   ```sh
+   niri validate
+   ```
+
+   有错的话，它会指出是哪一行。没有报错就可以往下走了。
+
+</Steps>
+
+### 可选的设置
+
+下面几项按自己的习惯选，展开后照着改同一个配置文件，改完同样用 `niri validate` 检查。
+
+<details>
+<summary>键盘、触摸板和鼠标</summary>
+
+在 `input { ... }` 里找到 `keyboard`、`touchpad`、`mouse` 三段，改成这样（`// ...` 表示中间没改的行）：
+
+```kdl title="~/.config/niri/config.kdl"
+input {
+    keyboard {
+        // ...
+
+        numlock
+
+        repeat-delay 500
+        repeat-rate 30
+    }
+
+    touchpad {
+        tap
+        natural-scroll
+        accel-speed 0.2
+        scroll-factor 0.2
+    }
+
+    mouse {
+        accel-speed -0.4
+        accel-profile "flat"
+    }
+
+    // ...
+}
+```
+
+| 设置 | 作用 |
+| --- | --- |
+| `numlock` | 开机打开数字小键盘，默认配置里已经有 |
+| `repeat-delay 500` | 按住一个键 500 毫秒后开始重复输入，默认 600 |
+| `repeat-rate 30` | 每秒重复 30 次，默认 25 |
+| `tap` | 轻触触摸板就是点击，默认配置里已经有 |
+| `natural-scroll` | 自然滚动：手指往上推，页面往上走，默认配置里已经有 |
+| 触摸板的 `accel-speed 0.2` | 指针速度，范围 -1.0 到 1.0，默认 0 |
+| `scroll-factor 0.2` | 滚动速度是默认的 0.2 倍 |
+| 鼠标的 `accel-speed -0.4` | 指针比默认慢一点 |
+| `accel-profile "flat"` | 关掉指针加速，指针移动的距离只和鼠标移动的距离有关 |
+
+</details>
+
+<details>
+<summary>鼠标指针</summary>
+
+换成安装时装好的 Breeze 指针。在 `input { ... }` 后面加上：
+
+```kdl title="~/.config/niri/config.kdl"
+cursor {
+    xcursor-theme "breeze_cursors"
+    xcursor-size 24
+}
+```
+
+</details>
+
+<details>
+<summary>关掉左上角的热角</summary>
+
+默认情况下，鼠标移到屏幕左上角会打开总览。不想要的话，在 `binds { ... }` 后面加上：
+
+```kdl title="~/.config/niri/config.kdl"
+gestures {
+    hot-corners {
+        off
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>显示器的分辨率和缩放</summary>
+
+只有一个显示器的话，可以不写：niri 会用显示器首选的分辨率和最高的刷新率，没写缩放时，按屏幕的尺寸和分辨率自己估一个。
+
+要手动指定的话，先查显示器的名字：
+
+```sh
+ls /sys/class/drm
+```
+
+列出来的 `card1-eDP-1` 这类名字，去掉开头的 `card1-` 就是 niri 里用的名字。`eDP` 一般是笔记本的内置屏，`HDMI-A`、`DP` 是外接的显示器。进了桌面以后，也可以用 `niri msg outputs` 查名字和支持的分辨率。
+
+然后在配置文件里加上一段，下面是笔者笔记本内置屏的设置：
+
+```kdl title="~/.config/niri/config.kdl"
+output "eDP-1" {
+    mode "2880x1880@120.000"
+    scale 1.5
+}
+```
+
+`mode` 是分辨率和刷新率，`scale` 是缩放倍率，可以是小数，1.5 就是 150%。默认配置里有一段用 `/-` 注释掉的 `output "eDP-1"` 示例，保持不动就行。
+
+用小数缩放时，原生的 Wayland 程序显示正常；X11 程序可能发糊，或者尺寸算错。缩放是 1 或 2 这样的整数时，一般没有这个问题。
+
+</details>
+
+<details>
+<summary>窗口装饰、启动提示和中键粘贴</summary>
+
+```kdl title="~/.config/niri/config.kdl"
+prefer-no-csd
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+clipboard {
+    disable-primary
+}
+```
+
+- `prefer-no-csd`：让程序别自己画标题栏和阴影。配合前面的窗口圆角，niri 画的焦点框和阴影会更贴合窗口。默认配置里有一行注释掉的 `// prefer-no-csd`，去掉 `//` 就行。
+- `skip-at-startup`：niri 每次启动时会弹出一张“Important Hotkeys”快捷键提示，加上这一行就不弹了。之后想看，按 <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd>。默认配置的 `hotkey-overlay` 里已经有注释掉的这一行。
+- `disable-primary`：Linux 下选中文字就会自动复制到另一个剪贴板（primary），按鼠标中键粘贴。加上这一行以后，只剩平常用 <kbd>Ctrl</kbd> + <kbd>C</kbd> / <kbd>V</kbd> 的那个剪贴板。
+
+</details>
+
+## Noctalia 和文件选择框
+
+<Steps>
+
+1. **打开 Noctalia 的身份验证**
+
+   ```sh
+   mkdir -p ~/.config/noctalia
+   vim ~/.config/noctalia/config.toml
+   ```
+
+   写入：
+
+   ```toml title="~/.config/noctalia/config.toml"
+   [shell]
+   polkit_agent = true
+   ```
+
+   有程序要管理员权限时（例如连接 Wi-Fi 时要求授权），Noctalia 会弹窗让你输密码。进了桌面以后，在 Noctalia 设置里改过的项会存到 `~/.local/state/noctalia/settings.toml`，优先于这个文件。
+
+2. **设置文件选择框**
+
+   niri 默认用 GNOME 的门户打开文件选择框，它要求装 GNOME 的文件管理器 Nautilus。这里没装，让文件选择框改用 GTK 的门户：
 
    ```sh
    mkdir -p ~/.config/xdg-desktop-portal
@@ -198,17 +414,84 @@ nmcli device wifi connect 你的Wi-Fi名称 password 你的密码
    org.freedesktop.impl.portal.FileChooser=gtk;
    ```
 
-   前四行和 niri 自带的设置一样，最后一行把文件选择框换成 GTK 的。
+   前四行和 niri 自带的设置一样，其中 Secret 那一行让程序通过门户找 gnome-keyring 存密码。最后一行把文件选择框换成 GTK 的。
 
-5. **打开 Noctalia 的身份验证**
+</Steps>
 
-   按 <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>,</kbd> 打开 Noctalia 的设置，在 Privacy & Security 里打开 polkit 身份验证代理。有程序要管理员权限时（例如连接 Wi-Fi 时要求授权），Noctalia 会弹窗让你输密码。
+## 拼音输入法
+
+Fcitx5 默认只有英文键盘，要把拼音加进去：
+
+```sh
+mkdir -p ~/.config/fcitx5
+vim ~/.config/fcitx5/profile
+```
+
+写入：
+
+```ini title="~/.config/fcitx5/profile"
+[Groups/0]
+Name=Default
+Default Layout=us
+DefaultIM=pinyin
+
+[Groups/0/Items/0]
+Name=keyboard-us
+Layout=
+
+[Groups/0/Items/1]
+Name=pinyin
+Layout=
+
+[GroupOrder]
+0=Default
+```
+
+这个分组里有英文键盘和拼音两个输入法，<kbd>Super</kbd> + <kbd>Space</kbd> 在两者之间切换。进了桌面以后想加别的输入法，或者改候选词的设置，运行 `fcitx5-configtool`。
+
+## 密钥环
+
+gnome-keyring 替程序保存密码，例如浏览器和编辑器的登录信息。它的后台程序由 systemd 自动启动，不用写进 niri 的配置。下面两步让它在登录时用你的登录密码自动解锁。
+
+<Steps>
+
+1. **登录时解锁**
+
+   ```sh
+   sudo vim /etc/pam.d/greetd
+   ```
+
+   加上两行 `pam_gnome_keyring.so`，改完是这样：
+
+   ```text title="/etc/pam.d/greetd" ins={6,9}
+   #%PAM-1.0
+
+   auth       required     pam_securetty.so
+   auth       requisite    pam_nologin.so
+   auth       include      system-local-login
+   auth       optional     pam_gnome_keyring.so
+   account    include      system-local-login
+   session    include      system-local-login
+   session    optional     pam_gnome_keyring.so auto_start
+   ```
+
+2. **改密码时跟着改**
+
+   以后用 `passwd` 改登录密码时，keyring 的密码不会自己跟着变，下次登录就解不了锁。在 `/etc/pam.d/passwd` 末尾加一行：
+
+   ```sh
+   sudo vim /etc/pam.d/passwd
+   ```
+
+   ```text title="/etc/pam.d/passwd"
+   password   optional    pam_gnome_keyring.so
+   ```
 
 </Steps>
 
 ## 登录界面
 
-现在每次开机都要在命令行里登录、再输入 `niri-session`。设置好 Noctalia 的登录界面以后，开机直接进图形界面登录。
+最后设置 Noctalia 的登录界面，以后开机直接进图形界面登录。
 
 <Steps>
 
@@ -249,4 +532,69 @@ nmcli device wifi connect 你的Wi-Fi名称 password 你的密码
 
 </Steps>
 
-桌面装好了，但界面还是英文，也打不了中文。下一页设置[中文和输入法](/system/linux/chinese)。
+## 进入桌面以后
+
+登录后，Noctalia 的状态栏出现在屏幕边上。<kbd>Super</kbd> 是键盘左下角带徽标的那个键，niri 的配置里写作 `Mod`。除了上面改过的快捷键，常用的还有：
+
+| 快捷键 | 作用 |
+| --- | --- |
+| 单按一下 <kbd>Super</kbd> | 总览：缩小显示所有工作区和窗口 |
+| <kbd>Super</kbd> + <kbd>←</kbd> / <kbd>→</kbd> | 切到左边或右边的窗口 |
+| <kbd>Super</kbd> + <kbd>Q</kbd> | 关闭窗口 |
+| <kbd>Super</kbd> + <kbd>R</kbd> | 切换窗口宽度 |
+| <kbd>Super</kbd> + <kbd>F</kbd> | 窗口占满整列 |
+| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd> | 显示所有快捷键 |
+
+在 kitty 里复制粘贴是 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> 和 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>。之后再改 niri 的配置，保存后立即生效，不用重启；改错了会弹出提示，并继续用上一次正确的配置。
+
+按 <kbd>Super</kbd> + <kbd>T</kbd> 打开 kitty，试一下输入法和密钥环：
+
+- 打开任意一个能打字的程序，按 <kbd>Super</kbd> + <kbd>Space</kbd> 切到拼音，打几个字。
+- 存一条测试用的密码，再读出来：
+
+  ```sh
+  echo -n "hello" | secret-tool store --label=test testkey testvalue
+  secret-tool lookup testkey testvalue
+  ```
+
+  第二条输出 `hello`、没有弹窗要密码，说明登录时已经自动解锁了。`testkey testvalue` 是用来查找这条记录的名字，不是密码。试完删掉这条记录：
+
+  ```sh
+  secret-tool clear testkey testvalue
+  ```
+
+<details>
+<summary>出问题时用的命令</summary>
+
+niri：
+
+```sh
+niri validate                # 检查配置文件
+niri msg version             # 版本
+niri msg outputs             # 显示器的名字、分辨率和缩放
+niri msg layers              # 状态栏、通知这类界面的信息
+niri msg event-stream        # 实时显示窗口和工作区的变化
+journalctl --user-unit=niri -b                       # 这次开机以来 niri 的日志
+journalctl --user-unit=niri -b | grep "X11 socket"   # X11 程序的支持是否正常启动
+```
+
+Noctalia：
+
+```sh
+noctalia msg status              # 运行状态
+noctalia msg config-reload       # 重新读取配置
+noctalia config validate         # 检查配置
+noctalia config export           # 导出当前的配置
+noctalia msg log-level-set debug # 输出更详细的日志
+```
+
+想给某个键设快捷键、但不知道它在 niri 里叫什么名字时，装上 wev，运行后按那个键，就能看到键名：
+
+```sh
+sudo pacman -S wev
+wev
+```
+
+</details>
+
+桌面配置完了。下一页是[常用软件](/system/linux/apps)。

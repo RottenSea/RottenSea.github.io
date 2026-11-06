@@ -30,14 +30,14 @@ sidebar:
 
 1. [准备工作](/system/linux/prepare)：下载 Arch Linux 镜像、做启动 U 盘、腾出硬盘。
 2. [安装 Arch Linux](/system/linux/install)：分出 EFI、swap、btrfs 三个分区，一次装好系统和桌面要用的软件，设置语言、用户、休眠和 GRUB。
-3. [niri 和 Noctalia](/system/linux/desktop)：配置桌面和登录界面，改好快捷键。
-4. [中文和输入法](/system/linux/chinese)：中文界面和 Fcitx5 拼音输入法。
-5. [常用软件](/system/linux/apps)：AUR 助手 paru 和笔者装的软件。
-6. [Snapper 快照](/system/linux/snapper)：自动给系统拍快照，出问题时回滚。
+3. [niri 和 Noctalia](/system/linux/desktop)：在命令行里配好桌面、快捷键、输入法、密钥环和登录界面，再进入桌面。
+4. [常用软件](/system/linux/apps)：AUR 助手 paru 和笔者装的软件。
+5. [Snapper 快照](/system/linux/snapper)：自动给系统拍快照，出问题时回滚。
+
+系统和桌面都用英文界面，安装时在 `/etc/locale.conf` 里设的是 `en_US.UTF-8`。中文字体和 Fcitx5 拼音输入法也在安装时装好，中文照样能显示、能输入。
 
 :::caution
 - 安装时只有黑底白字的命令行，提示全是英文。每一步要敲的命令这里都写出来了，照着敲就行。
-- 最好准备一根网线。安装时和装好以后都要联网下载软件，有线网络插上就能用，Wi-Fi 要多敲几条命令。
 - 这组教程把 Arch Linux 装在一整块硬盘上，硬盘上原有的数据会被清空。
 - 用 NVIDIA 独立显卡的话，niri 可能会出问题（例如从命令行启动后黑屏），先看 niri 文档的 [NVIDIA](https://niri-wm.github.io/niri/Nvidia.html) 一页。
 :::
