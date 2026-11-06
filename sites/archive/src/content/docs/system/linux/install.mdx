@@ -1,13 +1,13 @@
 ---
 title: 安装 Arch Linux
-description: 从 Ventoy U 盘启动 Arch Linux，连上网，用 archinstall 逐项选好设置，装好基本系统。
+description: 从 U 盘启动、联网，给硬盘分区，装好基本系统，设置时区、语言、用户和引导程序。
 sidebar:
   order: 3
 ---
 
 import { Steps } from "@astrojs/starlight/components";
 
-Arch Linux 的安装镜像里自带一个安装程序 archinstall。它把官方[安装指南](https://wiki.archlinux.org/title/Installation_guide)里的分区、装软件、配置引导这些步骤做成了菜单，选好就能装。这一页先做好启动和联网，再一项一项过 archinstall 的菜单。
+这一页的步骤来自 ArchWiki 的[安装指南](https://wiki.archlinux.org/title/Installation_guide)，按笔者的选择定好了每一处：整块硬盘分成启动分区和系统分区两个区，引导程序用 systemd-boot，网络用 NetworkManager。命令都在 U 盘的安装环境里输入。
 
 ## 启动和联网
 
@@ -15,13 +15,13 @@ Arch Linux 的安装镜像里自带一个安装程序 archinstall。它把官方
 
 1. **从 U 盘启动**
 
-   插上 U 盘开机，在 BIOS 里把 U 盘设为第一启动项（和装 Windows 时一样）。进入 Ventoy 的菜单后，选中 Arch Linux 的镜像回车，再选 “Arch Linux install medium (x86_64, UEFI)”。
+   插上 U 盘开机，进入 BIOS，把 U 盘设为第一启动项，保存退出。进入 Ventoy 的菜单后，选中 Arch Linux 的镜像回车，再选 “Arch Linux install medium (x86_64, UEFI)”。
 
-   等一会儿，屏幕上出现 `root@archiso ~ #`，就进入了安装环境。后面的命令都在这里输入。
+   等一会儿，屏幕上出现 `root@archiso ~ #`，就进入了安装环境。
 
 2. **字太小时，换个大字体（可选）**
 
-   高分辨率的屏幕上，命令行的字可能小得看不清。输入：
+   高分辨率的屏幕上，命令行的字可能小得看不清：
 
    ```sh
    setfont ter-132b
@@ -60,82 +60,269 @@ Arch Linux 的安装镜像里自带一个安装程序 archinstall。它把官方
 
 </Steps>
 
-## 用 archinstall 安装
+## 分区
 
 <Steps>
 
-1. **更新 archinstall（可选）**
-
-   镜像是月初做的，月中可能已经出了新版的 archinstall。先更新它：
+1. **找到要装系统的硬盘**
 
    ```sh
-   pacman -Sy archinstall
+   lsblk
    ```
 
-2. **启动 archinstall**
+   列出来的 `TYPE` 为 `disk` 的就是硬盘，看 `SIZE` 一栏的容量认出要装系统的那块。固态硬盘一般叫 `nvme0n1`，SATA 接口的硬盘和 U 盘叫 `sda`、`sdb`。下面以 `nvme0n1` 为例，你的硬盘名字不一样的话，后面每条命令都要换成你的。
+
+2. **分区**
 
    ```sh
-   archinstall
+   cfdisk /dev/nvme0n1
    ```
 
-   屏幕上会列出一张菜单。用上下方向键移动，回车进入某一项，Esc 返回上一级。下一步按菜单从上到下逐项设置。
+   cfdisk 是一个文字界面的分区工具，用上下方向键选分区，左右方向键选底部的操作，回车执行。
 
-   :::note
-   如果到这里还没联网，archinstall 会先问 “Would you like to connect to a Wifi?”，选 Yes 也能在这里连 Wi-Fi。
-   :::
-
-3. **逐项设置**
-
-   没在表里的项保持默认。
-
-   | 菜单项 | 选什么 | 说明 |
-   | --- | --- | --- |
-   | Archinstall language | English | 安装环境的命令行显示不了中文，保持英文。 |
-   | Locales | 保持默认 | 键盘布局 `us`，系统语言 `en_US.UTF-8`。中文界面在[中文和输入法](/system/linux/chinese)一页里设置，只对桌面生效，命令行还是英文，避免乱码。 |
-   | Mirrors and repositories | Select regions 里选 China | 以后装软件都从国内的镜像站下载。 |
-   | Disk configuration | 见下一步 | |
-   | Swap | 保持默认 | 默认在内存里压缩出一块交换空间（zram），不占硬盘。 |
-   | Bootloader | Systemd-boot | 默认就是它，简单够用。 |
-   | Hostname | 随你起 | 这台电脑在网络上的名字，例如 `archlinux`。 |
-   | Authentication | 设 root 密码，再加一个用户 | 见下下步。 |
-   | Profile | Type 选 Minimal | 只装基本系统，桌面下一页自己装。 |
-   | Applications | 见下下步 | |
-   | Network configuration | Use Network Manager (default backend) | 新系统用 NetworkManager 管网络，Noctalia 的网络面板也靠它。 |
-   | Additional packages | `git base-devel nano` | 见下下步。 |
-   | Timezone | Asia/Shanghai | |
-
-   :::tip[为什么 Profile 不选 niri]
-   Profile 里的 Desktop 下面也有 niri，但它会顺带装上 waybar（状态栏）、mako（通知）、fuzzel（启动器）这些，Noctalia 已经包含了它们的功能，装了也用不上。所以这里选 Minimal，下一页只装需要的。
-   :::
-
-4. **设置硬盘**
-
-   进入 Disk configuration > Partitioning，选 “Use a best-effort default partition layout”，再选要装系统的那块硬盘。看清型号和容量，别选到 U 盘或者存资料的硬盘。
-
-   接着它会问文件系统，选 `ext4`；问要不要单独给 `/home` 分一个区，选 No。archinstall 会自动分出启动分区和系统分区。
+   - 如果它先问分区表类型（label type），选 `gpt`。
+   - 把已有的分区全部删掉：选中分区，选 `Delete`，直到只剩一行 `Free space`。
+   - 选 `New`，大小输入 `1G`，建出启动分区。再选 `Type`，类型选 `EFI System`。
+   - 选中剩下的 `Free space`，选 `New`，大小直接回车，把剩下的空间全给系统分区。类型保持默认的 `Linux filesystem`。
+   - 选 `Write`，输入 `yes` 写入，再选 `Quit` 退出。
 
    :::caution
-   选中的硬盘会被整块清空。确认文件已经备份好了。
+   写入以后，这块硬盘上原来的数据就没了。确认选的是对的硬盘，文件已经备份好了。
    :::
 
-5. **设置账户和软件**
+   再运行一次 `lsblk`，硬盘下面应该多出两个分区：`nvme0n1p1`（1G）和 `nvme0n1p2`（其余空间）。SATA 硬盘的话是 `sda1` 和 `sda2`。
 
-   - **Authentication**：Root password 给 root（系统管理员）设一个密码。再进 User account 加一个自己日常用的用户，设好用户名和密码，问是否作为超级用户（sudo）时选 Yes，这样这个用户就能用 `sudo` 执行管理命令。如果问到 “Enable passwordless sudo?”，选 No，用 `sudo` 时还是要输密码。
-   - **Applications**：Audio 选 `pipewire`（声音），Bluetooth 选 Yes（蓝牙），Power management 选 `power-profiles-daemon`（电源模式，Noctalia 的控制中心里可以切换）。
-   - **Additional packages**：输入 `git base-devel nano`，空格隔开。`git` 和 `base-devel` 是以后装 AUR 软件要用的，`nano` 是一个简单的命令行文本编辑器，后面改配置文件要用。
+3. **格式化**
 
-6. **开始安装**
+   ```sh
+   mkfs.fat -F 32 /dev/nvme0n1p1
+   mkfs.ext4 /dev/nvme0n1p2
+   ```
 
-   全部设置好后，选 Install。archinstall 会把设置列出来让你确认，确认后开始下载和安装，几分钟到半小时不等，看网速。
+   启动分区用 UEFI 要求的 FAT32，系统分区用 Linux 最常见的 ext4。
 
-7. **重启**
+4. **挂载**
 
-   装完后会出现一个菜单，选 “Reboot system” 重启。屏幕黑掉时拔下 U 盘。
+   ```sh
+   mount /dev/nvme0n1p2 /mnt
+   mount --mkdir /dev/nvme0n1p1 /mnt/boot
+   ```
 
-8. **登录**
+   系统分区挂到 `/mnt`，启动分区挂到它下面的 `/boot`。接下来往 `/mnt` 里装的东西，就是装进了新系统。
 
-   重启后看到 `archlinux login:`（前面是你起的主机名），输入刚才建的用户名和密码。密码输入时屏幕上什么都不显示，这是正常的，输完回车就行。
+</Steps>
 
-   看到 `[用户名@主机名 ~]$`，基本系统就装好了。下一步装[桌面](/system/linux/desktop)。
+## 安装基本系统
+
+<Steps>
+
+1. **换成国内的镜像站**
+
+   ```sh
+   nano /etc/pacman.d/mirrorlist
+   ```
+
+   在文件最前面加上两行：
+
+   ```text title="/etc/pacman.d/mirrorlist"
+   Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
+   Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
+   ```
+
+   pacman 按从上到下的顺序找镜像站，排在前面的清华大学和中国科学技术大学镜像站会先用上。<kbd>Ctrl</kbd> + <kbd>O</kbd> 再回车保存，<kbd>Ctrl</kbd> + <kbd>X</kbd> 退出。这个文件稍后会被复制进新系统，以后装软件也走这两个镜像站。
+
+2. **安装软件包**
+
+   Intel 处理器：
+
+   ```sh
+   pacstrap -K /mnt base linux linux-firmware intel-ucode sof-firmware networkmanager sudo nano git base-devel pipewire pipewire-pulse wireplumber bluez bluez-utils power-profiles-daemon zram-generator
+   ```
+
+   AMD 处理器把 `intel-ucode` 换成 `amd-ucode`。
+
+   | 软件包 | 做什么 |
+   | --- | --- |
+   | `base`、`linux`、`linux-firmware` | 最基本的系统、Linux 内核和常见硬件的固件。 |
+   | `intel-ucode` / `amd-ucode` | 处理器的微码更新，修复处理器的缺陷和安全问题。 |
+   | `sof-firmware` | 很多笔记本的声卡要用这个固件才有声音。 |
+   | `networkmanager` | 管理网络连接，Noctalia 的网络面板也靠它。 |
+   | `sudo` | 让普通用户临时用管理员权限执行命令。 |
+   | `nano` | 简单的命令行文本编辑器，后面改配置文件要用。 |
+   | `git`、`base-devel` | 以后装 AUR 里的软件要用。 |
+   | `pipewire`、`pipewire-pulse`、`wireplumber` | 声音。 |
+   | `bluez`、`bluez-utils` | 蓝牙。 |
+   | `power-profiles-daemon` | 电源模式（节能、平衡、性能），Noctalia 的控制中心里可以切换。 |
+   | `zram-generator` | 在内存里压缩出一块交换空间，不占硬盘。 |
+
+   下载和安装要几分钟，看网速。
+
+3. **生成分区表文件**
+
+   ```sh
+   genfstab -U /mnt >> /mnt/etc/fstab
+   cat /mnt/etc/fstab
+   ```
+
+   `fstab` 告诉新系统开机时把哪个分区挂到哪里。`cat` 显示出来的内容里应该有 `/` 和 `/boot` 两项。
+
+</Steps>
+
+## 设置新系统
+
+<Steps>
+
+1. **进入新系统**
+
+   ```sh
+   arch-chroot /mnt
+   ```
+
+   提示符变成 `[root@archiso /]#`，接下来的命令都在新系统里执行，就像已经从硬盘启动了一样。
+
+2. **时区**
+
+   ```sh
+   ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+   hwclock --systohc
+   ```
+
+3. **语言**
+
+   ```sh
+   nano /etc/locale.gen
+   ```
+
+   按 <kbd>Ctrl</kbd> + <kbd>W</kbd> 搜索，分别找到下面两行，删掉开头的 `#`：
+
+   ```text title="/etc/locale.gen"
+   en_US.UTF-8 UTF-8
+   zh_CN.UTF-8 UTF-8
+   ```
+
+   保存退出后生成，并把系统语言设成英文：
+
+   ```sh
+   locale-gen
+   echo "LANG=en_US.UTF-8" > /etc/locale.conf
+   ```
+
+   Linux 的命令行（TTY）显示不了中文，系统语言设成中文的话，切到命令行时全是乱码。中文先生成好，等到[中文和输入法](/system/linux/chinese)一页再让桌面用中文。
+
+4. **主机名**
+
+   ```sh
+   echo "archlinux" > /etc/hostname
+   ```
+
+   主机名是这台电脑在网络上的名字，可以换成别的，只能用小写字母、数字和 `-`。
+
+5. **root 密码**
+
+   ```sh
+   passwd
+   ```
+
+   root 是系统管理员账户。输入两次密码，输入时屏幕上什么都不显示，这是正常的。
+
+6. **日常用的用户**
+
+   ```sh
+   useradd -m -G wheel 用户名
+   passwd 用户名
+   ```
+
+   把 `用户名` 换成你想要的名字（小写字母）。`-m` 给它建用户目录，`-G wheel` 把它加进 `wheel` 组。
+
+   再让 `wheel` 组的用户能用 `sudo`：
+
+   ```sh
+   EDITOR=nano visudo
+   ```
+
+   找到下面这一行，删掉开头的 `# `：
+
+   ```text title="/etc/sudoers"
+   %wheel ALL=(ALL:ALL) ALL
+   ```
+
+   保存退出。
+
+7. **内存交换空间**
+
+   ```sh
+   nano /etc/systemd/zram-generator.conf
+   ```
+
+   写入：
+
+   ```ini title="/etc/systemd/zram-generator.conf"
+   [zram0]
+   ```
+
+   只写这一行就够了，默认用内存的一半，最多 4 GiB。
+
+8. **开机启动的服务**
+
+   ```sh
+   systemctl enable NetworkManager bluetooth power-profiles-daemon systemd-timesyncd
+   ```
+
+   依次是网络、蓝牙、电源模式和联网自动校准时间。
+
+9. **安装引导程序**
+
+   ```sh
+   bootctl install
+   ```
+
+   systemd-boot 会装进启动分区。再写它的设置：
+
+   ```sh
+   nano /boot/loader/loader.conf
+   ```
+
+   ```text title="/boot/loader/loader.conf"
+   default  arch.conf
+   timeout  3
+   console-mode max
+   editor   no
+   ```
+
+   开机时显示 3 秒菜单，默认启动 Arch Linux。
+
+10. **添加启动项**
+
+    启动项要写上系统分区的 UUID（每个分区独有的编号）。UUID 很长，不好手抄，先用 `blkid` 把它写进文件：
+
+    ```sh
+    blkid -s UUID -o value /dev/nvme0n1p2 > /boot/loader/entries/arch.conf
+    nano /boot/loader/entries/arch.conf
+    ```
+
+    文件里现在只有一行 UUID，把它改成下面的样子，`options` 一行里换成你的 UUID：
+
+    ```text title="/boot/loader/entries/arch.conf"
+    title   Arch Linux
+    linux   /vmlinuz-linux
+    initrd  /initramfs-linux.img
+    options root=UUID=你的UUID rw
+    ```
+
+    微码已经打包在 `initramfs-linux.img` 里，不用另写一行。
+
+11. **重启**
+
+    ```sh
+    exit
+    umount -R /mnt
+    reboot
+    ```
+
+    屏幕黑掉时拔下 U 盘。
+
+12. **登录**
+
+    重启后看到 `archlinux login:`，输入刚才建的用户名和密码。看到 `[用户名@archlinux ~]$`，基本系统就装好了。下一步装[桌面](/system/linux/desktop)。
 
 </Steps>

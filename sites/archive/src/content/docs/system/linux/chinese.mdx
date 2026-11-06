@@ -1,6 +1,6 @@
 ---
 title: 中文和输入法
-description: 装中文字体，生成中文 locale，让桌面显示中文，再装 Fcitx5 拼音输入法。
+description: 装中文字体，让桌面显示中文，再装 Fcitx5 拼音输入法。
 sidebar:
   order: 5
 ---
@@ -21,29 +21,9 @@ import { Steps } from "@astrojs/starlight/components";
 
    `noto-fonts-cjk` 是 Google 和 Adobe 一起做的中日韩字体（思源黑体和思源宋体的另一个名字），装上以后网页和程序里的中文就不再是方块了。`noto-fonts-emoji` 是彩色的 emoji。
 
-2. **生成中文 locale**
+2. **让桌面用中文**
 
-   locale 决定程序用什么语言和格式显示文字、日期和数字。先打开 locale 的列表：
-
-   ```sh
-   sudo nano /etc/locale.gen
-   ```
-
-   按 <kbd>Ctrl</kbd> + <kbd>W</kbd> 搜索 `zh_CN.UTF-8`，把这一行开头的 `#` 删掉：
-
-   ```text title="/etc/locale.gen"
-   zh_CN.UTF-8 UTF-8
-   ```
-
-   保存退出，再生成：
-
-   ```sh
-   sudo locale-gen
-   ```
-
-3. **让桌面用中文**
-
-   系统的默认语言保持英文，只让桌面里的程序用中文。Linux 的命令行（TTY）显示不了中文，系统默认语言设成中文的话，切到命令行时全是乱码。
+   安装时已经生成了中文的 locale，系统语言保持英文。这里只让桌面里的程序用中文，命令行不受影响。
 
    ```sh
    mkdir -p ~/.config/environment.d
