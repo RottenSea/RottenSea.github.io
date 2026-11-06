@@ -4,8 +4,24 @@ description: 一步一步跟着做的教程，同一个主题的几页编成一�
 template: splash
 hero:
   title: Devil's Footprints
+  tagline: 一步一步跟着做的教程，同一个主题的几页编成一组。
   actions:
     - text: Start reading
       link: /start
       icon: right-arrow
 ---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+<CardGrid>
+  <LinkCard
+    title="安装干净稳定的 Windows"
+    description="从准备 U 盘、安装系统，到用脚本和手动完成设置，一共七页。"
+    href="/system/windows"
+  />
+  <LinkCard
+    title="Arch Linux"
+    description="从分区开始装好 Arch Linux，桌面用 niri 和 Noctalia，再配好输入法、常用软件和快照，一共六页。"
+    href="/system/linux"
+  />
+</CardGrid>
