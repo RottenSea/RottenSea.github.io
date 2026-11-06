@@ -50,7 +50,10 @@ import { Steps } from "@astrojs/starlight/components";
 
    ```sh
    sudo systemctl enable --now snapper-timeline.timer snapper-cleanup.timer
+   systemctl list-timers snapper*
    ```
+
+   最后一条列出两个定时器下一次运行的时间，能看到就说明启用了。
 
 5. **拍第一个快照**
 

@@ -227,6 +227,15 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
            xray false
        }
    }
+
+   // 窗口切换器背后总是模糊
+   layer-rule {
+       match namespace="noctalia-window-switcher"
+       background-effect {
+           blur true
+           xray false
+       }
+   }
    ```
 
    最后一段还要把 `layout { ... }` 里的背景设成透明，在 `layout {` 的下一行加上：
@@ -237,7 +246,7 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
 
    壁纸还有别的摆法（例如总览时显示模糊的壁纸），见 Noctalia 文档的 [Niri](https://docs.noctalia.dev/noctalia/compositor-settings/niri/) 一页。
 
-   窗口模糊不用另外打开：niri 默认允许程序自己申请背景模糊（例如终端设置里的背景模糊选项），这里不给所有窗口统一加模糊和透明。`draw-border-with-background false` 让这类半透明窗口背后不透出边框的底色。最后一条 layer-rule 只改 Noctalia 申请的模糊用哪种方式：关掉 xray 后，模糊的是它背后实际显示的窗口；开着 xray 时只模糊壁纸，开销更小。niri 文档把关掉 xray 的模糊列为实验功能，窗口打开、关闭的动画里会暂时看不到模糊。
+   窗口模糊不用另外打开：niri 默认允许程序自己申请背景模糊（例如终端设置里的背景模糊选项），这里不给所有窗口统一加模糊和透明。`draw-border-with-background false` 让这类半透明窗口背后不透出边框的底色。倒数第二条 layer-rule 只改 Noctalia 申请的模糊用哪种方式：关掉 xray 后，模糊的是它背后实际显示的窗口；开着 xray 时只模糊壁纸，开销更小。niri 文档把关掉 xray 的模糊列为实验功能，窗口打开、关闭的动画里会暂时看不到模糊。最后一条给 <kbd>Super</kbd> + <kbd>Tab</kbd> 打开的窗口切换器加上模糊，这一条是 niri 这边加的，不用 Noctalia 申请。
 
 8. **保存并检查**
 
@@ -556,7 +565,7 @@ gnome-keyring 替程序保存密码，例如浏览器和编辑器的登录信息
 
 GTK 程序的主题、图标和字体用 nwg-look 设置。按 <kbd>Super</kbd> + <kbd>S</kbd> 搜 nwg-look 打开，在 Widgets 里选 `adw-gtk3-dark`（浅色选 `adw-gtk3`），在 Icon theme 里选 `Adwaita`，点 Apply。
 
-按 <kbd>Super</kbd> + <kbd>T</kbd> 打开 kitty，试一下输入法和密钥环：
+按 <kbd>Super</kbd> + <kbd>T</kbd> 打开 kitty，试一下输入法、密钥环和休眠：
 
 - 打开任意一个能打字的程序，按 <kbd>Super</kbd> + <kbd>Space</kbd> 切到拼音，打几个字。
 - 存一条测试用的密码，再读出来：
@@ -571,6 +580,14 @@ GTK 程序的主题、图标和字体用 nwg-look 设置。按 <kbd>Super</kbd> 
   ```sh
   secret-tool clear testkey testvalue
   ```
+
+- 试一次休眠，先用 Noctalia 锁屏再休眠：
+
+  ```sh
+  noctalia msg session lock && sleep 1 && systemctl hibernate
+  ```
+
+  电脑会关掉。再开机时，经过 GRUB 后应该回到 Noctalia 的锁屏，输密码解锁，之前打开的窗口都还在。如果开机后是一个全新的登录界面，说明没能从休眠恢复，回去检查安装时的“确认休眠能恢复”和内核参数里的 `resume`。
 
 <details>
 <summary>出问题时用的命令</summary>

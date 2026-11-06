@@ -446,7 +446,7 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
     reboot
     ```
 
-    屏幕黑掉时拔下 U 盘。开机后先看到 GRUB 的菜单，默认 5 秒后进入 Arch Linux。
+    屏幕黑掉时拔下 U 盘。开机后先看到 GRUB 的菜单，默认 5 秒后进入 Arch Linux。想改等待的秒数，改 `/etc/default/grub` 里的 `GRUB_TIMEOUT`，再用 `sudo grub-mkconfig -o /boot/grub/grub.cfg` 重新生成配置。
 
 15. **登录并检查**
 
@@ -458,9 +458,10 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
     free -h
     swapon --show
     zramctl
+    ping -c 3 archlinux.org
     ```
 
-    `swapon --show` 应该列出两行：`/dev/zram0`（优先级 100）和 swap 分区（优先级更低）。系统先用 zram，swap 分区留给休眠。
+    `swapon --show` 应该列出两行：`/dev/zram0`（优先级 100）和 swap 分区（优先级更低）。系统先用 zram，swap 分区留给休眠。`ping` 有三行带 `time=` 的回复就是网络通了；插着网线的话开机就已经连上，用 Wi-Fi 的话这时还没连，下一页开头再连。
 
     下一步配置[桌面](/system/linux/desktop)。
 
