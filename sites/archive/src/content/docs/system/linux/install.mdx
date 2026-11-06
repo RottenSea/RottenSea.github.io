@@ -298,9 +298,11 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 2. **时区**
 
    ```sh
-   ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+   ln -sf /usr/share/zoneinfo/UTC /etc/localtime
    hwclock --systohc
    ```
+
+   系统时区设为 UTC，主板上的硬件时钟也按 UTC 走。屏幕上显示的时间（状态栏的时钟、`date`、文件的修改时间）都是 UTC，比北京时间慢 8 小时。
 
 3. **语言**
 
