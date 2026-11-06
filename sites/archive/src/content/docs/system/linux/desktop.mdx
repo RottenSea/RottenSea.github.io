@@ -234,6 +234,16 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
 
    壁纸还有别的摆法（例如总览时显示模糊的壁纸），见 Noctalia 文档的 [Niri](https://docs.noctalia.dev/noctalia/compositor-settings/niri/) 一页。
 
+   再在文件的最后一行加上：
+
+   ```kdl title="~/.config/niri/config.kdl"
+   include optional=true "noctalia.kdl"
+   ```
+
+   Noctalia 会按壁纸的配色生成 `~/.config/niri/noctalia.kdl`，里面是焦点框、边框这些颜色，换壁纸时跟着更新。下面 [Noctalia 的设置](#noctalia-和文件选择框)里会打开它。现在这个文件还不存在，`optional=true` 让 niri 找不到它时不报错。放在最后一行，是因为后读到的设置会覆盖前面同名的设置。
+
+   窗口模糊不用配置：niri 默认允许程序自己申请背景模糊（例如终端设置里的背景模糊选项），这里不给所有窗口统一加模糊和透明。
+
 8. **保存并检查**
 
    按 <kbd>Esc</kbd>，输入 `:wq` 回车保存退出，再检查一遍配置：
@@ -378,7 +388,7 @@ clipboard {
 
 <Steps>
 
-1. **打开 Noctalia 的身份验证**
+1. **Noctalia 的身份验证和 niri 配色**
 
    ```sh
    mkdir -p ~/.config/noctalia
@@ -390,31 +400,35 @@ clipboard {
    ```toml title="~/.config/noctalia/config.toml"
    [shell]
    polkit_agent = true
+
+   [theme.templates]
+   builtin_ids = ["niri"]
    ```
 
-   有程序要管理员权限时（例如连接 Wi-Fi 时要求授权），Noctalia 会弹窗让你输密码。进了桌面以后，在 Noctalia 设置里改过的项会存到 `~/.local/state/noctalia/settings.toml`，优先于这个文件。
+   `polkit_agent`：有程序要管理员权限时（例如连接 Wi-Fi 时要求授权），Noctalia 会弹窗让你输密码。`builtin_ids` 打开 Noctalia 自带的 niri 配色模板，生成前面 `include` 的那个 `noctalia.kdl`。
+
+   进了桌面以后，在 Noctalia 设置里改过的项会存到 `~/.local/state/noctalia/settings.toml`，优先于这个文件。
 
 2. **设置文件选择框**
 
-   niri 默认用 GNOME 的门户打开文件选择框，它要求装 GNOME 的文件管理器 Nautilus。这里没装，让文件选择框改用 GTK 的门户：
+   程序打开文件选择框、截屏、共享屏幕时，经过 xdg-desktop-portal（门户）转给具体的实现。niri 自带的设置先用 GNOME 的门户，而 GNOME 的文件选择框要求装 GNOME 的文件管理器 Nautilus。这里没装，改成先用 GTK 的门户：
 
    ```sh
    mkdir -p ~/.config/xdg-desktop-portal
-   vim ~/.config/xdg-desktop-portal/niri-portals.conf
+   vim ~/.config/xdg-desktop-portal/portals.conf
    ```
 
    写入：
 
-   ```ini title="~/.config/xdg-desktop-portal/niri-portals.conf"
+   ```ini title="~/.config/xdg-desktop-portal/portals.conf"
    [preferred]
-   default=gnome;gtk;
-   org.freedesktop.impl.portal.Access=gtk;
-   org.freedesktop.impl.portal.Notification=gtk;
-   org.freedesktop.impl.portal.Secret=gnome-keyring;
-   org.freedesktop.impl.portal.FileChooser=gtk;
+   default=gtk;gnome;
+   org.freedesktop.impl.portal.Secret=gnome-keyring
    ```
 
-   前四行和 niri 自带的设置一样，其中 Secret 那一行让程序通过门户找 gnome-keyring 存密码。最后一行把文件选择框换成 GTK 的。
+   `default` 一行按顺序找：GTK 的门户有的功能（例如文件选择框）用 GTK 的，没有的（例如共享屏幕）再用 GNOME 的。多个后端之间用分号隔开。Secret 一行让程序通过门户找 gnome-keyring 存密码。
+
+   这个文件放在用户目录里，会代替 niri 自带的 `/usr/share/xdg-desktop-portal/niri-portals.conf`，两个文件不合并。
 
 </Steps>
 
