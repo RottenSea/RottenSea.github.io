@@ -1,6 +1,6 @@
 ---
 title: 准备工作
-description: 下载 Windows 镜像，关掉 BitLocker，用 Ventoy 做启动 U 盘，备份文件，准备驱动。
+description: 下载 Windows 镜像，关掉 BitLocker，用 Ventoy 做启动 U 盘，准备驱动。
 sidebar:
   order: 2
 ---
@@ -15,7 +15,7 @@ import { Steps } from "@astrojs/starlight/components";
 
 2. **关闭 BitLocker**
 
-   硬盘加密后，不解密就无法访问，所以重装前要先关掉设备加密。
+   硬盘加密后，不解密就无法访问，所以安装前要先关掉设备加密。
 
    按 <kbd>Win</kbd> + <kbd>I</kbd> 打开设置，进入 **设置 > 隐私和安全性 > 设备加密**，把“设备加密”的开关关掉。
 
@@ -32,7 +32,7 @@ import { Steps } from "@astrojs/starlight/components";
 4. **安装 Ventoy**
 
    :::caution
-   安装 Ventoy 会格式化你的 U 盘。请先把 U 盘里的重要文件备份出来，例如拷到电脑上。
+   安装 Ventoy 会格式化 U 盘，U 盘里原有的文件都会被清空。
    :::
 
    安装和配置的方法可以看这个视频：[BV1nj411w7R4](https://www.bilibili.com/video/BV1nj411w7R4/)。
@@ -41,11 +41,7 @@ import { Steps } from "@astrojs/starlight/components";
 
 5. **把下载好的镜像放进这个文件夹**
 
-6. **备份重要文件**
-
-   重装系统会格式化硬盘，硬盘上的数据都会没掉，所以先把你自己的文件备份出来。可以用云端备份，但更建议备份到本地。装了 Ventoy 的 U 盘照样能存文件，镜像放在单独的文件夹里，就不会和备份混在一起。
-
-7. **下载网卡驱动等驱动，拷到 U 盘**
+6. **下载网卡驱动等驱动，拷到 U 盘**
 
    Windows 不一定自带你的无线网卡驱动，最好提前下载好放进 U 盘，这样装完系统就能连上 Wi-Fi。
 
@@ -55,12 +51,12 @@ import { Steps } from "@astrojs/starlight/components";
 
    芯片组、音频、触控板等其他驱动可以按需下载。Windows 更新已经收录了大部分设备的大部分驱动，联网后它会扫描设备、自动补全，包括前面说的显卡驱动。
 
-8. **其他注意事项**
+7. **其他注意事项**
 
    如果电脑里有多块硬盘，一定要分清哪块是机械硬盘（HDD）。系统装到机械硬盘上会非常慢，系统盘一定要用固态硬盘（SSD）。
 
    也可以把常用软件的安装包提前下好，例如 Chrome，这样装完系统不用打开 Edge 就能装软件。
 
-9. **确认都准备好了**，接下来开始[安装 Windows](/system/windows/install)。
+8. **确认都准备好了**，接下来开始[安装 Windows](/system/windows/install)。
 
 </Steps>
