@@ -62,11 +62,13 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
        GTK_IM_MODULE "fcitx"
        QT_IM_MODULE "fcitx"
 
+       QT_QPA_PLATFORM "wayland"
        QT_QPA_PLATFORMTHEME "qt6ct"
+       SDL_VIDEODRIVER "wayland"
    }
    ```
 
-   前三行是输入法的：`XMODIFIERS` 让只支持 X11 的老程序也能用输入法，另外两行让 GTK 和 Qt 写的程序通过 Fcitx5 自己的模块输入。最后一行让 Qt 程序的主题、字体和图标跟着 qt6ct 的设置走，不设的话，装了 qt6ct 也不起作用。
+   前三行是输入法的：`XMODIFIERS` 让只支持 X11 的老程序也能用输入法，另外两行让 GTK 和 Qt 写的程序通过 Fcitx5 自己的模块输入。后三行：`QT_QPA_PLATFORM` 让 Qt 程序直接跑在 Wayland 上，不经过 XWayland；`QT_QPA_PLATFORMTHEME` 让 Qt 程序的主题、字体和图标跟着 qt6ct 的设置走，不设的话，装了 qt6ct 也不起作用；`SDL_VIDEODRIVER` 让用 SDL 写的程序（大多是游戏）走 Wayland，个别老游戏可能因此打不开，到时只对那个游戏去掉这个变量。
 
    :::note
    原生的 Wayland 程序可以通过 Wayland 自己的输入协议（text-input）用输入法，按 ArchWiki 的 [Fcitx5](https://wiki.archlinux.org/title/Fcitx5) 一页，`GTK_IM_MODULE` 和 `QT_IM_MODULE` 并不是必需的。笔者加上它们，是因为有的程序不设就打不出字，或者候选框的位置不对。遇到问题时，可以用 `fcitx5-diagnose` 检查输入法的环境。
@@ -162,7 +164,6 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
    Mod+E hotkey-overlay-title="Open Files: Thunar" { spawn-sh "thunar"; }
    Mod+S hotkey-overlay-title="Noctalia launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
    Mod+D { spawn-sh "noctalia msg panel-toggle control-center"; }
-   Mod+Shift+Comma { spawn-sh "noctalia msg settings-toggle"; }
    Mod+Tab { spawn-sh "noctalia msg window-switcher"; }
    Mod+Shift+E { spawn-sh "noctalia msg panel-toggle session"; }
    Super+Alt+L { spawn-sh "noctalia msg session lock"; }
@@ -185,7 +186,6 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
    | <kbd>Super</kbd> + <kbd>E</kbd> | 打开文件管理器 Thunar |
    | <kbd>Super</kbd> + <kbd>S</kbd> | 启动器：输入名字打开程序 |
    | <kbd>Super</kbd> + <kbd>D</kbd> | 控制中心：网络、蓝牙、音量、电源模式 |
-   | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>,</kbd> | Noctalia 的设置 |
    | <kbd>Super</kbd> + <kbd>Tab</kbd> | 切换窗口 |
    | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | 会话面板：注销、重启、关机 |
    | <kbd>Super</kbd> + <kbd>Alt</kbd> + <kbd>L</kbd> | 锁屏 |
@@ -202,18 +202,11 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
    在文件末尾加上：
 
    ```kdl title="~/.config/niri/config.kdl"
-   // 窗口圆角
+   // 窗口圆角；半透明窗口背后不画边框的底色
    window-rule {
        geometry-corner-radius 20
        clip-to-geometry true
-   }
-
-   // Noctalia 的设置窗口浮在上面，不进窗口长带
-   window-rule {
-       match app-id="dev.noctalia.Noctalia"
-       open-floating true
-       default-column-width { fixed 1080; }
-       default-window-height { fixed 920; }
+       draw-border-with-background false
    }
 
    // 让 Noctalia 的通知能把对应的窗口切到前面
@@ -226,6 +219,14 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
        match namespace="^noctalia-wallpaper"
        place-within-backdrop true
    }
+
+   // 状态栏、通知、面板的模糊用背后实际显示的内容，不只是壁纸
+   layer-rule {
+       match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
+       background-effect {
+           xray false
+       }
+   }
    ```
 
    最后一段还要把 `layout { ... }` 里的背景设成透明，在 `layout {` 的下一行加上：
@@ -236,15 +237,7 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
 
    壁纸还有别的摆法（例如总览时显示模糊的壁纸），见 Noctalia 文档的 [Niri](https://docs.noctalia.dev/noctalia/compositor-settings/niri/) 一页。
 
-   再在文件的最后一行加上：
-
-   ```kdl title="~/.config/niri/config.kdl"
-   include optional=true "noctalia.kdl"
-   ```
-
-   Noctalia 会按壁纸的配色生成 `~/.config/niri/noctalia.kdl`，里面是焦点框、边框这些颜色，换壁纸时跟着更新。下面 [Noctalia 的设置](#noctalia-和文件选择框)里会打开它。现在这个文件还不存在，`optional=true` 让 niri 找不到它时不报错。放在最后一行，是因为后读到的设置会覆盖前面同名的设置。
-
-   窗口模糊不用配置：niri 默认允许程序自己申请背景模糊（例如终端设置里的背景模糊选项），这里不给所有窗口统一加模糊和透明。
+   窗口模糊不用另外打开：niri 默认允许程序自己申请背景模糊（例如终端设置里的背景模糊选项），这里不给所有窗口统一加模糊和透明。`draw-border-with-background false` 让这类半透明窗口背后不透出边框的底色。最后一条 layer-rule 只改 Noctalia 申请的模糊用哪种方式：关掉 xray 后，模糊的是它背后实际显示的窗口；开着 xray 时只模糊壁纸，开销更小。niri 文档把关掉 xray 的模糊列为实验功能，窗口打开、关闭的动画里会暂时看不到模糊。
 
 8. **保存并检查**
 
@@ -390,26 +383,24 @@ clipboard {
 
 <Steps>
 
-1. **Noctalia 的身份验证和 niri 配色**
+1. **Noctalia 的设置**
 
    ```sh
-   mkdir -p ~/.config/noctalia
-   vim ~/.config/noctalia/config.toml
+   mkdir -p ~/.local/state/noctalia
+   vim ~/.local/state/noctalia/settings.toml
    ```
 
    写入：
 
-   ```toml title="~/.config/noctalia/config.toml"
+   ```toml title="~/.local/state/noctalia/settings.toml"
    [shell]
    polkit_agent = true
-
-   [theme.templates]
-   builtin_ids = ["niri"]
+   niri_overview_type_to_launch_enabled = true
    ```
 
-   `polkit_agent`：有程序要管理员权限时（例如连接 Wi-Fi 时要求授权），Noctalia 会弹窗让你输密码。`builtin_ids` 打开 Noctalia 自带的 niri 配色模板，生成前面 `include` 的那个 `noctalia.kdl`。
+   第一行：有程序要管理员权限时（例如连接 Wi-Fi 时要求授权），Noctalia 会弹窗让你输密码。第二行：单按 <kbd>Super</kbd> 打开总览后直接打字，就会打开 Noctalia 的启动器开始搜索。
 
-   进了桌面以后，在 Noctalia 设置里改过的项会存到 `~/.local/state/noctalia/settings.toml`，优先于这个文件。
+   以后在 Noctalia 的设置界面里改的项也存在这个文件里，Noctalia 启动后还会往里补上 `config_version` 等内容。进了桌面以后，按 <kbd>Super</kbd> + <kbd>D</kbd> 打开控制中心，从那里进入 Noctalia 的设置。
 
 2. **设置文件选择框**
 
@@ -562,6 +553,8 @@ gnome-keyring 替程序保存密码，例如浏览器和编辑器的登录信息
 | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd> | 显示所有快捷键 |
 
 在 kitty 里复制粘贴是 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> 和 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>。之后再改 niri 的配置，保存后立即生效，不用重启；改错了会弹出提示，并继续用上一次正确的配置。
+
+GTK 程序的主题、图标和字体用 nwg-look 设置。按 <kbd>Super</kbd> + <kbd>S</kbd> 搜 nwg-look 打开，在 Widgets 里选 `adw-gtk3-dark`（浅色选 `adw-gtk3`），在 Icon theme 里选 `Adwaita`，点 Apply。
 
 按 <kbd>Super</kbd> + <kbd>T</kbd> 打开 kitty，试一下输入法和密钥环：
 

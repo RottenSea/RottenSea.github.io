@@ -240,7 +240,7 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
        grub efibootmgr btrfs-progs zram-generator \
        sudo vim git networkmanager \
        mesa lib32-mesa mesa-utils vulkan-tools \
-       pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber sof-firmware \
+       pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber \
        bluez bluez-utils power-profiles-daemon upower \
        niri noctalia xwayland-satellite xdg-desktop-portal-gtk xdg-desktop-portal-gnome \
        greetd noctalia-greeter gnome-keyring libsecret \
@@ -261,7 +261,7 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
    | 引导和磁盘 | `grub` `efibootmgr`（GRUB 和 UEFI 启动项），`btrfs-progs`（btrfs 工具），`zram-generator`（内存压缩交换空间） |
    | 基本工具 | `sudo` `vim` `git` `networkmanager`（网络） |
    | 显卡 | `mesa` `lib32-mesa`（OpenGL），`mesa-utils` `vulkan-tools`（检查驱动的工具），以及上一步选的驱动 |
-   | 声音 | `pipewire` 和它的 ALSA、PulseAudio、JACK 兼容层，`wireplumber`（会话管理），`sof-firmware`（很多笔记本声卡的固件） |
+   | 声音 | `pipewire` 和它的 ALSA、PulseAudio、JACK 兼容层，`wireplumber`（会话管理） |
    | 蓝牙和电源 | `bluez` `bluez-utils`（蓝牙），`power-profiles-daemon`（电源模式），`upower`（电池） |
    | 桌面 | `niri` `noctalia` `xwayland-satellite`（运行 X11 程序），两个 `xdg-desktop-portal`（文件选择框、屏幕共享） |
    | 登录和密钥 | `greetd` `noctalia-greeter`（登录界面），`gnome-keyring`（替程序保存密码），`libsecret`（提供命令行工具 `secret-tool`） |

@@ -25,10 +25,11 @@ import { Steps } from "@astrojs/starlight/components";
 
 3. **设置 BIOS**
 
-   开机时按 <kbd>Del</kbd>、<kbd>F2</kbd> 或 <kbd>F12</kbd> 进入 BIOS（不同设备的按键不一样，可以搜一下你的型号），改两处：
+   开机时按 <kbd>Del</kbd>、<kbd>F2</kbd> 或 <kbd>F12</kbd> 进入 BIOS（不同设备的按键不一样，可以搜一下你的型号），改三处：
 
    - 启动模式设为 UEFI，关闭 CSM（Legacy 兼容模式）。
    - 关闭 Secure Boot（安全启动）。Arch Linux 的安装镜像不支持它，开着就启动不了 U 盘。
+   - 硬盘模式（SATA Mode 或 Storage Mode）设为 AHCI。有的笔记本出厂是 Intel RST 或 VMD，这时安装环境里可能看不到硬盘，NVMe 固态硬盘也一样；有 VMD 选项的话把它关掉。
 
    :::note
    装好以后如果想重新打开 Secure Boot，要先给系统配好签名，见 ArchWiki 的 [Secure Boot](https://wiki.archlinux.org/title/Unified_Extensible_Firmware_Interface/Secure_Boot)。

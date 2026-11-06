@@ -20,9 +20,9 @@ AUR 里的包谁都能上传，Arch 官方不审核。装一个不熟悉的包�
 
 <Steps>
 
-1. **装 AUR 助手 paru**
+1. **装上 Rust 的工具链**
 
-   AUR 助手替你完成下载、编译、安装这几步，用起来和 `pacman` 差不多。paru 自己也在 AUR 里，第一次要手动装。
+   AUR 助手替你完成下载、编译、安装这几步，用起来和 `pacman` 差不多。下面装的 paru 自己也在 AUR 里，第一次要手动编译安装。
 
    paru 是用 Rust 写的，编译要用 Rust 的 `cargo`。安装时装的是 rustup，它负责下载和切换 Rust 的工具链，自己不带编译器，先装上稳定版：
 
@@ -30,16 +30,64 @@ AUR 里的包谁都能上传，Arch 官方不审核。装一个不熟悉的包�
    rustup default stable
    ```
 
-   以后自己写 Rust 也用这一套，`rustup update` 更新工具链。然后编译安装 paru：
+   以后自己写 Rust 也用这一套，`rustup update` 更新工具链。
+
+2. **给 Cargo 换国内源**
+
+   编译 paru 时，cargo 要从 crates.io 下载一堆依赖，国内直连很慢，容易超时。换成中科大的镜像：
+
+   ```sh
+   vim ~/.cargo/config.toml
+   ```
+
+   写入：
+
+   ```toml title="~/.cargo/config.toml"
+   [source.crates-io]
+   replace-with = 'ustc-sparse'
+
+   [source.ustc-sparse]
+   registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
+   ```
+
+3. **编译安装 paru**
 
    ```sh
    git clone https://aur.archlinux.org/paru.git
    cd paru
+   vim PKGBUILD
+   ```
+
+   paru 的源码从 GitHub 下载，国内也慢。找到 `source=` 那一行，在 `https://github.com` 前面加上 `https://v4.gh-proxy.org/`，改完是这样：
+
+   ```sh title="PKGBUILD"
+   source=("$pkgname-$pkgver.tar.gz::https://v4.gh-proxy.org/https://github.com/Morganamilo/paru/archive/v$pkgver.tar.gz")
+   ```
+
+   保存退出后编译安装：
+
+   ```sh
    makepkg -si
    cd .. && rm -rf paru
    ```
 
    以后用 `paru -S 包名` 装 AUR 里的软件。只输入 `paru`，会把官方仓库和 AUR 里的软件一起更新。
+
+4. **AUR 的包从 GitHub 下载太慢时**
+
+   很多 AUR 包也从 GitHub 下载。用 paru 装的时候，它会先显示 PKGBUILD 的改动，问 `Accept changes? [Y/n]:`。这时先别按键，另开一个终端，改这个包的 PKGBUILD：
+
+   ```sh
+   vim ~/.cache/paru/clone/包名/PKGBUILD
+   ```
+
+   和上一步一样，在每个 GitHub 链接前面加上 `https://v4.gh-proxy.org/`。保存后回到 paru 的终端按回车，它就按改过的 PKGBUILD 下载。
+
+   改过以后还是没装成功的话，可以直接从这个目录接着编译安装：
+
+   ```sh
+   paru -Bi ~/.cache/paru/clone/包名
+   ```
 
 </Steps>
 
