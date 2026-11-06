@@ -1,6 +1,6 @@
 ---
 title: 中文和输入法
-description: 装中文字体，让桌面显示中文，再装 Fcitx5 拼音输入法。
+description: 生成中文 locale，让桌面显示中文，再设置 Fcitx5 拼音输入法。
 sidebar:
   order: 5
 ---
@@ -13,21 +13,27 @@ import { Steps } from "@astrojs/starlight/components";
 
 <Steps>
 
-1. **装中文字体**
+1. **生成中文 locale**
+
+   中文字体安装时已经装好了，还要生成中文的 locale：
 
    ```sh
-   sudo pacman -S noto-fonts-cjk noto-fonts-emoji
+   sudo vim /etc/locale.gen
    ```
 
-   `noto-fonts-cjk` 是 Google 和 Adobe 一起做的中日韩字体（思源黑体和思源宋体的另一个名字），装上以后网页和程序里的中文就不再是方块了。`noto-fonts-emoji` 是彩色的 emoji。
+   按 <kbd>/</kbd> 搜索 `zh_CN.UTF-8`，把这一行开头的 `#` 删掉，保存退出，再生成：
+
+   ```sh
+   sudo locale-gen
+   ```
 
 2. **让桌面用中文**
 
-   安装时已经生成了中文的 locale，系统语言保持英文。这里只让桌面里的程序用中文，命令行不受影响。
+   系统语言保持英文，这里只让桌面里的程序用中文，命令行不受影响。
 
    ```sh
    mkdir -p ~/.config/environment.d
-   nano ~/.config/environment.d/locale.conf
+   vim ~/.config/environment.d/locale.conf
    ```
 
    写入：
@@ -45,18 +51,12 @@ import { Steps } from "@astrojs/starlight/components";
 
 <Steps>
 
-1. **装 Fcitx5 和中文输入法**
+1. **在 niri 里启动 Fcitx5，并设置环境变量**
+
+   Fcitx5 和拼音输入法安装时已经装好了。
 
    ```sh
-   sudo pacman -S fcitx5-im fcitx5-chinese-addons
-   ```
-
-   `fcitx5-im` 是 Fcitx5 和它的设置工具、GTK 和 Qt 程序的支持；`fcitx5-chinese-addons` 提供拼音、双拼等中文输入法。
-
-2. **在 niri 里启动 Fcitx5，并设置环境变量**
-
-   ```sh
-   nano ~/.config/niri/config.kdl
+   vim ~/.config/niri/config.kdl
    ```
 
    在 `spawn-at-startup "noctalia"` 的下一行加上：
@@ -81,11 +81,11 @@ import { Steps } from "@astrojs/starlight/components";
    原生的 Wayland 程序可以通过 Wayland 自己的输入协议（text-input）用输入法，按 ArchWiki 的 [Fcitx5](https://wiki.archlinux.org/title/Fcitx5) 一页，`GTK_IM_MODULE` 和 `QT_IM_MODULE` 并不是必需的。笔者加上它们，是因为有的程序不设就打不出字，或者候选框的位置不对。遇到问题时，可以用 `fcitx5-diagnose` 检查输入法的环境。
    :::
 
-3. **重新登录**
+2. **重新登录**
 
    按 <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd>，在会话面板里注销，再登录一次。语言和输入法的设置要重新登录才生效。
 
-4. **加上拼音输入法**
+3. **加上拼音输入法**
 
    ```sh
    fcitx5-configtool
@@ -93,7 +93,7 @@ import { Steps } from "@astrojs/starlight/components";
 
    左边是当前启用的输入法。如果里面只有英文键盘、没有拼音，在右边的可用输入法里搜“拼音”（界面是英文时搜 `Pinyin`），选中后把它加到左边，再点应用。左边已经有拼音的话，这一步可以跳过。
 
-5. **试一下**
+4. **试一下**
 
    打开任意一个能打字的程序，按 <kbd>Ctrl</kbd> + <kbd>Space</kbd> 在英文和拼音之间切换。
 

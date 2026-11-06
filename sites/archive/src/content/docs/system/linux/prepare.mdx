@@ -1,6 +1,6 @@
 ---
 title: 准备工作
-description: 下载 Arch Linux 镜像，用 Ventoy 做启动 U 盘，关掉 Secure Boot，备份文件。
+description: 下载 Arch Linux 镜像，用 Ventoy 做启动 U 盘，在 BIOS 里设好 UEFI、关掉 Secure Boot，备份文件。
 sidebar:
   order: 2
 ---
@@ -23,9 +23,12 @@ import { Steps } from "@astrojs/starlight/components";
    安装 Ventoy 会格式化 U 盘，先把 U 盘里的文件拷出来。
    :::
 
-3. **关闭 Secure Boot**
+3. **设置 BIOS**
 
-   Arch Linux 的安装镜像不支持 Secure Boot（安全启动），开着它就启动不了 U 盘。开机时按 <kbd>Del</kbd>、<kbd>F2</kbd> 或 <kbd>F12</kbd> 进入 BIOS（不同设备的按键不一样，可以搜一下你的型号），把 Secure Boot 关掉。
+   开机时按 <kbd>Del</kbd>、<kbd>F2</kbd> 或 <kbd>F12</kbd> 进入 BIOS（不同设备的按键不一样，可以搜一下你的型号），改两处：
+
+   - 启动模式设为 UEFI，关闭 CSM（Legacy 兼容模式）。
+   - 关闭 Secure Boot（安全启动）。Arch Linux 的安装镜像不支持它，开着就启动不了 U 盘。
 
    :::note
    装好以后如果想重新打开 Secure Boot，要先给系统配好签名，见 ArchWiki 的 [Secure Boot](https://wiki.archlinux.org/title/Unified_Extensible_Firmware_Interface/Secure_Boot)。

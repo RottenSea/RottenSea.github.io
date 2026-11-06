@@ -1,57 +1,23 @@
 ---
 title: niri 和 Noctalia
-description: 装 niri、Noctalia 和配套的软件，改好 niri 的配置和快捷键，再装上 Noctalia 的登录界面。
+description: 改好 niri 的配置和快捷键，进入 niri 和 Noctalia 的桌面，再设置 Noctalia 的登录界面。
 sidebar:
   order: 4
 ---
 
 import { Steps } from "@astrojs/starlight/components";
 
-这一页还是从命令行开始。先装软件、改两行配置，进桌面看一眼；剩下的配置在桌面里的终端改，最后装登录界面。
+要用的软件安装时都装好了。这一页还是从命令行开始：先联网、改两行配置，进桌面看一眼；剩下的配置在桌面里的终端改，最后设置登录界面。
 
-## 装软件
+## 联网
 
-<Steps>
+插着网线的话，开机就已经连上了。用 Wi-Fi 的话：
 
-1. **联网**
+```sh
+nmcli device wifi connect 你的Wi-Fi名称 password 你的密码
+```
 
-   插着网线的话，开机就已经连上了。用 Wi-Fi 的话：
-
-   ```sh
-   nmcli device wifi connect 你的Wi-Fi名称 password 你的密码
-   ```
-
-   也可以输入 `nmtui`，在一个文字界面里选网络、输密码。
-
-2. **更新系统**
-
-   ```sh
-   sudo pacman -Syu
-   ```
-
-   `sudo` 会要你输入自己的密码。Arch 是滚动更新的，以后也用这一条命令更新整个系统，隔一两周更新一次就行。
-
-3. **装 niri、Noctalia 和配套的软件**
-
-   ```sh
-   sudo pacman -S niri noctalia kitty xwayland-satellite xdg-desktop-portal-gtk xdg-desktop-portal-gnome gnome-keyring upower
-   ```
-
-   | 软件 | 做什么 |
-   | --- | --- |
-   | `niri` | 窗口管理器。 |
-   | `noctalia` | 桌面外壳：状态栏、启动器、通知、锁屏、壁纸。 |
-   | `kitty` | 终端。niri 默认配置里的终端是 Alacritty，下面会改成 kitty。 |
-   | `xwayland-satellite` | 让只支持 X11 的老程序（例如 Steam）也能在 niri 里运行。装上就行，niri 会自己启动它。 |
-   | `xdg-desktop-portal-gtk`、`xdg-desktop-portal-gnome` | 门户（portal）：程序通过它们打开文件选择框、共享屏幕。 |
-   | `gnome-keyring` | 密钥环，替程序保存密码，例如浏览器和 VS Code 的登录信息。 |
-   | `upower` | 读取电池电量，Noctalia 的电池图标要用。 |
-
-   :::note[显卡驱动]
-   Intel 和 AMD 的显卡驱动（Mesa）会跟着 niri 一起装上，不用另外装。NVIDIA 显卡（GeForce RTX 20 系列和 GTX 16 系列以后的）再装 `nvidia-open`，然后看 niri 文档的 [NVIDIA](https://niri-wm.github.io/niri/Nvidia.html) 一页。
-   :::
-
-</Steps>
+也可以输入 `nmtui`，在一个文字界面里选网络、输密码。
 
 ## 第一次进桌面
 
@@ -71,10 +37,10 @@ import { Steps } from "@astrojs/starlight/components";
 2. **改两行配置**
 
    ```sh
-   nano ~/.config/niri/config.kdl
+   vim ~/.config/niri/config.kdl
    ```
 
-   在 nano 里按 <kbd>Ctrl</kbd> + <kbd>W</kbd> 搜索，找到下面两行：
+   在 vim 里按 <kbd>/</kbd> 搜索，找到下面两行：
 
    ```kdl
    spawn-at-startup "waybar"
@@ -88,7 +54,7 @@ import { Steps } from "@astrojs/starlight/components";
    Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
    ```
 
-   第一行让 niri 启动时一起启动 Noctalia，第二行把 <kbd>Super</kbd> + <kbd>T</kbd> 打开的终端换成 kitty。按 <kbd>Ctrl</kbd> + <kbd>O</kbd> 再回车保存，<kbd>Ctrl</kbd> + <kbd>X</kbd> 退出。
+   第一行让 niri 启动时一起启动 Noctalia，第二行把 <kbd>Super</kbd> + <kbd>T</kbd> 打开的终端换成 kitty。改完按 <kbd>Esc</kbd>，输入 `:wq` 回车保存退出。
 
 3. **启动 niri**
 
@@ -121,7 +87,7 @@ import { Steps } from "@astrojs/starlight/components";
 1. **打开配置文件**
 
    ```sh
-   nano ~/.config/niri/config.kdl
+   vim ~/.config/niri/config.kdl
    ```
 
    用 kitty 时，复制粘贴是 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> 和 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>。
@@ -218,7 +184,7 @@ import { Steps } from "@astrojs/starlight/components";
 
    ```sh
    mkdir -p ~/.config/xdg-desktop-portal
-   nano ~/.config/xdg-desktop-portal/niri-portals.conf
+   vim ~/.config/xdg-desktop-portal/niri-portals.conf
    ```
 
    写入：
@@ -242,22 +208,14 @@ import { Steps } from "@astrojs/starlight/components";
 
 ## 登录界面
 
-现在每次开机都要在命令行里登录、再输入 `niri-session`。装上 Noctalia 的登录界面以后，开机直接进图形界面登录。
+现在每次开机都要在命令行里登录、再输入 `niri-session`。设置好 Noctalia 的登录界面以后，开机直接进图形界面登录。
 
 <Steps>
 
-1. **安装 greetd 和 Noctalia Greeter**
+1. **让 greetd 用 Noctalia Greeter**
 
    ```sh
-   sudo pacman -S greetd noctalia-greeter
-   ```
-
-   greetd 是负责登录的服务，Noctalia Greeter 是它显示的登录界面。
-
-2. **让 greetd 用 Noctalia Greeter**
-
-   ```sh
-   sudo nano /etc/greetd/config.toml
+   sudo vim /etc/greetd/config.toml
    ```
 
    找到 `[default_session]` 这一段，把 `command` 那一行改成：
@@ -270,13 +228,13 @@ import { Steps } from "@astrojs/starlight/components";
 
    `user` 那一行原来就是 `greeter` 的话，保持不变。
 
-3. **初始化登录界面的设置**
+2. **初始化登录界面的设置**
 
    ```sh
    sudo noctalia-greeter-apply-appearance --setup-system
    ```
 
-4. **开机启动 greetd 并重启**
+3. **开机启动 greetd 并重启**
 
    ```sh
    sudo systemctl enable greetd

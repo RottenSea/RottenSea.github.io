@@ -1,0 +1,91 @@
+---
+title: Snapper 快照
+description: 用 Snapper 给 btrfs 拍快照，每次装软件和升级前后自动拍一次，出问题时回滚，或者从 GRUB 菜单直接进快照。
+sidebar:
+  order: 7
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+系统分区用的是 btrfs，可以随时给系统拍快照。Snapper 管理这些快照；配上 snap-pac，每次用 pacman 装软件、升级前后都会自动拍一次，升级出问题时退回去就行。
+
+<Steps>
+
+1. **安装**
+
+   ```sh
+   sudo pacman -S snapper snap-pac grub-btrfs inotify-tools
+   ```
+
+   `snap-pac` 在每次 pacman 操作前后自动拍快照，`grub-btrfs` 把快照加进 GRUB 菜单，`inotify-tools` 让它发现新快照。
+
+2. **建立配置**
+
+   ```sh
+   sudo snapper -c root create-config /
+   sudo snapper -c home create-config /home
+   ```
+
+   第一条给系统（`@` 子卷）建配置，快照放在 `/.snapshots`；第二条给 `/home` 单独建一份。
+
+3. **设置保留多少快照（可选）**
+
+   ```sh
+   sudo vim /etc/snapper/configs/root
+   ```
+
+   修改这几项：
+
+   ```ini title="/etc/snapper/configs/root"
+   TIMELINE_LIMIT_HOURLY="5"
+   TIMELINE_LIMIT_DAILY="7"
+   TIMELINE_LIMIT_WEEKLY="4"
+   TIMELINE_LIMIT_MONTHLY="6"
+   NUMBER_LIMIT="20"
+   ```
+
+   前四项是按时间自动拍的快照各留几个，`NUMBER_LIMIT` 是 snap-pac 拍的快照最多留几个，多出来的会自动清理。
+
+4. **启用定时快照和清理**
+
+   ```sh
+   sudo systemctl enable --now snapper-timeline.timer snapper-cleanup.timer
+   ```
+
+5. **拍第一个快照**
+
+   ```sh
+   sudo snapper -c root create --description "init-root"
+   sudo snapper -c home create --description "init-home"
+   ```
+
+   系统刚装好、还很干净，先留一个。
+
+6. **让 GRUB 菜单显示快照**
+
+   ```sh
+   sudo systemctl enable --now grub-btrfsd
+   sudo grub-mkconfig -o /boot/grub/grub.cfg
+   ```
+
+   重启后 GRUB 菜单里会多出一个快照的子菜单，系统起不来的时候，可以从这里进某个快照排查。
+
+</Steps>
+
+## 日常用法
+
+```sh
+# 列出系统的快照
+sudo snapper -c root list
+
+# 升级前手动拍一个
+sudo snapper -c root create --description "升级前-$(date +%Y%m%d)"
+
+# 撤销 10 号到 11 号快照之间的改动
+sudo snapper -c root undochange 10..11
+
+# 把整个系统回滚到 10 号快照，重启后生效
+sudo snapper -c root rollback 10
+```
+
+快照也可以在图形界面里管理：安装时装好的 btrfs-assistant 能浏览、对比和恢复快照。

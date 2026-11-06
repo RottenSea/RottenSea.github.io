@@ -1,13 +1,15 @@
 ---
 title: 安装 Arch Linux
-description: 从 U 盘启动、联网，给硬盘分区，装好基本系统，设置时区、语言、用户和引导程序。
+description: 从 U 盘启动、联网，分出 EFI、swap 和 btrfs 三个分区，一次装好系统和桌面要用的软件，再设置语言、用户、休眠和 GRUB。
 sidebar:
   order: 3
 ---
 
-import { Steps } from "@astrojs/starlight/components";
+import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 
-这一页的步骤来自 ArchWiki 的[安装指南](https://wiki.archlinux.org/title/Installation_guide)，按笔者的选择定好了每一处：整块硬盘分成启动分区和系统分区两个区，引导程序用 systemd-boot，网络用 NetworkManager。命令都在 U 盘的安装环境里输入。
+这一页的步骤来自 ArchWiki 的[安装指南](https://wiki.archlinux.org/title/Installation_guide)。硬盘分成 EFI、swap、系统三个分区，系统分区用 btrfs；引导程序用 GRUB；系统和桌面要用的软件在安装时一次装好，进系统以后基本不用再装。
+
+后面改配置文件都用 vim：打开文件后按 <kbd>i</kbd> 开始编辑，改完按 <kbd>Esc</kbd>，输入 `:wq` 回车保存退出。要搜索时，先按 <kbd>Esc</kbd>，再输入 `/` 加要找的内容回车。
 
 ## 启动和联网
 
@@ -21,8 +23,6 @@ import { Steps } from "@astrojs/starlight/components";
 
 2. **字太小时，换个大字体（可选）**
 
-   高分辨率的屏幕上，命令行的字可能小得看不清：
-
    ```sh
    setfont ter-132b
    ```
@@ -33,7 +33,7 @@ import { Steps } from "@astrojs/starlight/components";
    cat /sys/firmware/efi/fw_platform_size
    ```
 
-   输出 `64` 就对了。如果提示文件不存在，说明电脑是用传统的 BIOS 模式启动的，回到 BIOS 里把启动模式改成 UEFI。
+   输出 `64` 就对了。如果提示文件不存在，说明电脑是用传统的 BIOS 模式启动的，回到 BIOS 里把启动模式改成 UEFI、关闭 CSM。
 
 4. **连上网络**
 
@@ -58,6 +58,14 @@ import { Steps } from "@astrojs/starlight/components";
 
    看到三行带 `time=` 的回复就是通了。
 
+6. **检查系统时钟**
+
+   ```sh
+   timedatectl status
+   ```
+
+   看到 `NTP service: active` 就行，联网后时间会自动校准。时间不对的话，后面下载软件包时会校验失败。
+
 </Steps>
 
 ## 分区
@@ -70,9 +78,19 @@ import { Steps } from "@astrojs/starlight/components";
    lsblk
    ```
 
-   列出来的 `TYPE` 为 `disk` 的就是硬盘，看 `SIZE` 一栏的容量认出要装系统的那块。固态硬盘一般叫 `nvme0n1`，SATA 接口的硬盘和 U 盘叫 `sda`、`sdb`。下面以 `nvme0n1` 为例，你的硬盘名字不一样的话，后面每条命令都要换成你的。
+   列出来的 `TYPE` 为 `disk` 的就是硬盘，看 `SIZE` 一栏的容量认出要装系统的那块。固态硬盘一般叫 `nvme0n1`，SATA 接口的硬盘和 U 盘叫 `sda`、`sdb`。下面以 `nvme0n1` 为例。
 
-2. **分区**
+2. **规划分区**
+
+   | 分区 | 大小 | 类型 | 文件系统 | 挂载到 | 用途 |
+   | --- | --- | --- | --- | --- | --- |
+   | `nvme0n1p1` | 1G | EFI System | FAT32 | `/efi` | EFI 系统分区，放 GRUB 的启动文件 |
+   | `nvme0n1p2` | 不小于内存，例如 64G | Linux swap | swap | | 交换分区，休眠时内存里的内容写到这里 |
+   | `nvme0n1p3` | 剩下的全部 | Linux filesystem | btrfs | `/` 和 `/home` | 系统和用户文件 |
+
+   swap 分区主要给休眠用，要能装下内存里的内容，所以不要比内存小。平时用的交换空间是内存里压缩出来的 zram，后面会设置。
+
+3. **分区**
 
    ```sh
    cfdisk /dev/nvme0n1
@@ -82,44 +100,77 @@ import { Steps } from "@astrojs/starlight/components";
 
    - 如果它先问分区表类型（label type），选 `gpt`。
    - 把已有的分区全部删掉：选中分区，选 `Delete`，直到只剩一行 `Free space`。
-   - 选 `New`，大小输入 `1G`，建出启动分区。再选 `Type`，类型选 `EFI System`。
-   - 选中剩下的 `Free space`，选 `New`，大小直接回车，把剩下的空间全给系统分区。类型保持默认的 `Linux filesystem`。
+   - 选 `New`，大小输入 `1G`，再选 `Type`，类型选 `EFI System`。
+   - 选中剩下的 `Free space`，选 `New`，大小输入 `64G`（按你的内存定），`Type` 选 `Linux swap`。
+   - 选中剩下的 `Free space`，选 `New`，大小直接回车，用掉剩下的全部空间，类型保持 `Linux filesystem`。
    - 选 `Write`，输入 `yes` 写入，再选 `Quit` 退出。
 
    :::caution
    写入以后，这块硬盘上原来的数据就没了。确认选的是对的硬盘，文件已经备份好了。
    :::
 
-   再运行一次 `lsblk`，硬盘下面应该多出两个分区：`nvme0n1p1`（1G）和 `nvme0n1p2`（其余空间）。SATA 硬盘的话是 `sda1` 和 `sda2`。
+   再运行一次 `lsblk`，硬盘下面应该有 `nvme0n1p1`、`nvme0n1p2`、`nvme0n1p3` 三个分区。
 
-3. **格式化**
+</Steps>
+
+## 格式化和挂载
+
+<Steps>
+
+1. **给分区起个名字**
 
    ```sh
-   mkfs.fat -F 32 /dev/nvme0n1p1
-   mkfs.ext4 /dev/nvme0n1p2
+   ESP=/dev/nvme0n1p1
+   SWAP=/dev/nvme0n1p2
+   ROOT=/dev/nvme0n1p3
    ```
 
-   启动分区用 UEFI 要求的 FAT32，系统分区用 Linux 最常见的 ext4。
+   这三行定义了三个变量，后面的命令用 `$ESP`、`$SWAP`、`$ROOT` 代替设备名，可以直接复制。硬盘名字不一样的话，只改这三行。SATA 硬盘是 `/dev/sda1`、`/dev/sda2`、`/dev/sda3`。
+
+2. **格式化**
+
+   ```sh
+   mkfs.fat -F 32 "$ESP"
+   mkswap "$SWAP"
+   mkfs.btrfs -f "$ROOT"
+   ```
+
+   btrfs 支持快照、透明压缩和子卷，最后一页用它给系统拍快照，升级出问题时能退回去。
+
+3. **建 btrfs 子卷**
+
+   ```sh
+   mount "$ROOT" /mnt
+   btrfs subvolume create /mnt/@
+   btrfs subvolume create /mnt/@home
+   umount /mnt
+   ```
+
+   `@` 放系统，`@home` 放用户文件。两个子卷分开，给系统拍快照、回滚时不会动到你的文件。
 
 4. **挂载**
 
    ```sh
-   mount /dev/nvme0n1p2 /mnt
-   mount --mkdir /dev/nvme0n1p1 /mnt/boot
+   mount -o compress=zstd,noatime,subvol=@ "$ROOT" /mnt
+   mount --mkdir -o compress=zstd,noatime,subvol=@home "$ROOT" /mnt/home
+   mount --mkdir "$ESP" /mnt/efi
+   swapon "$SWAP"
    ```
 
-   系统分区挂到 `/mnt`，启动分区挂到它下面的 `/boot`。接下来往 `/mnt` 里装的东西，就是装进了新系统。
+   `compress=zstd` 让写进硬盘的文件自动压缩，`noatime` 不记录每次读文件的时间，少写一些硬盘。EFI 分区挂到 `/efi` 而不是 `/boot`：内核和 initramfs 留在 btrfs 的 `@` 里，跟着系统一起进快照，回滚后内核和系统的版本还是对得上。`swapon` 先启用 swap，下一步生成的 fstab 里才会有它。
+
+   运行 `lsblk` 检查，`nvme0n1p3` 一行后面应该同时有 `/mnt` 和 `/mnt/home`，因为两个子卷在同一个分区上。
 
 </Steps>
 
-## 安装基本系统
+## 安装系统和软件
 
 <Steps>
 
 1. **换成国内的镜像站**
 
    ```sh
-   nano /etc/pacman.d/mirrorlist
+   vim /etc/pacman.d/mirrorlist
    ```
 
    在文件最前面加上两行：
@@ -129,42 +180,112 @@ import { Steps } from "@astrojs/starlight/components";
    Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
    ```
 
-   pacman 按从上到下的顺序找镜像站，排在前面的清华大学和中国科学技术大学镜像站会先用上。<kbd>Ctrl</kbd> + <kbd>O</kbd> 再回车保存，<kbd>Ctrl</kbd> + <kbd>X</kbd> 退出。这个文件稍后会被复制进新系统，以后装软件也走这两个镜像站。
+   pacman 按从上到下的顺序找镜像站，排在前面的清华大学和中国科学技术大学镜像站会先用上。这个文件稍后会被复制进新系统。
 
-2. **安装软件包**
-
-   Intel 处理器：
+2. **打开 32 位软件仓库（multilib）**
 
    ```sh
-   pacstrap -K /mnt base linux linux-firmware intel-ucode sof-firmware networkmanager sudo nano git base-devel pipewire pipewire-pulse wireplumber bluez bluez-utils power-profiles-daemon zram-generator
+   vim /etc/pacman.conf
    ```
 
-   AMD 处理器把 `intel-ucode` 换成 `amd-ucode`。
+   找到下面两行，删掉开头的 `#`：
 
-   | 软件包 | 做什么 |
+   ```ini title="/etc/pacman.conf"
+   [multilib]
+   Include = /etc/pacman.d/mirrorlist
+   ```
+
+   Steam、Wine 这类程序和 32 位的显卡驱动在这个仓库里。在这里先打开，下一步就能把它们一起装上，安装时加的 `-P` 会把这份设置复制进新系统。
+
+3. **选处理器和显卡对应的包**
+
+   处理器的微码更新，选你的处理器：
+
+   <Tabs syncKey="cpu">
+     <TabItem label="AMD">
+       ```sh
+       CPU="amd-ucode"
+       ```
+     </TabItem>
+     <TabItem label="Intel">
+       ```sh
+       CPU="intel-ucode"
+       ```
+     </TabItem>
+   </Tabs>
+
+   显卡驱动，选你的显卡：
+
+   <Tabs syncKey="gpu">
+     <TabItem label="AMD">
+       ```sh
+       GPU="vulkan-radeon lib32-vulkan-radeon"
+       ```
+     </TabItem>
+     <TabItem label="Intel">
+       ```sh
+       GPU="vulkan-intel lib32-vulkan-intel intel-media-driver"
+       ```
+     </TabItem>
+     <TabItem label="NVIDIA">
+       ```sh
+       GPU="nvidia-open nvidia-utils lib32-nvidia-utils"
+       ```
+
+       `nvidia-open` 适用于 GeForce RTX 20 系列、GTX 16 系列和更新的显卡。niri 在 NVIDIA 显卡上可能有问题，装好后看 niri 文档的 [NVIDIA](https://niri-wm.github.io/niri/Nvidia.html) 一页。
+     </TabItem>
+   </Tabs>
+
+   OpenGL 的通用驱动 Mesa 在下一步的列表里，每种显卡都会装。有核显又有独显的话，把两种显卡的包写在同一个 `GPU="..."` 里，用空格隔开。
+
+4. **安装**
+
+   ```sh
+   pacstrap -K -P /mnt $CPU $GPU \
+       base base-devel linux linux-firmware \
+       grub efibootmgr btrfs-progs zram-generator \
+       sudo vim git networkmanager \
+       mesa lib32-mesa mesa-utils vulkan-tools \
+       pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber sof-firmware \
+       bluez bluez-utils power-profiles-daemon upower \
+       niri noctalia xwayland-satellite xdg-desktop-portal-gtk xdg-desktop-portal-gnome \
+       greetd noctalia-greeter gnome-keyring \
+       kitty alacritty thunar xfconf xfce4-settings \
+       nwg-look adw-gtk-theme adwaita-icon-theme breeze \
+       qt5-wayland qt6-wayland qt6ct qt6-multimedia-ffmpeg btrfs-assistant \
+       noto-fonts noto-fonts-cjk noto-fonts-emoji fontconfig ttf-jetbrains-mono-nerd \
+       fcitx5-im fcitx5-chinese-addons \
+       firefox fastfetch yazi wl-clipboard desktop-file-utils \
+       curl wget fd ripgrep openssh man-db man-pages bash-completion rust
+   ```
+
+   行末的 `\` 表示命令还没完，下一行接着写，整段是一条命令。下载和安装要一段时间，看网速。
+
+   | 用途 | 软件包 |
    | --- | --- |
-   | `base`、`linux`、`linux-firmware` | 最基本的系统、Linux 内核和常见硬件的固件。 |
-   | `intel-ucode` / `amd-ucode` | 处理器的微码更新，修复处理器的缺陷和安全问题。 |
-   | `sof-firmware` | 很多笔记本的声卡要用这个固件才有声音。 |
-   | `networkmanager` | 管理网络连接，Noctalia 的网络面板也靠它。 |
-   | `sudo` | 让普通用户临时用管理员权限执行命令。 |
-   | `nano` | 简单的命令行文本编辑器，后面改配置文件要用。 |
-   | `git`、`base-devel` | 以后装 AUR 里的软件要用。 |
-   | `pipewire`、`pipewire-pulse`、`wireplumber` | 声音。 |
-   | `bluez`、`bluez-utils` | 蓝牙。 |
-   | `power-profiles-daemon` | 电源模式（节能、平衡、性能），Noctalia 的控制中心里可以切换。 |
-   | `zram-generator` | 在内存里压缩出一块交换空间，不占硬盘。 |
+   | 系统 | `base` `base-devel` `linux` `linux-firmware`，以及上一步选的微码 |
+   | 引导和磁盘 | `grub` `efibootmgr`（GRUB 和 UEFI 启动项），`btrfs-progs`（btrfs 工具），`zram-generator`（内存压缩交换空间） |
+   | 基本工具 | `sudo` `vim` `git` `networkmanager`（网络） |
+   | 显卡 | `mesa` `lib32-mesa`（OpenGL），`mesa-utils` `vulkan-tools`（检查驱动的工具），以及上一步选的驱动 |
+   | 声音 | `pipewire` 和它的 ALSA、PulseAudio、JACK 兼容层，`wireplumber`（会话管理），`sof-firmware`（很多笔记本声卡的固件） |
+   | 蓝牙和电源 | `bluez` `bluez-utils`（蓝牙），`power-profiles-daemon`（电源模式），`upower`（电池） |
+   | 桌面 | `niri` `noctalia` `xwayland-satellite`（运行 X11 程序），两个 `xdg-desktop-portal`（文件选择框、屏幕共享） |
+   | 登录和密钥 | `greetd` `noctalia-greeter`（登录界面），`gnome-keyring`（替程序保存密码） |
+   | 终端和文件管理 | `kitty` `alacritty`，`thunar` 和它用的 `xfconf` `xfce4-settings` |
+   | 外观 | `nwg-look`（GTK 主题设置），`adw-gtk-theme` `adwaita-icon-theme` `breeze`，`qt6ct` 和 Qt 的 Wayland 支持，`qt6-multimedia-ffmpeg`，`btrfs-assistant`（快照的图形界面） |
+   | 字体 | `noto-fonts` `noto-fonts-cjk`（中文）`noto-fonts-emoji` `fontconfig` `ttf-jetbrains-mono-nerd` |
+   | 输入法 | `fcitx5-im` `fcitx5-chinese-addons` |
+   | 常用软件 | `firefox` `fastfetch` `yazi`（终端文件管理器）`wl-clipboard` `desktop-file-utils` |
+   | 命令行工具 | `curl` `wget` `fd` `ripgrep` `openssh` `man-db` `man-pages` `bash-completion`，`rust`（编译 AUR 助手 paru） |
 
-   下载和安装要几分钟，看网速。
-
-3. **生成分区表文件**
+5. **生成 fstab**
 
    ```sh
    genfstab -U /mnt >> /mnt/etc/fstab
    cat /mnt/etc/fstab
    ```
 
-   `fstab` 告诉新系统开机时把哪个分区挂到哪里。`cat` 显示出来的内容里应该有 `/` 和 `/boot` 两项。
+   `fstab` 告诉新系统开机时把哪个分区挂到哪里。里面应该有 `/` 和 `/home` 两个 btrfs 子卷、`/efi` 和 swap 四项。
 
 </Steps>
 
@@ -178,7 +299,7 @@ import { Steps } from "@astrojs/starlight/components";
    arch-chroot /mnt
    ```
 
-   提示符变成 `[root@archiso /]#`，接下来的命令都在新系统里执行，就像已经从硬盘启动了一样。
+   提示符变成 `[root@archiso /]#`，接下来的命令都在新系统里执行。前面定义的 `$ESP`、`$SWAP`、`$ROOT` 在这里不能用了，要用设备名时写完整路径。
 
 2. **时区**
 
@@ -190,32 +311,32 @@ import { Steps } from "@astrojs/starlight/components";
 3. **语言**
 
    ```sh
-   nano /etc/locale.gen
+   vim /etc/locale.gen
    ```
 
-   按 <kbd>Ctrl</kbd> + <kbd>W</kbd> 搜索，分别找到下面两行，删掉开头的 `#`：
-
-   ```text title="/etc/locale.gen"
-   en_US.UTF-8 UTF-8
-   zh_CN.UTF-8 UTF-8
-   ```
-
-   保存退出后生成，并把系统语言设成英文：
+   找到 `en_US.UTF-8 UTF-8` 这一行，删掉开头的 `#`，保存退出后生成：
 
    ```sh
    locale-gen
    echo "LANG=en_US.UTF-8" > /etc/locale.conf
    ```
 
-   Linux 的命令行（TTY）显示不了中文，系统语言设成中文的话，切到命令行时全是乱码。中文先生成好，等到[中文和输入法](/system/linux/chinese)一页再让桌面用中文。
+   系统语言用英文：命令行（TTY）显示不了中文，报错信息也是英文的好搜。桌面里的中文在[中文和输入法](/system/linux/chinese)一页设置。
 
-4. **主机名**
+4. **主机名和 hosts**
 
    ```sh
-   echo "archlinux" > /etc/hostname
+   echo "arch" > /etc/hostname
+   vim /etc/hosts
    ```
 
-   主机名是这台电脑在网络上的名字，可以换成别的，只能用小写字母、数字和 `-`。
+   在 hosts 里写入：
+
+   ```text title="/etc/hosts"
+   127.0.0.1   localhost
+   ::1         localhost
+   127.0.1.1   arch.localdomain arch
+   ```
 
 5. **root 密码**
 
@@ -230,88 +351,100 @@ import { Steps } from "@astrojs/starlight/components";
    ```sh
    useradd -m -G wheel 用户名
    passwd 用户名
+   EDITOR=vim visudo
    ```
 
-   把 `用户名` 换成你想要的名字（小写字母）。`-m` 给它建用户目录，`-G wheel` 把它加进 `wheel` 组。
-
-   再让 `wheel` 组的用户能用 `sudo`：
-
-   ```sh
-   EDITOR=nano visudo
-   ```
-
-   找到下面这一行，删掉开头的 `# `：
+   把 `用户名` 换成你想要的名字（小写字母）。`visudo` 打开的文件里，找到下面这一行，删掉开头的 `# `，让 `wheel` 组的用户能用 `sudo`：
 
    ```text title="/etc/sudoers"
    %wheel ALL=(ALL:ALL) ALL
    ```
 
-   保存退出。
-
-7. **内存交换空间**
+7. **zram**
 
    ```sh
-   nano /etc/systemd/zram-generator.conf
+   vim /etc/systemd/zram-generator.conf
    ```
 
    写入：
 
    ```ini title="/etc/systemd/zram-generator.conf"
    [zram0]
+   zram-size = ram
+   compression-algorithm = zstd
    ```
 
-   只写这一行就够了，默认用内存的一半，最多 4 GiB。
+   zram 在内存里压缩出一块交换空间，最大和内存一样大，用 zstd 压缩。它比硬盘上的 swap 分区快得多，系统平时先用它，swap 分区留给休眠。
 
 8. **开机启动的服务**
 
    ```sh
-   systemctl enable NetworkManager bluetooth power-profiles-daemon systemd-timesyncd
+   systemctl enable NetworkManager bluetooth power-profiles-daemon systemd-timesyncd fstrim.timer
    ```
 
-   依次是网络、蓝牙、电源模式和联网自动校准时间。
+   依次是网络、蓝牙、电源模式、联网自动校准时间，以及每周给固态硬盘做一次 TRIM（告诉硬盘哪些空间已经不用了，长期保持写入速度）。
 
-9. **安装引导程序**
+9. **确认休眠能恢复**
 
    ```sh
-   bootctl install
+   grep ^HOOKS /etc/mkinitcpio.conf
    ```
 
-   systemd-boot 会装进启动分区。再写它的设置：
+   现在 Arch 默认的 initramfs 由 systemd 启动，输出以 `HOOKS=(base systemd` 开头，它自带从休眠恢复的功能，这一步什么都不用改。
 
-   ```sh
-   nano /boot/loader/loader.conf
-   ```
+   如果输出以 `HOOKS=(base udev` 开头，用的是旧式的 initramfs，要用 vim 在这一行的 `filesystems` 后面加上 `resume`，保存后运行 `mkinitcpio -P` 重新生成。
 
-   ```text title="/boot/loader/loader.conf"
-   default  arch.conf
-   timeout  3
-   console-mode max
-   editor   no
-   ```
-
-   开机时显示 3 秒菜单，默认启动 Arch Linux。
-
-10. **添加启动项**
-
-    启动项要写上系统分区的 UUID（每个分区独有的编号）。UUID 很长，不好手抄，先用 `blkid` 把它写进文件：
+10. **安装 GRUB**
 
     ```sh
-    blkid -s UUID -o value /dev/nvme0n1p2 > /boot/loader/entries/arch.conf
-    nano /boot/loader/entries/arch.conf
+    grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
     ```
 
-    文件里现在只有一行 UUID，把它改成下面的样子，`options` 一行里换成你的 UUID：
+    GRUB 的启动文件装进 `/efi/EFI/GRUB/`，模块和配置放在 btrfs 里的 `/boot/grub/`。
 
-    ```text title="/boot/loader/entries/arch.conf"
-    title   Arch Linux
-    linux   /vmlinuz-linux
-    initrd  /initramfs-linux.img
-    options root=UUID=你的UUID rw
+11. **设置内核参数**
+
+    ```sh
+    SWAP_UUID=$(blkid -s UUID -o value /dev/nvme0n1p2)
+    sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=5 nowatchdog resume=UUID=$SWAP_UUID\"|" /etc/default/grub
+    grep ^GRUB_CMDLINE_LINUX_DEFAULT /etc/default/grub
     ```
 
-    微码已经打包在 `initramfs-linux.img` 里，不用另写一行。
+    第一行取出 swap 分区的 UUID（每个分区独有的编号），第二行把它写进 GRUB 的内核参数，第三行显示改好的结果，应该是：
 
-11. **重启**
+    ```text title="/etc/default/grub"
+    GRUB_CMDLINE_LINUX_DEFAULT="loglevel=5 nowatchdog resume=UUID=一长串编号"
+    ```
+
+    `loglevel=5` 让启动时显示适量的日志，`nowatchdog` 关掉个人电脑用不上的看门狗，`resume` 告诉系统休眠后从哪个分区恢复。swap 分区不是 `nvme0n1p2` 的话，改第一行的设备名。
+
+12. **GRUB 主题**
+
+    ```sh
+    git clone https://github.com/catppuccin/grub.git /tmp/catppuccin-grub
+    mkdir -p /usr/share/grub/themes
+    cp -r /tmp/catppuccin-grub/src/* /usr/share/grub/themes/
+    vim /etc/default/grub
+    ```
+
+    在 `/etc/default/grub` 里加上主题，并在 `GRUB_TERMINAL_OUTPUT` 这一行开头加 `#` 注释掉，不然主题不生效：
+
+    ```text title="/etc/default/grub"
+    GRUB_THEME="/usr/share/grub/themes/catppuccin-mocha-grub-theme/theme.txt"
+    #GRUB_TERMINAL_OUTPUT="console"
+    ```
+
+    Catppuccin 有四种配色，把 `mocha` 换成 `latte`（亮色）、`frappe`、`macchiato` 就是另外三种。主题比例不对的话，再加一行 `GRUB_GFXMODE=1920x1080`，换成你屏幕的分辨率。
+
+13. **生成 GRUB 配置**
+
+    ```sh
+    grub-mkconfig -o /boot/grub/grub.cfg
+    ```
+
+    输出里有 `Found linux image: /boot/vmlinuz-linux` 就对了。
+
+14. **重启**
 
     ```sh
     exit
@@ -319,10 +452,22 @@ import { Steps } from "@astrojs/starlight/components";
     reboot
     ```
 
-    屏幕黑掉时拔下 U 盘。
+    屏幕黑掉时拔下 U 盘。开机后先看到 GRUB 的菜单，默认 5 秒后进入 Arch Linux。
 
-12. **登录**
+15. **登录并检查**
 
-    重启后看到 `archlinux login:`，输入刚才建的用户名和密码。看到 `[用户名@archlinux ~]$`，基本系统就装好了。下一步装[桌面](/system/linux/desktop)。
+    看到 `arch login:`，输入刚才建的用户名和密码。登录后检查一下：
+
+    ```sh
+    uname -a
+    df -h
+    free -h
+    swapon --show
+    zramctl
+    ```
+
+    `swapon --show` 应该列出两行：`/dev/zram0`（优先级 100）和 swap 分区（优先级更低）。系统先用 zram，swap 分区留给休眠。
+
+    下一步配置[桌面](/system/linux/desktop)。
 
 </Steps>

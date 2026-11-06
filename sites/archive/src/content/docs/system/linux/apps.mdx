@@ -25,7 +25,6 @@ AUR 里的包谁都能上传，Arch 官方不审核。装一个不熟悉的包�
    AUR 助手替你完成下载、编译、安装这几步，用起来和 `pacman` 差不多。paru 自己也在 AUR 里，第一次要手动装：
 
    ```sh
-   sudo pacman -S --needed base-devel git
    git clone https://aur.archlinux.org/paru.git
    cd paru
    makepkg -si
@@ -42,16 +41,16 @@ AUR 里的包谁都能上传，Arch 官方不审核。装一个不熟悉的包�
 | --- | --- | --- | --- |
 | 浏览器 | Google Chrome | `paru -S google-chrome` | Chromium 内核的浏览器。 |
 | 编辑器 | Visual Studio Code | `paru -S visual-studio-code-bin` | 微软官方构建的 VS Code。 |
-| 文件管理 | Thunar | `sudo pacman -S thunar` | Xfce 的文件管理器，轻快，不依赖 Xfce 桌面。 |
+| 文件管理 | Thunar | 安装时已装好 | Xfce 的文件管理器，轻快，不依赖 Xfce 桌面。 |
 | 传文件 | LocalSend | `paru -S localsend-bin` | 在局域网里的设备之间传文件。 |
-| 系统信息 | fastfetch | `sudo pacman -S fastfetch` | 在终端里显示系统和硬件信息。 |
+| 系统信息 | fastfetch | 安装时已装好 | 在终端里显示系统和硬件信息。 |
 | 等宽字体 | Maple Mono NF CN | `paru -S maplemononl-nf-cn` | 带中文和图标的编程字体，终端和编辑器用。 |
-| 鼠标指针 | Breeze | `sudo pacman -S breeze` | KDE 的指针主题。 |
+| 鼠标指针 | Breeze | 安装时已装好 | KDE 的指针主题。 |
 
 ### 让 kitty 用 Maple Mono
 
 ```sh
-nano ~/.config/kitty/kitty.conf
+vim ~/.config/kitty/kitty.conf
 ```
 
 ```text title="~/.config/kitty/kitty.conf"
@@ -73,8 +72,10 @@ cursor {
 
 重新登录后生效。
 
-## 最后
+## 日常维护
 
 日常维护只有一件事：隔一两周运行一次 `paru`，把整个系统更新到最新。更新前看一眼 [Arch Linux 首页](https://archlinux.org/)的新闻，偶尔会有需要手动处理的更新。
 
 遇到问题，先查 [ArchWiki](https://wiki.archlinux.org/)，niri 和 Noctalia 的问题分别看 [niri 的文档](https://niri-wm.github.io/niri/)和 [Noctalia 的文档](https://docs.noctalia.dev/)。
+
+最后一页设置 [Snapper 快照](/system/linux/snapper)，升级出问题时能退回去。
