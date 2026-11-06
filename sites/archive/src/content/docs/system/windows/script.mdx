@@ -1,0 +1,121 @@
+---
+title: 设置脚本
+description: 一个 PowerShell 脚本，做完教程里能自动化的设置和推荐的系统优化：怎么运行，每一项改了什么。
+sidebar:
+  order: 6
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+教程里能用注册表或命令改的设置，以及从 Chris Titus Tech 的 Windows Utility（WinUtil）里挑出来的系统优化，都写进了一个 PowerShell 脚本。系统优化按 WinUtil 自己的实现重写，运行时不会下载或启动 WinUtil。
+
+脚本运行后先列出要改的每一项，确认一次后全部执行。它不备份，也不能撤销，确认前先看一遍列表。
+
+## 运行
+
+<Steps>
+
+1. **下载并解压**
+
+   从 [Windows setup](https://rottensea.github.io/misc/windows-setup/) 下载 `windows-setup.zip`，右键选“全部解压缩”。解压出来的 `windows-setup` 文件夹里有：
+
+   | 文件 | 内容 |
+   | --- | --- |
+   | `Setup.ps1` | 入口，列出改动、确认、执行 |
+   | `items\1-settings.ps1` | 教程里的设置 |
+   | `items\2-optimizations.ps1` | 系统优化 |
+   | `items\3-dev.ps1` | 开发环境 |
+   | `lib\Helpers.ps1` | 几个共用的函数 |
+   | `THIRD-PARTY-NOTICES.txt` | WinUtil 的许可（MIT） |
+
+2. **在这个文件夹里打开终端**
+
+   右键 `windows-setup` 文件夹，选“在终端中打开”。
+
+3. **运行**
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File .\Setup.ps1
+   ```
+
+   Windows 默认不允许运行脚本，`-ExecutionPolicy Bypass` 只对这一次运行放开。想不问就加上开发环境，在最后加 `-Dev`。
+
+4. **确认**
+
+   脚本列出三组改动：前两组默认执行；开发环境默认不做，会问一句要不要一起做。最后问一次是否执行，回车就开始。
+
+   标着 admin 的改动要管理员权限，脚本会弹出一次管理员确认，在新开的管理员窗口里执行；其余的在当前窗口执行。用管理员账户运行：管理员窗口里改的当前用户设置，属于点确认的那个账户。
+
+5. **注销或重启**
+
+   做完会重启一次资源管理器，任务栏会闪一下。有些设置要注销或重启后才生效。
+
+</Steps>
+
+## 教程里的设置
+
+默认执行。都是教程里手动改的设置，对应的手动做法折叠在[联网前的设置](/system/windows/offline-setup)和[联网后的设置](/system/windows/settings)里。
+
+| 改动 | 做什么 | 管理员 |
+| --- | --- | --- |
+| `mouse-acceleration` | 关闭鼠标加速（“提高指针精确度”），重新登录后生效 | |
+| `account-search` | 搜索不再显示 Microsoft 帐户和工作或学校帐户里的内容 | |
+| `lock-screen` | 关掉锁屏的 Windows 聚焦和趣闻、提示，锁屏显示图片 | |
+| `start-suggestions` | 开始菜单不显示推荐的文件、提示和新应用，以及帐户相关的通知 | |
+| `taskbar-buttons` | 任务栏的搜索只显示图标，去掉任务视图按钮 | |
+| `dynamic-lighting` | 关掉动态光效，前台应用也不能接管灯光 | |
+| `end-task` | 右键任务栏上的应用可以“结束任务” | |
+| `long-paths` | 启用长路径，去掉 260 个字符的路径长度限制 | ✅ |
+| `script-policy` | 执行策略设为 RemoteSigned：本机写的脚本不用签名就能运行，下载的脚本仍然要签名 | ✅ |
+| `developer-mode` | 打开开发人员模式 | ✅ |
+| `game-mode` | 关掉游戏模式 | |
+| `accessibility-shortcuts` | 关掉粘滞键（连按五次 <kbd>Shift</kbd>）、筛选键、对比度主题和讲述人的快捷键，功能本身还在 | |
+| `transparency` | 关掉透明效果 | |
+| `scrollbars` | 滚动条始终显示 | |
+
+## 系统优化
+
+默认执行。从 WinUtil 里挑出来的优化，减少遥测、广告、推荐和后台服务。
+
+| 改动 | 做什么 | 管理员 |
+| --- | --- | --- |
+| `consumer-features` | 关掉“消费者功能”，Windows 不再自动安装推广的应用、推荐商店内容 | ✅ |
+| `telemetry` | 关掉诊断数据、广告 ID、个性化体验、墨迹和键入个性化、活动记录发布和反馈提示；禁用“已连接用户体验和遥测”和“Windows 错误报告”服务；Defender 不再自动上传样本，PowerShell 7 不再上传使用数据 | ✅ |
+| `services` | 脱机文件、已连接用户体验和遥测、Internet 连接共享三个服务禁用；下载的地图管理器、存储服务改为手动启动 | ✅ |
+| `widgets` | 卸载小组件（<kbd>Win</kbd> + <kbd>W</kbd> 打开的面板）和它的运行库 | ✅ |
+| `windows-ai` | 卸载 Copilot 和 Microsoft 365 应用，关掉“回顾”（Recall）和记事本里的 AI 功能，设置里隐藏 AI 组件页 | ✅ |
+| `edge-policies` | 用组策略关掉 Edge 的首次运行引导、推荐、购物助手、奖励和钱包推广、集锦、反馈和诊断数据，更新时不再往桌面放快捷方式。Edge 本身不卸载 | ✅ |
+| `store-search` | 在开始菜单里搜应用时，不再推荐微软商店的应用。商店还没打开过的话这一项会跳过，打开一次商店后再运行脚本 | |
+| `folder-discovery` | 资源管理器不再按文件夹里的内容猜文件夹类型，所有文件夹用通用视图打开。会清掉每个文件夹保存的视图，文件夹里也不再分组 | |
+| `classic-context-menu` | 资源管理器的右键菜单换回 Windows 10 样式，不用再点“显示更多选项” | |
+| `teredo` | 关掉 Teredo（IPv6 隧道），减少网络延迟。少数联机游戏会用到它 | ✅ |
+| `start-recommended` | 去掉开始菜单里整块“推荐”。Windows 只在教育版允许这样做，所以会把系统标成教育环境，锁屏的 Windows 聚焦也会跟着关掉 | ✅ |
+| `bing-search` | 搜索不再显示 Bing 的网页结果 | |
+| `file-extensions` | 资源管理器显示文件扩展名 | |
+| `hidden-files` | 资源管理器显示隐藏的文件和文件夹 | |
+| `settings-home` | 设置不再显示“主页”，打开就是“系统” | |
+| `verbose-status` | 登录、注销和关机时显示详细的状态信息 | ✅ |
+| `classic-outlook` | 保留经典版 Outlook，不显示切换到新版的开关，也不自动迁移 | |
+| `standby-network` | 支持现代待机（S0 睡眠）的笔记本，插着电源睡眠时保持联网 | |
+
+<details>
+<summary>不用脚本时</summary>
+
+每一项改的注册表值和运行的命令，都在 zip 里的 `items\2-optimizations.ps1`，一项一段，可以照着手动改。
+
+</details>
+
+## 开发环境
+
+默认不做，要联网。装好 [Scoop](https://scoop.sh/) 和一组开发工具，再配置 Git 和 GitHub CLI。
+
+| 改动 | 做什么 |
+| --- | --- |
+| `scoop` | 安装 Scoop，加上 java 仓库，再装 git、gh、curl、nodejs-lts、pnpm、python、uv、mingw-winlibs、rustup-gnu、temurin-lts-jdk、fastfetch、yazi、fd、ripgrep、less、fzf、7zip、jq、poppler、ffmpeg、imagemagick |
+| `git-long-paths` | `git config --global core.longpaths true`，Git 能检出路径超过 260 个字符的文件 |
+| `pi-agent` | 用 npm 全局安装 `@earendil-works/pi-coding-agent`，不运行它的安装脚本 |
+| `github-login` | `gh auth login`，在浏览器里登录 GitHub |
+
+Scoop 装在用户目录里，按它的要求不用管理员权限运行，所以这一组都在当前窗口里执行。
+
+装好系统后第一次运行脚本时没联网的话，联网后再运行一次，到确认开发环境时回答 `y`。前两组会再执行一遍，结果和第一次一样，只是资源管理器里各文件夹保存的视图会再清一次。

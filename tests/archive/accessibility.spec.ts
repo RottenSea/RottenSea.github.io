@@ -13,7 +13,7 @@ for (const path of [
   "/",
   "/start",
   "/system/windows/settings",
-  "/system/windows/winutil",
+  "/system/windows/script",
   "/system/linux/install",
   "/system/linux/desktop",
   "/404"
