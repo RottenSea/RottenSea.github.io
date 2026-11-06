@@ -8,7 +8,7 @@ The tutorials are written in Chinese and the interface is in English. The site's
 | --- | --- |
 | `src/content/docs/index.mdx` | The front page |
 | `src/content/docs/start.md` | The start page, which the front page's button opens |
-| `src/content/docs/system/windows/` | A series, one page a file; the sidebar lists its pages in `sidebar.order`, and `index.mdx` is its first page |
+| `src/content/docs/system/windows/`, `src/content/docs/system/linux/` | Two series, one page a file; the sidebar lists each series' pages in `sidebar.order`, and `index.mdx` is its first page |
 | `src/styles/theme.css` | Starlight's colour, font and shadow variables set to the system's tokens, and its asides drawn as the system's admonitions |
 | `src/components/Head.astro` | Starlight's head with the system's `Fonts` |
 | `src/pages/favicon.svg.ts` | The design system's logo as the tab icon |

@@ -1,0 +1,42 @@
+---
+title: 安装 Arch Linux 和 niri
+description: 从零装一台 Arch Linux，桌面用 niri 加 Noctalia，这是笔者自己在用的组合。
+sidebar:
+  label: 这一套是什么
+  order: 1
+---
+
+## 三样东西
+
+这一组教程装出来的系统由三部分组成：
+
+| 部分 | 是什么 |
+| --- | --- |
+| [Arch Linux](https://archlinux.org/) | 发行版，也就是操作系统本身。 |
+| [niri](https://github.com/niri-wm/niri) | 窗口管理器，严格地说是 Wayland 合成器（compositor）：把窗口画到屏幕上，决定每个窗口放在哪。 |
+| [Noctalia](https://noctalia.dev/) | 桌面外壳（shell）：状态栏、启动器、通知、锁屏、壁纸、控制中心。 |
+
+**Arch Linux** 装好以后只有一个命令行，你点名要什么软件，它才装什么，没有预装软件，也没有默认的桌面。它是滚动更新的：没有“大版本升级”这回事，软件一直跟着上游更新。官方仓库里没有的软件，大多能在用户维护的 AUR（Arch User Repository）里找到。它的 [ArchWiki](https://wiki.archlinux.org/) 是 Linux 世界里写得最全的文档之一，其他发行版的用户遇到问题也常去查。
+
+**niri** 的窗口排成一条横向的长带。新打开的窗口接在右边，不会把已有的窗口挤小；屏幕放不下时，往左右滚动就能看到别的窗口。纵向是一个个工作区，上下切换。习惯以后，开再多窗口也不会乱成一团。
+
+**Noctalia** 补上 niri 不管的部分。niri 只负责窗口，状态栏、音量和亮度的提示、通知、锁屏这些都要另外装，Noctalia 把它们一次给齐，还能从壁纸里取色，给整个桌面配色。
+
+和 GNOME、KDE 这样的完整桌面比，这一套更轻，也更需要动手：很多设置要写进配置文件。好处是每样东西都是你自己装上的，出了问题知道去哪里找。
+
+## 概要
+
+接下来几页依次是：
+
+1. [准备工作](/system/linux/prepare)：下载 Arch Linux 镜像、做启动 U 盘、腾出硬盘。
+2. [安装 Arch Linux](/system/linux/install)：从 U 盘启动、联网，用 archinstall 装好基本系统。
+3. [niri 和 Noctalia](/system/linux/desktop)：装桌面和登录界面，改好快捷键。
+4. [中文和输入法](/system/linux/chinese)：中文字体、中文界面、Fcitx5 拼音输入法。
+5. [常用软件](/system/linux/apps)：AUR 助手 paru 和笔者装的软件。
+
+:::caution
+- 安装时只有黑底白字的命令行，提示全是英文。每一步要敲的命令这里都写出来了，照着敲就行。
+- 最好准备一根网线。安装程序和新系统都要联网下载软件，有线网络插上就能用，Wi-Fi 要多敲几条命令。
+- 这组教程把 Linux 装在一整块硬盘上，硬盘上原有的数据会被清空。想和 Windows 装在同一块硬盘上（双系统），分区要自己规划，见 ArchWiki 的 [Dual boot with Windows](https://wiki.archlinux.org/title/Dual_boot_with_Windows)。
+- 用 NVIDIA 独立显卡的话，niri 可能会出问题（例如从命令行启动后黑屏），先看 niri 文档的 [NVIDIA](https://niri-wm.github.io/niri/Nvidia.html) 一页。
+:::

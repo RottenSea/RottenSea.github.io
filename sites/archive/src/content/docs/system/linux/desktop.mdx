@@ -1,0 +1,294 @@
+---
+title: niri 和 Noctalia
+description: 装 niri、Noctalia 和配套的软件，改好 niri 的配置和快捷键，再装上 Noctalia 的登录界面。
+sidebar:
+  order: 4
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+这一页还是从命令行开始。先装软件、改两行配置，进桌面看一眼；剩下的配置在桌面里的终端改，最后装登录界面。
+
+## 装软件
+
+<Steps>
+
+1. **联网**
+
+   插着网线的话，开机就已经连上了。用 Wi-Fi 的话：
+
+   ```sh
+   nmcli device wifi connect 你的Wi-Fi名称 password 你的密码
+   ```
+
+   也可以输入 `nmtui`，在一个文字界面里选网络、输密码。
+
+2. **更新系统**
+
+   ```sh
+   sudo pacman -Syu
+   ```
+
+   `sudo` 会要你输入自己的密码。Arch 是滚动更新的，以后也用这一条命令更新整个系统，隔一两周更新一次就行。
+
+3. **装 niri、Noctalia 和配套的软件**
+
+   ```sh
+   sudo pacman -S niri noctalia kitty xwayland-satellite xdg-desktop-portal-gtk xdg-desktop-portal-gnome gnome-keyring upower
+   ```
+
+   | 软件 | 做什么 |
+   | --- | --- |
+   | `niri` | 窗口管理器。 |
+   | `noctalia` | 桌面外壳：状态栏、启动器、通知、锁屏、壁纸。 |
+   | `kitty` | 终端。niri 默认配置里的终端是 Alacritty，下面会改成 kitty。 |
+   | `xwayland-satellite` | 让只支持 X11 的老程序（例如 Steam）也能在 niri 里运行。装上就行，niri 会自己启动它。 |
+   | `xdg-desktop-portal-gtk`、`xdg-desktop-portal-gnome` | 门户（portal）：程序通过它们打开文件选择框、共享屏幕。 |
+   | `gnome-keyring` | 密钥环，替程序保存密码，例如浏览器和 VS Code 的登录信息。 |
+   | `upower` | 读取电池电量，Noctalia 的电池图标要用。 |
+
+   :::note[显卡驱动]
+   Intel 和 AMD 的显卡驱动（Mesa）会跟着 niri 一起装上，不用另外装。NVIDIA 显卡（GeForce RTX 20 系列和 GTX 16 系列以后的）再装 `nvidia-open`，然后看 niri 文档的 [NVIDIA](https://niri-wm.github.io/niri/Nvidia.html) 一页。
+   :::
+
+</Steps>
+
+## 第一次进桌面
+
+<Steps>
+
+1. **复制 niri 的默认配置**
+
+   niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录）。先把软件包里带的默认配置复制过去：
+
+   ```sh
+   mkdir -p ~/.config/niri
+   cp /usr/share/doc/niri/default-config.kdl ~/.config/niri/config.kdl
+   ```
+
+   默认配置里每个选项都有英文注释，以后想改什么，先在这个文件里找。
+
+2. **改两行配置**
+
+   ```sh
+   nano ~/.config/niri/config.kdl
+   ```
+
+   在 nano 里按 <kbd>Ctrl</kbd> + <kbd>W</kbd> 搜索，找到下面两行：
+
+   ```kdl
+   spawn-at-startup "waybar"
+   Mod+T hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
+   ```
+
+   改成：
+
+   ```kdl
+   spawn-at-startup "noctalia"
+   Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
+   ```
+
+   第一行让 niri 启动时一起启动 Noctalia，第二行把 <kbd>Super</kbd> + <kbd>T</kbd> 打开的终端换成 kitty。按 <kbd>Ctrl</kbd> + <kbd>O</kbd> 再回车保存，<kbd>Ctrl</kbd> + <kbd>X</kbd> 退出。
+
+3. **启动 niri**
+
+   ```sh
+   niri-session
+   ```
+
+   屏幕会切到桌面，Noctalia 的状态栏出现在屏幕边上。按 <kbd>Super</kbd> + <kbd>T</kbd> 打开 kitty。<kbd>Super</kbd> 就是 Windows 键，niri 的配置里写作 `Mod`。
+
+   按 <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd> 能看到所有快捷键。常用的几个：
+
+   | 快捷键 | 作用 |
+   | --- | --- |
+   | <kbd>Super</kbd> + <kbd>←</kbd> / <kbd>→</kbd> | 切到左边或右边的窗口 |
+   | <kbd>Super</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd> | 切到上一个或下一个工作区 |
+   | 单按一下 <kbd>Super</kbd> | 总览：缩小显示所有工作区和窗口 |
+   | <kbd>Super</kbd> + <kbd>Q</kbd> | 关闭窗口 |
+   | <kbd>Super</kbd> + <kbd>R</kbd> | 切换窗口宽度 |
+   | <kbd>Super</kbd> + <kbd>F</kbd> | 窗口占满整列 |
+   | <kbd>Print</kbd> | 截图：框选区域，<kbd>Ctrl</kbd> + <kbd>Print</kbd> 截整个屏幕，<kbd>Alt</kbd> + <kbd>Print</kbd> 截当前窗口 |
+
+</Steps>
+
+## 配置 niri
+
+下面在 kitty 里改配置。niri 保存配置文件后会立即生效，不用重启；改错了会弹出提示，并继续用上一次正确的配置。
+
+<Steps>
+
+1. **打开配置文件**
+
+   ```sh
+   nano ~/.config/niri/config.kdl
+   ```
+
+   用 kitty 时，复制粘贴是 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> 和 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>。
+
+2. **换掉用不上的快捷键**
+
+   默认配置的启动器、锁屏、音量和亮度键调用的是没装的程序。在 `binds { ... }` 里找到这几行：
+
+   ```kdl
+   Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
+   Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+   XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
+   XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
+   XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+   XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+10%"; }
+   XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
+   Mod+Shift+E { quit; }
+   ```
+
+   每行前面加 `//` 注释掉，再在 `binds {` 的下一行加上 Noctalia 的快捷键：
+
+   ```kdl title="~/.config/niri/config.kdl"
+   Mod+S hotkey-overlay-title="Noctalia launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+   Mod+D { spawn-sh "noctalia msg panel-toggle control-center"; }
+   Mod+Shift+Comma { spawn-sh "noctalia msg settings-toggle"; }
+   Mod+Tab { spawn-sh "noctalia msg window-switcher"; }
+   Mod+Shift+E { spawn-sh "noctalia msg panel-toggle session"; }
+   Super+Alt+L { spawn-sh "noctalia msg session lock"; }
+
+   XF86AudioRaiseVolume { spawn-sh "noctalia msg volume-up"; }
+   XF86AudioLowerVolume { spawn-sh "noctalia msg volume-down"; }
+   XF86AudioMute { spawn-sh "noctalia msg volume-mute"; }
+   XF86MonBrightnessUp { spawn-sh "noctalia msg brightness-up"; }
+   XF86MonBrightnessDown { spawn-sh "noctalia msg brightness-down"; }
+   ```
+
+   | 快捷键 | 作用 |
+   | --- | --- |
+   | <kbd>Super</kbd> + <kbd>S</kbd> | 启动器：输入名字打开程序 |
+   | <kbd>Super</kbd> + <kbd>D</kbd> | 控制中心：网络、蓝牙、音量、电源模式 |
+   | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>,</kbd> | Noctalia 的设置 |
+   | <kbd>Super</kbd> + <kbd>Tab</kbd> | 切换窗口 |
+   | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | 注销、重启、关机 |
+   | <kbd>Super</kbd> + <kbd>Alt</kbd> + <kbd>L</kbd> | 锁屏 |
+
+   原来的 <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> 是直接退出 niri，换成 Noctalia 的会话面板后，退出、重启、关机都在面板里选。截图继续用 niri 自带的 <kbd>Print</kbd>。
+
+   :::caution
+   同一个快捷键只能出现一次，重复了 niri 会报错。加新的快捷键前，先搜一下文件里有没有同样的组合。
+   :::
+
+3. **加上 Noctalia 建议的设置**
+
+   在文件末尾加上：
+
+   ```kdl title="~/.config/niri/config.kdl"
+   // 窗口圆角
+   window-rule {
+       geometry-corner-radius 20
+       clip-to-geometry true
+   }
+
+   // Noctalia 的设置窗口浮在上面，不进窗口长带
+   window-rule {
+       match app-id="dev.noctalia.Noctalia"
+       open-floating true
+       default-column-width { fixed 1080; }
+       default-window-height { fixed 920; }
+   }
+
+   // 让 Noctalia 的通知能把对应的窗口切到前面
+   debug {
+       honor-xdg-activation-with-invalid-serial
+   }
+
+   // 壁纸固定不动，切换工作区和打开总览时都看得到
+   layer-rule {
+       match namespace="^noctalia-wallpaper"
+       place-within-backdrop true
+   }
+   ```
+
+   最后一段还要把 `layout { ... }` 里的背景设成透明，在 `layout {` 的下一行加上：
+
+   ```kdl
+   background-color "transparent"
+   ```
+
+   壁纸还有别的摆法（例如总览时显示模糊的壁纸），见 Noctalia 文档的 [Niri](https://docs.noctalia.dev/noctalia/compositor-settings/niri/) 一页。
+
+4. **设置文件选择框**
+
+   niri 默认用 GNOME 的门户打开文件选择框，它要求装 GNOME 的文件管理器 Nautilus。不想装的话，让文件选择框改用 GTK 的门户：
+
+   ```sh
+   mkdir -p ~/.config/xdg-desktop-portal
+   nano ~/.config/xdg-desktop-portal/niri-portals.conf
+   ```
+
+   写入：
+
+   ```ini title="~/.config/xdg-desktop-portal/niri-portals.conf"
+   [preferred]
+   default=gnome;gtk;
+   org.freedesktop.impl.portal.Access=gtk;
+   org.freedesktop.impl.portal.Notification=gtk;
+   org.freedesktop.impl.portal.Secret=gnome-keyring;
+   org.freedesktop.impl.portal.FileChooser=gtk;
+   ```
+
+   前四行和 niri 自带的设置一样，最后一行把文件选择框换成 GTK 的。
+
+5. **打开 Noctalia 的身份验证**
+
+   按 <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>,</kbd> 打开 Noctalia 的设置，在 Privacy & Security 里打开 polkit 身份验证代理。有程序要管理员权限时（例如连接 Wi-Fi 时要求授权），Noctalia 会弹窗让你输密码。
+
+</Steps>
+
+## 登录界面
+
+现在每次开机都要在命令行里登录、再输入 `niri-session`。装上 Noctalia 的登录界面以后，开机直接进图形界面登录。
+
+<Steps>
+
+1. **安装 greetd 和 Noctalia Greeter**
+
+   ```sh
+   sudo pacman -S greetd noctalia-greeter
+   ```
+
+   greetd 是负责登录的服务，Noctalia Greeter 是它显示的登录界面。
+
+2. **让 greetd 用 Noctalia Greeter**
+
+   ```sh
+   sudo nano /etc/greetd/config.toml
+   ```
+
+   找到 `[default_session]` 这一段，把 `command` 那一行改成：
+
+   ```toml title="/etc/greetd/config.toml"
+   [default_session]
+   command = "/usr/bin/noctalia-greeter-session"
+   user = "greeter"
+   ```
+
+   `user` 那一行原来就是 `greeter` 的话，保持不变。
+
+3. **初始化登录界面的设置**
+
+   ```sh
+   sudo noctalia-greeter-apply-appearance --setup-system
+   ```
+
+4. **开机启动 greetd 并重启**
+
+   ```sh
+   sudo systemctl enable greetd
+   sudo reboot
+   ```
+
+   重启后会看到 Noctalia 的登录界面，选 niri，输入密码登录。
+
+   :::caution
+   如果重启后没有出现登录界面，按 <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F2</kbd> 切到命令行登录，用 `systemctl status greetd` 查看出了什么错。
+   :::
+
+</Steps>
+
+桌面装好了，但界面还是英文，也打不了中文。下一页设置[中文和输入法](/system/linux/chinese)。

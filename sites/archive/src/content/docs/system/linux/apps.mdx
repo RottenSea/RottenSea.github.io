@@ -1,0 +1,80 @@
+---
+title: 常用软件
+description: 装 AUR 助手 paru，再装笔者在 Arch Linux 上用的浏览器、编辑器、字体和小工具。
+sidebar:
+  order: 6
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+## 官方仓库和 AUR
+
+Arch Linux 的软件有两个来源：
+
+- **官方仓库**：由 Arch 的维护者打包，用 `pacman` 安装，前面几页装的都是这里的。
+- **AUR**（Arch User Repository）：由用户上传的打包脚本（PKGBUILD），在你的电脑上下载、编译、打包，再安装。Chrome、VS Code 这类官方仓库里没有的软件，大多在 AUR 里。
+
+:::caution
+AUR 里的包谁都能上传，Arch 官方不审核。装一个不熟悉的包之前，先在 [AUR 网站](https://aur.archlinux.org/)上看看它的投票数、维护者和最近的评论。
+:::
+
+<Steps>
+
+1. **装 AUR 助手 paru**
+
+   AUR 助手替你完成下载、编译、安装这几步，用起来和 `pacman` 差不多。paru 自己也在 AUR 里，第一次要手动装：
+
+   ```sh
+   sudo pacman -S --needed base-devel git
+   git clone https://aur.archlinux.org/paru.git
+   cd paru
+   makepkg -si
+   cd .. && rm -rf paru
+   ```
+
+   以后用 `paru -S 包名` 装 AUR 里的软件。只输入 `paru`，会把官方仓库和 AUR 里的软件一起更新。
+
+</Steps>
+
+## 笔者装的软件
+
+| 用途 | 软件 | 安装命令 | 说明 |
+| --- | --- | --- | --- |
+| 浏览器 | Google Chrome | `paru -S google-chrome` | 和 Windows 上用的是同一个浏览器，登录以后书签和扩展都会同步过来。 |
+| 编辑器 | Visual Studio Code | `paru -S visual-studio-code-bin` | 微软官方构建的 VS Code。 |
+| 文件管理 | Thunar | `sudo pacman -S thunar` | Xfce 的文件管理器，轻快，不依赖 Xfce 桌面。 |
+| 传文件 | LocalSend | `paru -S localsend-bin` | 在局域网里的设备之间传文件，Windows 和手机上也有。 |
+| 系统信息 | fastfetch | `sudo pacman -S fastfetch` | 在终端里显示系统和硬件信息。 |
+| 等宽字体 | Maple Mono NF CN | `paru -S maplemononl-nf-cn` | 带中文和图标的编程字体，终端和编辑器用。 |
+| 鼠标指针 | Breeze | `sudo pacman -S breeze` | KDE 的指针主题。 |
+
+### 让 kitty 用 Maple Mono
+
+```sh
+nano ~/.config/kitty/kitty.conf
+```
+
+```text title="~/.config/kitty/kitty.conf"
+font_family Maple Mono NL NF CN Medium
+```
+
+保存后，在 kitty 里按 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F5</kbd> 重新加载配置。
+
+### 换鼠标指针
+
+在 niri 的配置文件里加上：
+
+```kdl title="~/.config/niri/config.kdl"
+cursor {
+    xcursor-theme "breeze_cursors"
+    xcursor-size 24
+}
+```
+
+重新登录后生效。
+
+## 最后
+
+日常维护只有一件事：隔一两周运行一次 `paru`，把整个系统更新到最新。更新前看一眼 [Arch Linux 首页](https://archlinux.org/)的新闻，偶尔会有需要手动处理的更新。
+
+遇到问题，先查 [ArchWiki](https://wiki.archlinux.org/)，niri 和 Noctalia 的问题分别看 [niri 的文档](https://niri-wm.github.io/niri/)和 [Noctalia 的文档](https://docs.noctalia.dev/)。

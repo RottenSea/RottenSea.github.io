@@ -35,6 +35,10 @@ export default defineConfig({
             {
               label: "Windows",
               items: [{ autogenerate: { directory: "system/windows" } }]
+            },
+            {
+              label: "Linux",
+              items: [{ autogenerate: { directory: "system/linux" } }]
             }
           ]
         }

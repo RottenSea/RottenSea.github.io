@@ -1,0 +1,50 @@
+---
+title: 准备工作
+description: 下载 Arch Linux 镜像并校验，放进 Ventoy U 盘，关掉 Secure Boot，备份文件。
+sidebar:
+  order: 2
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+<Steps>
+
+1. **下载 Arch Linux 镜像**
+
+   打开 Arch Linux 的[下载页](https://archlinux.org/download/)。镜像每个月初发布一次，文件名形如 `archlinux-2026.11.01-x86_64.iso`，一千多 MB。
+
+   页面中间的 “HTTP Direct Downloads” 按国家列出了下载镜像站，在 China 下面挑一个，例如清华大学（TUNA）或中国科学技术大学（USTC），点进去下载 `.iso` 文件。国内的镜像站比官方服务器快得多。
+
+2. **校验镜像（可选）**
+
+   下载页上写着镜像的 SHA256 校验值。在 Windows 的 PowerShell 里算一下下载到的文件：
+
+   ```powershell
+   Get-FileHash .\archlinux-2026.11.01-x86_64.iso
+   ```
+
+   输出的 `Hash` 和下载页上的一样，说明文件完整、没被改过。
+
+3. **把镜像放进 Ventoy U 盘**
+
+   做启动 U 盘的方法和装 Windows 时一样，见 Windows 那一组的[准备工作](/system/windows/prepare)第 3 到第 5 步：装好 Ventoy，把 ISO 复制进 U 盘的镜像文件夹。已经有 Ventoy U 盘的话，直接把 ISO 放进去。
+
+4. **关闭 Secure Boot**
+
+   Arch Linux 的安装镜像不支持 Secure Boot（安全启动），开着它就启动不了 U 盘。进 BIOS 把 Secure Boot 关掉，进 BIOS 的方法见 Windows 那一组的[安装](/system/windows/install)第 1 步。
+
+   :::note
+   装 Windows 时已经关过的话，这一步可以跳过。装好以后如果想重新打开 Secure Boot，要先给系统配好签名，见 ArchWiki 的 [Secure Boot](https://wiki.archlinux.org/title/Unified_Extensible_Firmware_Interface/Secure_Boot)。
+   :::
+
+5. **备份重要文件**
+
+   安装时会清空整块硬盘，先把要留的文件拷出来，放到 U 盘或者别的硬盘上。
+
+6. **记下网络信息**
+
+   能插网线最省事。只能用 Wi-Fi 的话，记下 Wi-Fi 的名称（SSID）和密码，安装时要在命令行里输入。
+
+7. **确认都准备好了**，接下来开始[安装 Arch Linux](/system/linux/install)。
+
+</Steps>

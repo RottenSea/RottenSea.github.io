@@ -1,0 +1,141 @@
+---
+title: 安装 Arch Linux
+description: 从 Ventoy U 盘启动 Arch Linux，连上网，用 archinstall 逐项选好设置，装好基本系统。
+sidebar:
+  order: 3
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+Arch Linux 的安装镜像里自带一个安装程序 archinstall。它把官方[安装指南](https://wiki.archlinux.org/title/Installation_guide)里的分区、装软件、配置引导这些步骤做成了菜单，选好就能装。这一页先做好启动和联网，再一项一项过 archinstall 的菜单。
+
+## 启动和联网
+
+<Steps>
+
+1. **从 U 盘启动**
+
+   插上 U 盘开机，在 BIOS 里把 U 盘设为第一启动项（和装 Windows 时一样）。进入 Ventoy 的菜单后，选中 Arch Linux 的镜像回车，再选 “Arch Linux install medium (x86_64, UEFI)”。
+
+   等一会儿，屏幕上出现 `root@archiso ~ #`，就进入了安装环境。后面的命令都在这里输入。
+
+2. **字太小时，换个大字体（可选）**
+
+   高分辨率的屏幕上，命令行的字可能小得看不清。输入：
+
+   ```sh
+   setfont ter-132b
+   ```
+
+3. **确认是 UEFI 启动**
+
+   ```sh
+   cat /sys/firmware/efi/fw_platform_size
+   ```
+
+   输出 `64` 就对了。如果提示文件不存在，说明电脑是用传统的 BIOS 模式启动的，回到 BIOS 里把启动模式改成 UEFI。
+
+4. **连上网络**
+
+   插着网线的话，什么都不用做。
+
+   用 Wi-Fi 的话，输入 `iwctl` 进入 Wi-Fi 工具，提示符会变成 `[iwd]#`，然后依次输入：
+
+   ```sh
+   device list
+   station wlan0 scan
+   station wlan0 get-networks
+   station wlan0 connect 你的Wi-Fi名称
+   ```
+
+   第一条列出无线网卡，网卡名一般是 `wlan0`，不是的话，把后面三条里的 `wlan0` 换成列出来的名字。最后一条会让你输入 Wi-Fi 密码。连上以后输入 `exit` 退出。
+
+5. **检查网络**
+
+   ```sh
+   ping -c 3 archlinux.org
+   ```
+
+   看到三行带 `time=` 的回复就是通了。
+
+</Steps>
+
+## 用 archinstall 安装
+
+<Steps>
+
+1. **更新 archinstall（可选）**
+
+   镜像是月初做的，月中可能已经出了新版的 archinstall。先更新它：
+
+   ```sh
+   pacman -Sy archinstall
+   ```
+
+2. **启动 archinstall**
+
+   ```sh
+   archinstall
+   ```
+
+   屏幕上会列出一张菜单。用上下方向键移动，回车进入某一项，Esc 返回上一级。下一步按菜单从上到下逐项设置。
+
+   :::note
+   如果到这里还没联网，archinstall 会先问 “Would you like to connect to a Wifi?”，选 Yes 也能在这里连 Wi-Fi。
+   :::
+
+3. **逐项设置**
+
+   没在表里的项保持默认。
+
+   | 菜单项 | 选什么 | 说明 |
+   | --- | --- | --- |
+   | Archinstall language | English | 安装环境的命令行显示不了中文，保持英文。 |
+   | Locales | 保持默认 | 键盘布局 `us`，系统语言 `en_US.UTF-8`。中文界面在[中文和输入法](/system/linux/chinese)一页里设置，只对桌面生效，命令行还是英文，避免乱码。 |
+   | Mirrors and repositories | Select regions 里选 China | 以后装软件都从国内的镜像站下载。 |
+   | Disk configuration | 见下一步 | |
+   | Swap | 保持默认 | 默认在内存里压缩出一块交换空间（zram），不占硬盘。 |
+   | Bootloader | Systemd-boot | 默认就是它，简单够用。 |
+   | Hostname | 随你起 | 这台电脑在网络上的名字，例如 `archlinux`。 |
+   | Authentication | 设 root 密码，再加一个用户 | 见下下步。 |
+   | Profile | Type 选 Minimal | 只装基本系统，桌面下一页自己装。 |
+   | Applications | 见下下步 | |
+   | Network configuration | Use Network Manager (default backend) | 新系统用 NetworkManager 管网络，Noctalia 的网络面板也靠它。 |
+   | Additional packages | `git base-devel nano` | 见下下步。 |
+   | Timezone | Asia/Shanghai | |
+
+   :::tip[为什么 Profile 不选 niri]
+   Profile 里的 Desktop 下面也有 niri，但它会顺带装上 waybar（状态栏）、mako（通知）、fuzzel（启动器）这些，Noctalia 已经包含了它们的功能，装了也用不上。所以这里选 Minimal，下一页只装需要的。
+   :::
+
+4. **设置硬盘**
+
+   进入 Disk configuration > Partitioning，选 “Use a best-effort default partition layout”，再选要装系统的那块硬盘。看清型号和容量，别选到 U 盘或者存资料的硬盘。
+
+   接着它会问文件系统，选 `ext4`；问要不要单独给 `/home` 分一个区，选 No。archinstall 会自动分出启动分区和系统分区。
+
+   :::caution
+   选中的硬盘会被整块清空。确认文件已经备份好了。
+   :::
+
+5. **设置账户和软件**
+
+   - **Authentication**：Root password 给 root（系统管理员）设一个密码。再进 User account 加一个自己日常用的用户，设好用户名和密码，问是否作为超级用户（sudo）时选 Yes，这样这个用户就能用 `sudo` 执行管理命令。如果问到 “Enable passwordless sudo?”，选 No，用 `sudo` 时还是要输密码。
+   - **Applications**：Audio 选 `pipewire`（声音），Bluetooth 选 Yes（蓝牙），Power management 选 `power-profiles-daemon`（电源模式，Noctalia 的控制中心里可以切换）。
+   - **Additional packages**：输入 `git base-devel nano`，空格隔开。`git` 和 `base-devel` 是以后装 AUR 软件要用的，`nano` 是一个简单的命令行文本编辑器，后面改配置文件要用。
+
+6. **开始安装**
+
+   全部设置好后，选 Install。archinstall 会把设置列出来让你确认，确认后开始下载和安装，几分钟到半小时不等，看网速。
+
+7. **重启**
+
+   装完后会出现一个菜单，选 “Reboot system” 重启。屏幕黑掉时拔下 U 盘。
+
+8. **登录**
+
+   重启后看到 `archlinux login:`（前面是你起的主机名），输入刚才建的用户名和密码。密码输入时屏幕上什么都不显示，这是正常的，输完回车就行。
+
+   看到 `[用户名@主机名 ~]$`，基本系统就装好了。下一步装[桌面](/system/linux/desktop)。
+
+</Steps>
