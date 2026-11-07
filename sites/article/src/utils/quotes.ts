@@ -12,7 +12,11 @@ export const QUOTES: Quote[] = source
   .split("\n")
   .filter((line) => line.startsWith("- "))
   .map((line) => {
-    const [text, attribution] = line.slice(2).split(" — ");
-    return { text: text.trim(), attribution: attribution?.trim() || undefined };
+    // The last " — " starts the source, so a quote may hold the dash itself.
+    const quote = line.slice(2);
+    const dash = quote.lastIndexOf(" — ");
+    const text = dash < 0 ? quote : quote.slice(0, dash);
+    const attribution = dash < 0 ? "" : quote.slice(dash + 3);
+    return { text: text.trim(), attribution: attribution.trim() || undefined };
   })
   .filter((quote) => quote.text);
