@@ -47,24 +47,31 @@ panel?.addEventListener("ds-open", () => {
   load();
 });
 
+/** The query in the box now. An answer that comes back for an older one is dropped. */
+let latest = "";
+
 panel?.addEventListener("ds-query", async (event) => {
   const query = (event as CustomEvent<string>).detail;
+  latest = query;
+  // Clearing the box calls no search, so a search still waiting is not cancelled by Pagefind.
   if (!query) {
     panel.setResults([]);
     return;
   }
   panel.setLoading(true);
   const index = await load();
+  if (query !== latest) return;
   if (!index) {
     panel.setResults([], "Search works on the built site, after pnpm build.");
     return;
   }
   // A newer query cancels this one, and Pagefind then answers null.
   const search = await index.debouncedSearch(query);
-  if (!search) return;
+  if (!search || query !== latest) return;
   const found = await Promise.all(
     search.results.slice(0, LIMIT).map((result) => result.data())
   );
+  if (query !== latest) return;
   panel.setResults(
     found.map((post) => ({
       title: post.meta.title ?? "",
