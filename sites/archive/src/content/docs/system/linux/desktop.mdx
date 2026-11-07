@@ -19,6 +19,26 @@ nmcli device wifi connect 你的Wi-Fi名称 password 你的密码
 
 也可以输入 `nmtui`，在一个文字界面里选网络、输密码。
 
+<details>
+<summary>校园网这类要输入账号和密码的 Wi-Fi</summary>
+
+在 Windows 里安全类型显示为“Microsoft: Protected EAP (PEAP)”的 Wi-Fi，连接时要输入账号和密码。上面那条命令只能填一个密码，要先建一个连接：
+
+```sh
+nmcli connection add type wifi con-name 校园网 ssid 你的Wi-Fi名称 \
+    wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
+    802-1x.identity 你的账号 802-1x.password 你的密码
+nmcli connection up 校园网
+```
+
+`con-name` 是这个连接在本机的名字，随便起；`ssid` 后面是 Wi-Fi 的名称，带空格的话用引号括起来。以后在信号范围内会自动连上。这个连接没有校验 Wi-Fi 服务器的证书，和 Windows 里选“不验证证书”一样；学校提供了 CA 证书的话，用 `nmcli connection modify 校园网 802-1x.ca-cert /证书的路径` 加上。
+
+:::note
+连不上、日志里有 `unsupported protocol` 的话，是学校的认证服务器还在用 TLS 1.0 或 1.1，新版 OpenSSL 默认不再支持。ArchWiki 的 [NetworkManager](https://wiki.archlinux.org/title/NetworkManager#WPA_Enterprise_connections_fail_to_authenticate_with_OpenSSL_%22unsupported_protocol%22_error) 一页写了怎么对这一个连接放开。
+:::
+
+</details>
+
 ## 配置 niri
 
 niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录）。第 2 到第 7 步都在这个文件里改，全部改完再保存退出。

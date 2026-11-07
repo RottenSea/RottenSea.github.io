@@ -44,6 +44,47 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 
    第一条列出无线网卡，网卡名一般是 `wlan0`，不是的话，把后面三条里的 `wlan0` 换成列出来的名字。最后一条会让你输入 Wi-Fi 密码。连上以后输入 `exit` 退出。
 
+   <details>
+   <summary>校园网这类要输入账号和密码的 Wi-Fi</summary>
+
+   有的 Wi-Fi 连接时要输入账号和密码，而不只是一个密码，在 Windows 里它的安全类型显示为“Microsoft: Protected EAP (PEAP)”。`iwctl` 不会问账号，要先给这个网络写一个配置文件。
+
+   配置文件的名字是 Wi-Fi 名称加 `.8021x`。Wi-Fi 名称里只有英文字母、数字、空格、`_` 和 `-` 时，直接用名称；带中文或其他符号时，要换成 `=` 加名称的十六进制编码，用这条命令算出来：
+
+   ```sh
+   printf '%s' '你的Wi-Fi名称' | od -An -tx1 | tr -d ' \n'
+   ```
+
+   假设名称是 `CampusNet`，新建配置文件：
+
+   ```sh
+   vim /var/lib/iwd/CampusNet.8021x
+   ```
+
+   写入，把账号和密码换成你自己的：
+
+   ```ini title="/var/lib/iwd/CampusNet.8021x"
+   [Security]
+   EAP-Method=PEAP
+   EAP-Identity=你的账号
+   EAP-PEAP-Phase2-Method=MSCHAPV2
+   EAP-PEAP-Phase2-Identity=你的账号
+   EAP-PEAP-Phase2-Password=你的密码
+
+   [Settings]
+   AutoConnect=true
+   ```
+
+   保存后连接：
+
+   ```sh
+   iwctl station wlan0 connect CampusNet
+   ```
+
+   这份配置没有校验 Wi-Fi 服务器的证书，和 Windows 里选“不验证证书”一样。学校提供了 CA 证书的话，可以加一行 `EAP-PEAP-CACert=` 写上证书文件的路径。这个文件只在安装环境里有效，装好的系统用 NetworkManager，进系统以后还要再连一次，见[桌面](/system/linux/desktop#联网)一页。
+
+   </details>
+
 4. **检查网络**
 
    ```sh
