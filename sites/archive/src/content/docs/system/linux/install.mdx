@@ -466,14 +466,13 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
     vim /etc/default/grub
     ```
 
-    在 `/etc/default/grub` 里加上主题，并在 `GRUB_TERMINAL_OUTPUT` 这一行开头加 `#` 注释掉，不然主题不生效：
+    找到注释掉的 `#GRUB_THEME=` 这一行，删掉开头的 `#`，改成：
 
     ```text title="/etc/default/grub"
     GRUB_THEME="/usr/share/grub/themes/catppuccin-mocha-grub-theme/theme.txt"
-    #GRUB_TERMINAL_OUTPUT="console"
     ```
 
-    Catppuccin 有四种配色，把 `mocha` 换成 `latte`（亮色）、`frappe`、`macchiato` 就是另外三种。主题比例不对的话，再加一行 `GRUB_GFXMODE=1920x1080`，换成你屏幕的分辨率。
+    同一个文件里的 `#GRUB_TERMINAL_OUTPUT=console` 要保持注释掉，它打开的话主题不生效。Catppuccin 有四种配色，把 `mocha` 换成 `latte`（亮色）、`frappe`、`macchiato` 就是另外三种。主题比例不对的话，把 `GRUB_GFXMODE=auto` 一行改成你屏幕的分辨率，例如 `GRUB_GFXMODE=1920x1080`。
 
 13. **生成 GRUB 配置**
 

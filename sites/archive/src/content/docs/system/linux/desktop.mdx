@@ -415,21 +415,21 @@ clipboard {
 1. **Noctalia 的设置**
 
    ```sh
-   mkdir -p ~/.local/state/noctalia
-   vim ~/.local/state/noctalia/settings.toml
+   mkdir -p ~/.config/noctalia
+   vim ~/.config/noctalia/config.toml
    ```
 
    写入：
 
-   ```toml title="~/.local/state/noctalia/settings.toml"
+   ```toml title="~/.config/noctalia/config.toml"
    [shell]
    polkit_agent = true
    niri_overview_type_to_launch_enabled = true
    ```
 
-   第一行：有程序要管理员权限时（例如连接 Wi-Fi 时要求授权），Noctalia 会弹窗让你输密码。第二行：单按 <kbd>Super</kbd> 打开总览后直接打字，就会打开 Noctalia 的启动器开始搜索。
+   `polkit_agent`：有程序要管理员权限时，Noctalia 会弹窗让你输密码。`niri_overview_type_to_launch_enabled`：按 <kbd>Super</kbd> + <kbd>O</kbd> 打开总览后直接打字，就会打开 Noctalia 的启动器开始搜索。
 
-   以后在 Noctalia 的设置界面里改的项也存在这个文件里，Noctalia 启动后还会往里补上 `config_version` 等内容。进了桌面以后，按 <kbd>Super</kbd> + <kbd>D</kbd> 打开控制中心，从那里进入 Noctalia 的设置。
+   `~/.config/noctalia/` 放自己手写的配置，Noctalia 不会改动它。进了桌面以后，按 <kbd>Super</kbd> + <kbd>D</kbd> 打开控制中心，从那里进入 Noctalia 的设置；在设置界面里改的项另存在 `~/.local/state/noctalia/settings.toml`，同一项两边都写了的话，以设置界面里改的为准。
 
 2. **设置文件选择框**
 
@@ -574,11 +574,11 @@ gnome-keyring 替程序保存密码，例如浏览器和编辑器的登录信息
 
 | 快捷键 | 作用 |
 | --- | --- |
-| 单按一下 <kbd>Super</kbd> | 总览：缩小显示所有工作区和窗口 |
+| <kbd>Super</kbd> + <kbd>O</kbd> | 总览：缩小显示所有工作区和窗口；鼠标移到左上角、触摸板四指上滑也能打开 |
 | <kbd>Super</kbd> + <kbd>←</kbd> / <kbd>→</kbd> | 切到左边或右边的窗口 |
 | <kbd>Super</kbd> + <kbd>Q</kbd> | 关闭窗口 |
 | <kbd>Super</kbd> + <kbd>R</kbd> | 切换窗口宽度 |
-| <kbd>Super</kbd> + <kbd>F</kbd> | 窗口占满整列 |
+| <kbd>Super</kbd> + <kbd>F</kbd> | 当前列占满屏幕宽度，再按一次恢复 |
 | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd> | 显示所有快捷键 |
 
 在 kitty 里复制粘贴是 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> 和 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>。之后再改 niri 的配置，保存后立即生效，不用重启；改错了会弹出提示，并继续用上一次正确的配置。
@@ -601,13 +601,13 @@ GTK 程序的主题、图标和字体用 nwg-look 设置。按 <kbd>Super</kbd> 
   secret-tool clear testkey testvalue
   ```
 
-- 试一次休眠，先用 Noctalia 锁屏再休眠：
+- 试一次休眠：
 
   ```sh
-  noctalia msg session lock && sleep 1 && systemctl hibernate
+  systemctl hibernate
   ```
 
-  电脑会关掉。再开机时，经过 GRUB 后应该回到 Noctalia 的锁屏，输密码解锁，之前打开的窗口都还在。如果开机后是一个全新的登录界面，说明没能从休眠恢复，回去检查安装时的“确认休眠能恢复”和内核参数里的 `resume`。
+  Noctalia 默认在休眠前自动锁屏，电脑随后关掉。再开机时，经过 GRUB 后应该回到 Noctalia 的锁屏，输密码解锁，之前打开的窗口都还在。如果开机后是一个全新的登录界面，说明没能从休眠恢复，回去检查安装时的“确认休眠能恢复”和内核参数里的 `resume`。
 
 <details>
 <summary>出问题时用的命令</summary>
