@@ -281,7 +281,7 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
    pacstrap -K -P /mnt $CPU $GPU \
        base base-devel linux linux-firmware \
        grub efibootmgr btrfs-progs zram-generator \
-       sudo vim git networkmanager \
+       sudo vim neovim git networkmanager \
        mesa lib32-mesa mesa-utils vulkan-tools \
        pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber \
        bluez bluez-utils power-profiles-daemon upower \
@@ -293,7 +293,7 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
        noto-fonts noto-fonts-cjk noto-fonts-emoji fontconfig ttf-jetbrains-mono-nerd \
        fcitx5 fcitx5-chinese-addons fcitx5-configtool fcitx5-gtk fcitx5-qt \
        firefox fastfetch yazi wl-clipboard desktop-file-utils \
-       curl wget fd ripgrep openssh man-db man-pages bash-completion rustup
+       curl wget fd ripgrep tree unzip yq openssh man-db man-pages bash-completion rustup
    ```
 
    行末的 `\` 表示命令还没完，下一行接着写，整段是一条命令。下载和安装要一段时间，看网速。
@@ -302,7 +302,7 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
    | --- | --- |
    | 系统 | `base` `base-devel` `linux` `linux-firmware`，以及上一步选的微码 |
    | 引导和磁盘 | `grub` `efibootmgr`（GRUB 和 UEFI 启动项），`btrfs-progs`（btrfs 工具），`zram-generator`（内存压缩交换空间） |
-   | 基本工具 | `sudo` `vim` `git` `networkmanager`（网络） |
+   | 基本工具 | `sudo` `vim` `neovim`（编辑器）`git` `networkmanager`（网络） |
    | 显卡 | `mesa` `lib32-mesa`（OpenGL），`mesa-utils` `vulkan-tools`（检查驱动的工具），以及上一步选的驱动 |
    | 声音 | `pipewire` 和它的 ALSA、PulseAudio、JACK 兼容层，`wireplumber`（会话管理） |
    | 蓝牙和电源 | `bluez` `bluez-utils`（蓝牙），`power-profiles-daemon`（电源模式），`upower`（电池） |
@@ -313,7 +313,7 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
    | 字体 | `noto-fonts` `noto-fonts-cjk`（中文）`noto-fonts-emoji` `fontconfig` `ttf-jetbrains-mono-nerd` |
    | 输入法 | `fcitx5`，`fcitx5-chinese-addons`（拼音），`fcitx5-configtool`（设置界面），`fcitx5-gtk` `fcitx5-qt`（GTK 和 Qt 程序的输入法模块） |
    | 常用软件 | `firefox` `fastfetch` `yazi`（终端文件管理器）`wl-clipboard` `desktop-file-utils` |
-   | 命令行工具 | `curl` `wget` `fd` `ripgrep` `openssh` `man-db` `man-pages` `bash-completion`，`rustup`（管理 Rust 的工具链，编译 AUR 助手 paru 也要用） |
+   | 命令行工具 | `curl` `wget` `fd` `ripgrep`，`tree`（按树形列出目录），`unzip`（解压 zip），`yq`（处理 YAML、TOML、XML，用法和 jq 一样），`openssh` `man-db` `man-pages` `bash-completion`，`rustup`（管理 Rust 的工具链，编译 AUR 助手 paru 也要用） |
 
 5. **生成 fstab**
 
