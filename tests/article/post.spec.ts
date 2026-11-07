@@ -58,6 +58,30 @@ test("a draft opens from its link, kept out of search engines, search and the fe
   }
 });
 
+test("every post links the posts published before and after it", async ({
+  page,
+  request
+}) => {
+  // llms.txt lists the published posts, newest first.
+  const feed = await (await request.get("/llms.txt")).text();
+  const paths = [...feed.matchAll(/\]\(https:\/\/[^/]+(\/blog\/[^)]+)\)/g)].map(
+    ([, path]) => path
+  );
+  expect(paths.length).toBeGreaterThan(0);
+  for (const [index, path] of paths.entries()) {
+    await page.goto(path);
+    // The older post comes first, then the newer.
+    const expected = [paths[index + 1], paths[index - 1]].filter(Boolean);
+    const links = page.locator(".ds-post-nav a");
+    await expect(links).toHaveCount(expected.length);
+    expect(
+      await links.evaluateAll((anchors) =>
+        anchors.map((anchor) => anchor.getAttribute("href"))
+      )
+    ).toEqual(expected);
+  }
+});
+
 test("a page that does not exist gets the 404 page", async ({ page }) => {
   const response = await page.goto("/no-such-page");
   expect(response?.status()).toBe(404);

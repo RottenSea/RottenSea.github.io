@@ -48,7 +48,8 @@ export async function getStaticPaths() {
       lang: post.data.lang
     };
   return (await getAllPosts()).map((post) => {
-    const index = byTime.indexOf(post);
+    // By id: each getCollection call makes new entry objects, so the lists share none.
+    const index = byTime.findIndex((other) => other.id === post.id);
     return {
       params: { slug: postSlug(post) },
       props: {
