@@ -16,17 +16,13 @@ export const AUTHOR_TIME_ZONE = "Asia/Shanghai";
 const DEFAULT_TIME = new Time(11);
 
 /**
- * A frontmatter date as an ISO instant in UTC. YAML reads a bare date as midnight UTC, which is
- * taken as "no time given" and becomes 11:00 UTC+8.
+ * A frontmatter date as an ISO instant in UTC. YAML reads a bare date as midnight UTC, which
+ * becomes 11:00 UTC+8. Only the written text tells a bare date from a time that is midnight UTC,
+ * such as 08:00+08:00, so the caller says which it was.
  */
-export function toInstant(date: Date): string {
+export function toInstant(date: Date, bareDate: boolean): string {
   const utc = fromDate(date, SITE_TIME_ZONE);
-  const isBareDate =
-    utc.hour === 0 &&
-    utc.minute === 0 &&
-    utc.second === 0 &&
-    utc.millisecond === 0;
-  if (!isBareDate) return utc.toAbsoluteString();
+  if (!bareDate) return utc.toAbsoluteString();
   return toZoned(
     toCalendarDateTime(toCalendarDate(utc), DEFAULT_TIME),
     AUTHOR_TIME_ZONE

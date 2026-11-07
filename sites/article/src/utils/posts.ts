@@ -1,4 +1,5 @@
 import { type CollectionEntry, getCollection } from "astro:content";
+import { readFileSync } from "node:fs";
 import { fileHistory } from "./git";
 import { formatDate, toInstant } from "./time";
 
@@ -24,13 +25,34 @@ export interface PostDates {
   revisions: number;
 }
 
+const bareDateKeys = new Map<string, Set<string>>();
+
+/** The frontmatter keys of a post written as a date alone, such as `publishedAt: 2026-11-03`. */
+function bareDates(filePath: string): Set<string> {
+  let keys = bareDateKeys.get(filePath);
+  if (!keys) {
+    const front =
+      readFileSync(filePath, "utf8").match(
+        /^---\r?\n([\s\S]*?)\r?\n---/
+      )?.[1] ?? "";
+    keys = new Set(
+      [
+        ...front.matchAll(/^(\w+):\s*(["']?)\d{4}-\d{2}-\d{2}\2\s*(?:#.*)?$/gm)
+      ].map(([, key]) => key)
+    );
+    bareDateKeys.set(filePath, keys);
+  }
+  return keys;
+}
+
 export function postDates({ data, filePath }: Post): PostDates {
-  const published = toInstant(data.publishedAt);
+  const bare = filePath ? bareDates(filePath) : new Set<string>();
+  const published = toInstant(data.publishedAt, bare.has("publishedAt"));
   const { revisions, lastChanged } = filePath
     ? fileHistory(filePath)
     : { revisions: 0, lastChanged: undefined };
   const updated = data.updatedAt
-    ? toInstant(data.updatedAt)
+    ? toInstant(data.updatedAt, bare.has("updatedAt"))
     : new Date(lastChanged ?? Date.now()).toISOString();
   return {
     published,
