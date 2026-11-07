@@ -80,7 +80,7 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
    | --- | --- | --- | --- | --- | --- |
    | `nvme0n1p1` | 1G | EFI System | FAT32 | `/efi` | EFI 系统分区，放 GRUB 的启动文件 |
    | `nvme0n1p2` | 不小于内存，例如 64G | Linux swap | swap | | 交换分区，休眠时内存里的内容写到这里 |
-   | `nvme0n1p3` | 剩下的全部 | Linux filesystem | btrfs | `/` 和 `/home` | 系统和用户文件 |
+   | `nvme0n1p3` | 剩下的全部 | Linux filesystem | btrfs | `/`、`/home` 和 `/.snapshots` | 系统、用户文件和快照 |
 
    swap 分区主要给休眠用，要能装下内存里的内容，所以不要比内存小。平时用的交换空间是内存里压缩出来的 zram，后面会设置。
 
@@ -137,23 +137,25 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
    mount "$ROOT" /mnt
    btrfs subvolume create /mnt/@
    btrfs subvolume create /mnt/@home
+   btrfs subvolume create /mnt/@snapshots
    umount /mnt
    ```
 
-   `@` 放系统，`@home` 放用户文件。两个子卷分开，给系统拍快照、回滚时不会动到你的文件。
+   `@` 放系统，`@home` 放用户文件，`@snapshots` 放系统的快照。三个子卷分开：给系统拍快照、回滚时不会动到你的文件；快照不在 `@` 里面，回滚时把 `@` 整个换掉，快照也还在。
 
 4. **挂载**
 
    ```sh
    mount -o compress=zstd,noatime,subvol=@ "$ROOT" /mnt
    mount --mkdir -o compress=zstd,noatime,subvol=@home "$ROOT" /mnt/home
+   mount --mkdir -o compress=zstd,noatime,subvol=@snapshots "$ROOT" /mnt/.snapshots
    mount --mkdir "$ESP" /mnt/efi
    swapon "$SWAP"
    ```
 
-   `compress=zstd` 让写进硬盘的文件自动压缩，`noatime` 不记录每次读文件的时间，少写一些硬盘。EFI 分区挂到 `/efi` 而不是 `/boot`：内核和 initramfs 留在 btrfs 的 `@` 里，跟着系统一起进快照，回滚后内核和系统的版本还是对得上。`swapon` 先启用 swap，下一步生成的 fstab 里才会有它。
+   `compress=zstd` 让写进硬盘的文件自动压缩，`noatime` 不记录每次读文件的时间，少写一些硬盘。EFI 分区挂到 `/efi` 而不是 `/boot`：内核和 initramfs 留在 btrfs 的 `@` 里，跟着系统一起进快照，回滚后内核和系统的版本还是对得上。`@snapshots` 和 `swapon` 都是现在挂上，下一步生成的 fstab 里才会有它们。
 
-   运行 `lsblk` 检查，`nvme0n1p3` 一行后面应该同时有 `/mnt` 和 `/mnt/home`，因为两个子卷在同一个分区上。
+   运行 `lsblk` 检查，`nvme0n1p3` 一行后面应该同时有 `/mnt`、`/mnt/home` 和 `/mnt/.snapshots`，因为三个子卷在同一个分区上。
 
 </Steps>
 
@@ -279,7 +281,7 @@ import { Steps, Tabs, TabItem } from "@astrojs/starlight/components";
    cat /mnt/etc/fstab
    ```
 
-   `fstab` 告诉新系统开机时把哪个分区挂到哪里。里面应该有 `/` 和 `/home` 两个 btrfs 子卷、`/efi` 和 swap 四项。
+   `fstab` 告诉新系统开机时把哪个分区挂到哪里。里面应该有 `/`、`/home`、`/.snapshots` 三个 btrfs 子卷，以及 `/efi` 和 swap，一共五项。
 
 </Steps>
 

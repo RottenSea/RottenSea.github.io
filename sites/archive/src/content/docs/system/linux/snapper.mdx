@@ -1,6 +1,6 @@
 ---
 title: Snapper 快照
-description: 用 Snapper 给 btrfs 拍快照，每次装软件和升级前后自动拍一次，出问题时回滚，或者从 GRUB 菜单直接进快照。
+description: 用 Snapper 给 btrfs 拍快照，每次装软件和升级前后自动拍一次，出问题时用 snapper-rollback 把系统回滚到某个快照。
 sidebar:
   order: 6
 ---
@@ -9,24 +9,40 @@ import { Steps } from "@astrojs/starlight/components";
 
 系统分区用的是 btrfs，可以随时给系统拍快照。Snapper 管理这些快照；配上 snap-pac，每次用 pacman 装软件、升级前后都会自动拍一次，升级出问题时退回去就行。
 
+快照放在安装时建的 `@snapshots` 子卷里，不在系统的 `@` 里面。回滚时把 `@` 整个换成某个快照，快照本身不受影响。这是 ArchWiki 的 [Snapper](https://wiki.archlinux.org/title/Snapper#Suggested_filesystem_layout) 一页建议的布局，回滚用为它写的 snapper-rollback。
+
 <Steps>
 
 1. **安装**
 
    ```sh
-   sudo pacman -S snapper snap-pac grub-btrfs inotify-tools
+   sudo pacman -S snapper snap-pac
+   paru -S snapper-rollback
    ```
 
-   `snap-pac` 在每次 pacman 操作前后自动拍快照，`grub-btrfs` 把快照加进 GRUB 菜单，`inotify-tools` 让它发现新快照。
+   `snap-pac` 在每次 pacman 操作前后自动拍快照，`snapper-rollback` 把系统回滚到某个快照，它在 AUR 里。
 
 2. **建立配置**
 
+   Snapper 建配置时，要求 `/.snapshots` 不存在，它会自己在 `@` 里面建一个 `.snapshots` 子卷。这里用不上它，删掉后把安装时建的 `@snapshots` 挂回去：
+
    ```sh
+   sudo umount /.snapshots
+   sudo rmdir /.snapshots
    sudo snapper -c root create-config /
-   sudo snapper -c home create-config /home
+   sudo btrfs subvolume delete /.snapshots
+   sudo mkdir /.snapshots
+   sudo mount -a
+   sudo chmod 750 /.snapshots
    ```
 
-   第一条给系统（`@` 子卷）建配置，快照放在 `/.snapshots`；第二条给 `/home` 单独建一份。
+   `mount -a` 按 fstab 把 `@snapshots` 重新挂到 `/.snapshots`。运行 `findmnt /.snapshots`，`SOURCE` 一栏以 `[/@snapshots]` 结尾就对了。
+
+   再给 `/home` 单独建一份配置，它的快照放在 `/home/.snapshots`，不用改：
+
+   ```sh
+   sudo snapper -c home create-config /home
+   ```
 
 3. **设置保留多少快照（可选）**
 
@@ -55,7 +71,21 @@ import { Steps } from "@astrojs/starlight/components";
 
    最后一条列出两个定时器下一次运行的时间，能看到就说明启用了。
 
-5. **拍第一个快照**
+5. **设置 snapper-rollback**
+
+   ```sh
+   sudo vim /etc/snapper-rollback.conf
+   ```
+
+   找到 `#dev =` 这一行，删掉开头的 `#`，写上系统分区：
+
+   ```ini title="/etc/snapper-rollback.conf"
+   dev = /dev/nvme0n1p3
+   ```
+
+   同一个文件里的 `subvol_main = @` 和 `subvol_snapshots = @snapshots` 和安装时建的子卷对得上，不用改。回滚时它把整个 btrfs 分区挂到 `/btrfsroot`，在那里替换 `@`。
+
+6. **拍第一个快照**
 
    ```sh
    sudo snapper -c root create --description "init-root"
@@ -63,15 +93,6 @@ import { Steps } from "@astrojs/starlight/components";
    ```
 
    系统刚装好、还很干净，先留一个。
-
-6. **让 GRUB 菜单显示快照**
-
-   ```sh
-   sudo systemctl enable --now grub-btrfsd
-   sudo grub-mkconfig -o /boot/grub/grub.cfg
-   ```
-
-   重启后 GRUB 菜单里会多出一个快照的子菜单，系统起不来的时候，可以从这里进某个快照排查。
 
 </Steps>
 
@@ -86,9 +107,42 @@ sudo snapper -c root create --description "升级前-$(date +%Y%m%d)"
 
 # 撤销 10 号到 11 号快照之间的改动
 sudo snapper -c root undochange 10..11
-
-# 把整个系统回滚到 10 号快照，重启后生效
-sudo snapper -c root rollback 10
 ```
 
 快照也可以在图形界面里管理：安装时装好的 btrfs-assistant 能浏览、对比和恢复快照。
+
+## 回滚整个系统
+
+把系统回滚到 10 号快照：
+
+```sh
+sudo snapper-rollback 10
+```
+
+它会要求输入 `CONFIRM` 确认，然后把现在的 `@` 改名成 `@` 加当时的时间（例如 `@2026-11-07T14:30`），再从 10 号快照建一个新的 `@`。重启后就是 10 号快照时的系统。内核和 initramfs 在 `@` 里，跟着一起回到当时的版本；`/home` 是另一个子卷，不受影响。
+
+确认回滚后的系统没问题，再删掉改名留下的旧系统，释放空间：
+
+```sh
+sudo mount --mkdir -o subvolid=5 /dev/nvme0n1p3 /btrfsroot
+sudo btrfs subvolume list /btrfsroot
+sudo btrfs subvolume delete "/btrfsroot/@2026-11-07T14:30"
+sudo umount /btrfsroot
+```
+
+第二条列出所有子卷，找到改名后的那个，把第三条里的名字换成它。
+
+### 系统起不来时
+
+进不了系统就运行不了 snapper-rollback，这时从安装用的 U 盘启动，手动做同样的事：
+
+```sh
+mount -o subvolid=5 /dev/nvme0n1p3 /mnt
+grep -r '<date>' /mnt/@snapshots/*/info.xml
+mv /mnt/@ /mnt/@.broken
+btrfs subvolume snapshot /mnt/@snapshots/10/snapshot /mnt/@
+umount /mnt
+reboot
+```
+
+第二条列出每个快照的编号和拍摄时间（UTC），挑一个要退回的，把第四条里的 `10` 换成它的编号。第三条把坏掉的系统改名留着，确认没问题后，按上面的方法删掉 `@.broken`。
