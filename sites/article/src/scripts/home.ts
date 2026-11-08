@@ -3,7 +3,7 @@
 
 const PAGE_SIZE = 10;
 
-/** When the site went live: 2026-05-20 10:49:12 UTC+8. */
+/** When the site went live: 2026-05-20 02:49:12 UTC. */
 const LAUNCHED_AT = Date.parse("2026-05-20T02:49:12Z");
 
 interface Filters {

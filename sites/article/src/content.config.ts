@@ -16,7 +16,7 @@ const blog = defineCollection({
         description: z.string(),
         /** `en` or `zh`. The site's own text is English; this is the post's language. */
         lang: z.enum(["en", "zh"]),
-        /** A bare date means 11:00 UTC+8; a time with its zone orders posts of the same day. */
+        /** A bare date means 11:00 UTC+8; a time, written in UTC, orders posts of the same day. */
         publishedAt: z.coerce.date(),
         /** Defaults to the last commit that changed the post. */
         updatedAt: z.coerce.date().optional(),

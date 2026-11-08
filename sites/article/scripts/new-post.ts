@@ -58,31 +58,16 @@ if (existsSync(dir)) {
   process.exit(1);
 }
 
-// Now in UTC+8; the time orders posts published on the same day.
-const parts = Object.fromEntries(
-  new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Shanghai",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23"
-  })
-    .formatToParts(new Date())
-    .map(({ type, value }) => [type, value])
-);
-const date = `${parts.year}-${parts.month}-${parts.day}`;
-const time = `${parts.hour}:${parts.minute}:${parts.second}`;
+// Now in UTC, to the second; the time orders posts published on the same day.
+const now = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
 
 // Every field the schema in src/content.config.ts accepts. Optional ones are commented out.
 const template = `---
 title: ""
 description: ""
 lang: zh
-publishedAt: ${date}T${time}+08:00
-# updatedAt: ${date}T${time}+08:00
+publishedAt: ${now}
+# updatedAt: ${now}
 tags: []
 # category: ""
 # image: ./cover.png
