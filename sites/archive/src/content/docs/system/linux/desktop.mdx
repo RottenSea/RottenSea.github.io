@@ -91,7 +91,7 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
    前三行是输入法的：`XMODIFIERS` 让只支持 X11 的老程序也能用输入法，另外两行让 GTK 和 Qt 写的程序通过 Fcitx5 自己的模块输入。后三行：`QT_QPA_PLATFORM` 让 Qt 程序直接跑在 Wayland 上，不经过 XWayland；`QT_QPA_PLATFORMTHEME` 让 Qt 程序的主题、字体和图标跟着 qt6ct 的设置走，不设的话，装了 qt6ct 也不起作用；`SDL_VIDEODRIVER` 让用 SDL 写的程序（大多是游戏）走 Wayland，个别老游戏可能因此打不开，到时只对那个游戏去掉这个变量。
 
    :::note
-   原生的 Wayland 程序可以通过 Wayland 自己的输入协议（text-input）用输入法，按 ArchWiki 的 [Fcitx5](https://wiki.archlinux.org/title/Fcitx5) 一页，`GTK_IM_MODULE` 和 `QT_IM_MODULE` 并不是必需的。笔者加上它们，是因为有的程序不设就打不出字，或者候选框的位置不对。遇到问题时，可以用 `fcitx5-diagnose` 检查输入法的环境。
+   原生的 Wayland 程序可以通过 Wayland 自己的输入协议（text-input）用输入法，按 ArchWiki 的 [Fcitx5](https://wiki.archlinux.org/title/Fcitx5) 一页，`GTK_IM_MODULE` 和 `QT_IM_MODULE` 并不是必需的。这里仍然加上它们，因为有的程序不设就打不出字，或者候选框的位置不对。遇到问题时，可以用 `fcitx5-diagnose` 检查输入法的环境。
    :::
 
 4. **注释掉用不上的默认快捷键**
@@ -118,7 +118,7 @@ niri 的配置文件是 `~/.config/niri/config.kdl`（`~` 是你的用户目录�
    Ctrl+Alt+Delete { quit; }
    ```
 
-   终端、启动器、锁屏、音量、亮度、截图和退出这几项，第 6 步会换成 kitty 和 Noctalia 的。fuzzel、swaylock 和亮度要用的 brightnessctl 都没有装。`Super+Alt+S` 开关读屏程序 Orca，也没有装。`Mod+Comma` 和 `Mod+Period` 把窗口并入、移出当前列，`Mod+W` 把一列里的窗口显示成标签页，笔者不用这三个。
+   终端、启动器、锁屏、音量、亮度、截图和退出这几项，第 6 步会换成 kitty 和 Noctalia 的。fuzzel、swaylock 和亮度要用的 brightnessctl 都没有装。`Super+Alt+S` 开关读屏程序 Orca，也没有装。`Mod+Comma` 和 `Mod+Period` 把窗口并入、移出当前列，`Mod+W` 把一列里的窗口显示成标签页，这组教程用不到这三个。
 
 5. **上下方向改成切换工作区**
 
@@ -372,7 +372,7 @@ ls /sys/class/drm
 
 列出来的 `card1-eDP-1` 这类名字，去掉开头的 `card1-` 就是 niri 里用的名字。`eDP` 一般是笔记本的内置屏，`HDMI-A`、`DP` 是外接的显示器。进了桌面以后，也可以用 `niri msg outputs` 查名字和支持的分辨率。
 
-然后在配置文件里加上一段，下面是笔者笔记本内置屏的设置：
+然后在配置文件里加上一段，下面以一台笔记本的内置屏为例：
 
 ```kdl title="~/.config/niri/config.kdl"
 output "eDP-1" {
