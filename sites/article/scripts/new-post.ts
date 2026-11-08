@@ -69,7 +69,7 @@ lang: zh
 publishedAt: ${now}
 # updatedAt: ${now}
 tags: []
-# category: ""
+category:
 # image: ./cover.png
 # pinned: true
 # comment: true

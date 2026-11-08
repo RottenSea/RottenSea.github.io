@@ -21,7 +21,11 @@ const blog = defineCollection({
         /** Defaults to the last commit that changed the post. */
         updatedAt: z.coerce.date().optional(),
         tags: z.array(z.string()).default([]),
-        category: z.string().optional(),
+        /** `pnpm new-post` leaves it empty, which YAML reads as null: no category. */
+        category: z
+          .string()
+          .nullish()
+          .transform((category) => category ?? undefined),
         pinned: z.boolean().default(false),
         image: image().optional(),
         /** Comments are off unless a post turns them on. */
