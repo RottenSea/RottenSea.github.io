@@ -18,7 +18,7 @@ sidebar:
 
 ## 设置脚本
 
-能用注册表或命令改的设置，都写进了一个 PowerShell 脚本：先列出要改的每一项，确认一次后全部执行。下载和每一项改了什么，见 [Windows setup](https://rottensea.github.io/misc/windows-setup/)。教程里脚本会做的项，手动的做法都折叠起来，只在不用脚本时展开看。
+能用注册表或命令改的设置，都写进了两个 PowerShell 脚本：联网前运行的 `1-Offline.ps1` 做设置和系统优化，联网后运行的 `2-Online.ps1` 装开发环境。每个脚本先列出要改的每一项，确认一次后全部执行。下载和每一项改了什么，见 [Windows setup](https://rottensea.github.io/misc/windows-setup/)。教程里脚本会做的项，手动的做法都折叠起来，只在不用脚本时展开看。
 
 ## 概要
 
@@ -26,7 +26,7 @@ sidebar:
 2. [安装](/system/windows/install)：从 U 盘安装 Windows，跳过联网，创建本地账户。
 3. [联网前的设置](/system/windows/offline-setup)：装驱动，运行设置脚本，关启动项，调整搜索。
 4. [联网后的设置](/system/windows/settings)：卸载预装软件，加上英语，整理开始菜单，调整脚本做不了的设置。
-5. [设置脚本](/system/windows/script)：脚本的用法，以及它改了哪些设置和系统优化。
+5. [设置脚本](/system/windows/script)：两个脚本的用法，以及它们改了哪些设置、做了哪些系统优化、装了哪些开发工具。
 6. [推荐的软件](/system/windows/apps)：浏览器、Office、看图、视频、压缩、下载和传文件。
 
 :::caution
