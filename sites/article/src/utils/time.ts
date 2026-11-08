@@ -11,21 +11,20 @@ import {
 /** Post times are stored and shown in UTC, so a post's date reads the same in every time zone. */
 export const SITE_TIME_ZONE = "UTC";
 
-/** A frontmatter date without a time means 11:00 on that day in UTC+8. */
-export const AUTHOR_TIME_ZONE = "Asia/Shanghai";
-const DEFAULT_TIME = new Time(11);
+/** A frontmatter date without a time means 04:00 UTC on that day. */
+const DEFAULT_TIME = new Time(4);
 
 /**
  * A frontmatter date as an ISO instant in UTC. YAML reads a bare date as midnight UTC, which
- * becomes 11:00 UTC+8. Only the written text tells a bare date from a time that is midnight UTC,
- * such as 08:00+08:00, so the caller says which it was.
+ * becomes 04:00 UTC. Only the written text tells a bare date from a time that is midnight UTC,
+ * such as 2026-11-03T00:00:00Z, so the caller says which it was.
  */
 export function toInstant(date: Date, bareDate: boolean): string {
   const utc = fromDate(date, SITE_TIME_ZONE);
   if (!bareDate) return utc.toAbsoluteString();
   return toZoned(
     toCalendarDateTime(toCalendarDate(utc), DEFAULT_TIME),
-    AUTHOR_TIME_ZONE
+    SITE_TIME_ZONE
   ).toAbsoluteString();
 }
 
